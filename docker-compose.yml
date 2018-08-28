@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  database:
+    container_name: explorer_db
+    image: postgres:10.4
+    restart: always
+    environment:
+      POSTGRES_DB: "app"
+      POSTGRES_USER: "app"
+      POSTGRES_PASSWORD: "app"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  rest:
+    container_name: explorer_rest
+    image: postgrest/postgrest
+    restart: always
+    environment:
+      PGRST_DB_URI: "postgres://app:app@database/app"
+      PGRST_DB_ANON_ROLE: "app"
+    links:
+      - database:database
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
+
+
+  #advanced:
+  #  build: ./database-golang-app
+  #  working_dir: /go/src/database-golang-app
+  #  command: go run main.go
+  #  volumes:
+  #    - ./database-golang-app:/go/src/database-golang-app
+  #  links:
+  #    - database
+  #  environment:
+  #    - DB_NAME=advanced-golang-db

@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+import "volume.proto";
+
+package sonm;
+
+message Registry {
+    string username = 1;
+    string password = 2;
+}
+
+// ContainerRestartPolicy represents the restart policies of the container.
+message ContainerRestartPolicy {
+    // Name can be either "always" to always restart or "on-failure" to restart
+    // only when the container exit code is non-zero. If on-failure is used,
+    // MaximumRetryCount controls the number of times to retry before giving up.
+    // The default is not to restart.
+    string name = 1;
+    uint32 maximumRetryCount = 2;
+}
+
+message NetworkSpec {
+    string type = 1;
+    map<string, string> options = 2;
+    string subnet = 3;
+    string addr = 4;
+}
+
+message Container {
+    // Image describes a Docker image name. Required.
+    string image = 1;
+    // SSH public key used to attach to the container.
+    string sshKey = 2;
+    // CommitOnStop points whether a container should commit when stopped.
+    // Committed containers can be fetched later while there is an active
+    // deal.
+    bool commitOnStop = 3;
+    // Env describes environment variables forwarded into the container.
+    map<string, string> env = 4;
+    // Volumes describes network volumes that are used to be mounted inside
+    // the container.
+    // Mapping from the volume type (cifs, nfs, etc.) to its settings.
+    map<string, Volume> volumes = 5;
+    // Mounts describes mount points from the volume name to the container.
+    repeated string mounts = 6;
+
+    repeated NetworkSpec networks = 7;
+    // ContainerRestartPolicy describes the restart policies of the container.
+    ContainerRestartPolicy restartPolicy = 8;
+    // Expose controls how container ports are exposed.
+    repeated string expose = 10;
+}

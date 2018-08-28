@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "bigint.proto";
+import "capabilities.proto";
+import "insonmnia.proto";
+import "marketplace.proto";
+import "timestamp.proto";
+
+package sonm;
+
+message AskPlanCPU {
+    uint64 core_percents = 1;
+}
+
+message AskPlanGPU {
+    repeated uint64 indexes = 1;
+    repeated string hashes = 2;
+}
+
+message AskPlanRAM {
+    DataSize size = 1;
+}
+
+message AskPlanStorage {
+    DataSize size = 1;
+}
+
+message AskPlanNetwork {
+    DataSizeRate throughputIn = 1;
+    DataSizeRate throughputOut = 2;
+    NetFlags netFlags = 3;
+}
+
+message AskPlanResources {
+    AskPlanCPU CPU = 1;
+    AskPlanRAM RAM = 2;
+    AskPlanStorage storage = 3;
+    AskPlanGPU GPU = 4;
+    AskPlanNetwork network = 5;
+}
+
+message AskPlan {
+    enum Status {
+        ACTIVE = 0;
+        PENDING_DELETION = 1;
+    }
+    string ID = 1;
+    BigInt orderID = 2;
+    BigInt dealID = 3;
+    Duration duration = 4;
+    Price price = 5;
+    EthAddress blacklist = 6;
+    EthAddress counterparty = 7;
+    IdentityLevel identity = 8;
+    bytes tag = 9;
+    AskPlanResources resources = 10;
+    Status status = 11;
+    Timestamp createTime = 12;
+    Timestamp lastOrderPlacedTime = 13;
+}

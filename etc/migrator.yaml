@@ -1,0 +1,13 @@
+logging:
+  # The desired logging level.
+  # Allowed values are "debug", "info", "warn", "error", "panic" and "fatal"
+  level: "debug"
+
+database:
+  user: app
+  password: app
+  database: app
+
+migrator:
+  directory: ./migrations
+  dialect: postgres

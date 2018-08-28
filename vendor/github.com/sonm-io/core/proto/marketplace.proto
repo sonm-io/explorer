@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+import "bigint.proto";
+import "capabilities.proto";
+import "insonmnia.proto";
+import "timestamp.proto";
+
+package sonm;
+
+service Market {
+    // GetOrders returns orders by given filter parameters.
+    // Note that set of filters may be changed in the closest future.
+    rpc GetOrders(Count) returns (GetOrdersReply) {}
+    // CreateOrder places new order on the Marketplace.
+    // Note that current impl of Node API prevents you from
+    // creating ASKs orders.
+    rpc CreateOrder(BidOrder) returns (Order) {}
+    // GetOrderByID returns order by given ID.
+    // If order save an `inactive` status returns error instead.
+    // TODO: get rid of string ID #1237
+    rpc GetOrderByID(ID) returns (Order) {}
+    // CancelOrder removes active order from the Marketplace.
+    // TODO: get rid of string ID #1237
+    rpc CancelOrder(ID) returns (Empty) {}
+    // Purge remove all active orders from marketplace
+    rpc Purge(Empty) returns (Empty) {}
+}
+
+message GetOrdersReply {
+    repeated Order orders = 1;
+}
+
+enum OrderType {
+    ANY = 0;
+    BID = 1;
+    ASK = 2;
+}
+
+enum OrderStatus {
+    ORDER_UNKNOWN = 0;
+    ORDER_INACTIVE = 1;
+    ORDER_ACTIVE = 2;
+}
+
+enum IdentityLevel {
+    UNKNOWN = 0;
+    ANONYMOUS = 1;
+    REGISTERED = 2;
+    IDENTIFIED = 3;
+    PROFESSIONAL = 4;
+}
+
+enum DealStatus {
+    DEAL_UNKNOWN = 0;
+    DEAL_ACCEPTED = 1;
+    DEAL_CLOSED = 2;
+}
+
+enum ChangeRequestStatus {
+    REQUEST_UNKNOWN = 0;
+    REQUEST_CREATED = 1;
+    REQUEST_CANCELED = 2;
+    REQUEST_REJECTED = 3;
+    REQUEST_ACCEPTED = 4;
+}
+
+enum BlacklistType {
+    BLACKLIST_NOBODY = 0;
+    BLACKLIST_WORKER = 1;
+    BLACKLIST_MASTER = 2;
+}
+
+message Benchmarks {
+    repeated uint64 values = 1;
+}
+
+message Deal {
+    BigInt id = 1;
+    Benchmarks benchmarks = 2;
+    EthAddress supplierID = 3;
+    EthAddress consumerID = 4;
+    EthAddress masterID = 5;
+    BigInt askID = 6;
+    BigInt bidID = 7;
+    uint64 duration = 8;
+    BigInt price = 9;
+    Timestamp startTime = 10;
+    Timestamp endTime = 11;
+    DealStatus status = 12;
+    BigInt blockedBalance = 13;
+    BigInt totalPayout = 14;
+    Timestamp lastBillTS = 15;
+}
+
+message Order {
+    BigInt id = 1;
+    BigInt dealID = 2;
+    OrderType orderType = 3;
+    OrderStatus orderStatus = 4;
+    EthAddress authorID = 5;
+    EthAddress counterpartyID = 6;
+    uint64 duration = 7;
+    BigInt price = 8;
+    NetFlags netflags = 9;
+    IdentityLevel identityLevel = 10;
+    string blacklist = 11;
+    bytes tag = 12;
+    Benchmarks benchmarks = 13;
+    BigInt frozenSum = 14;
+}
+
+message BidNetwork {
+    bool overlay = 1;
+    bool outbound = 2;
+    bool incoming = 3;
+}
+
+message BidResources{
+    BidNetwork network = 1;
+    map<string, uint64> benchmarks = 2;
+}
+
+message BidOrder {
+    string ID = 1;
+
+    Duration duration = 2;
+    Price price = 3;
+    EthAddress blacklist = 4;
+    IdentityLevel identity = 5;
+    string tag = 6;
+
+    EthAddress Counterparty = 7;
+    BidResources resources = 8;
+}

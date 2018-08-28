@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+import "benchmarks.proto";
+
+package sonm;
+
+enum GPUVendorType {
+    GPU_UNKNOWN = 0;
+    NVIDIA = 1;
+    RADEON = 2;
+    FAKE = 99;
+}
+
+message CPUDevice {
+    // ModelName describes full model name.
+    // For example "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz".
+    string modelName = 1;
+    // Cores describes number of cores on a CPU device.
+    uint32 cores = 2;
+    // Sockets describes number of CPU sockets on a host system.
+    uint32 sockets = 3;
+}
+
+message CPU {
+    CPUDevice device = 1;
+    map<uint64, Benchmark> benchmarks = 2;
+}
+
+message RAMDevice {
+    uint64 total = 1;
+    uint64 available = 2;
+}
+
+message RAM {
+    RAMDevice device = 1;
+    map<uint64, Benchmark> benchmarks = 2;
+}
+
+message GPUDevice {
+    // ID returns unique device ID on workers machine,
+    // typically PCI bus ID
+    string ID = 1;
+
+    // VendorID returns an unique device vendor identifier
+    uint64 vendorID = 2;
+    // VendorName returns GPU vendor name.
+    string vendorName = 3;
+
+    // DeviceID returns device ID (e.g.: NVidia)
+    uint64 deviceID = 5;
+    // DeviceName returns device name, (e.g.: 1080Ti)
+    string deviceName = 6;
+
+    // MajorNumber returns device's major number
+    uint64 majorNumber = 7;
+    // MinorNumber returns device's minor number
+    uint64 minorNumber = 8;
+
+    // Memory is amount of vmem for device, in bytes
+    uint64 Memory = 9;
+
+    // Hash string built from device parameters
+    string hash = 10;
+}
+
+message GPU {
+    GPUDevice device = 1;
+    map<uint64, Benchmark> benchmarks = 2;
+}
+
+message NetFlags {
+    uint64 flags =1;
+}
+
+message Network {
+    uint64 in = 1;
+    uint64 out = 2;
+    NetFlags netFlags = 3;
+
+    map<uint64, Benchmark> benchmarksIn = 4;
+    map<uint64, Benchmark> benchmarksOut = 5;
+}
+
+message StorageDevice {
+    uint64 bytesAvailable = 1;
+}
+
+message Storage {
+    StorageDevice device = 1;
+    map<uint64, Benchmark> benchmarks = 2;
+}

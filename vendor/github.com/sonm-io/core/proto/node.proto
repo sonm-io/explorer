@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+import "bigint.proto";
+import "container.proto";
+import "dwh.proto";
+import "insonmnia.proto";
+import "marketplace.proto";
+import "worker.proto";
+
+package sonm;
+
+// The SONM Local node API must also include
+// the Marketplace API, but it already has been described
+// into a "proto/marketplace.proto" file.
+
+// TaskManagement describe a bunch of methods
+// to manage tasks running into the SONM network
+service TaskManagement {
+    // List produces a list of all tasks running on different SONM nodes
+    rpc List(TaskListRequest) returns (TaskListReply) {}
+    // PushTask pushes image to Worker
+    rpc PushTask(stream Chunk) returns (stream Progress) {}
+    // Start starts a task on given resource
+    rpc Start(StartTaskRequest) returns (StartTaskReply) {}
+    // JoinNetwork provides network specs to join specified task
+    rpc JoinNetwork(JoinNetworkRequest) returns (NetworkSpec) {}
+    // Status produces a task status by their ID
+    rpc Status(TaskID) returns (TaskStatusReply) {}
+    // Logs retrieves a task log (stdin/stderr) from given task
+    rpc Logs(TaskLogsRequest) returns (stream TaskLogsChunk) {}
+    // Stop stops a task by their ID
+    rpc Stop(TaskID) returns (Empty) {}
+    // PullTask pulls task image back
+    rpc PullTask(PullTaskRequest) returns (stream Chunk) {}
+}
+
+message JoinNetworkRequest {
+    TaskID taskID = 1;
+    string NetworkID = 2;
+}
+
+message TaskListRequest {
+    BigInt dealID = 1;
+}
+
+// DealManagement describe a bunch of methods
+// to manage deals made into the SONM network
+service DealManagement {
+    // List produces a list of all deals made by client with given ID
+    rpc List(Count) returns (DealsReply) {}
+    // Status produces a detailed info about deal with given ID.
+    rpc Status(BigInt) returns (DealInfoReply) {}
+    // Finish finishes a deal with given ID
+    rpc Finish(DealFinishRequest) returns (Empty) {}
+    // Open tries to open deal between two orders
+    rpc Open(OpenDealRequest) returns (Deal) {}
+    // ChangeRequestsList return change requests for given deal
+    rpc ChangeRequestsList(BigInt) returns (DealChangeRequestsReply) {}
+    // CreateChangeRequest creates new change request for deal
+    rpc CreateChangeRequest(DealChangeRequest) returns (BigInt) {}
+    // ApproveChangeRequest approves change request by their ID
+    rpc ApproveChangeRequest(BigInt) returns (Empty) {}
+    // CancelChangeRequest removes pending change request
+    rpc CancelChangeRequest(BigInt) returns (Empty) {}
+    // QuickBuy places BID order with the same parameters as given ASK order have,
+    // then opens deal with this two orders.
+    rpc QuickBuy(QuickBuyRequest) returns (DealInfoReply) {}
+}
+
+message QuickBuyRequest {
+    BigInt askID = 1;
+    Duration duration = 2;
+    bool force = 3;
+}
+
+message DealFinishRequest {
+    BigInt id = 1;
+    BlacklistType blacklistType = 2;
+}
+
+message DealsReply {
+    repeated Deal deal = 1;
+}
+
+message OpenDealRequest {
+    BigInt bidID = 1;
+    BigInt askID = 2;
+    bool force = 3;
+}
+
+// todo: implement this as part of Node API
+service MasterManagement {
+    // WorkersList returns worker's list for current master address.
+    // List includes already registred workers and pending unapproved requests.
+    rpc WorkersList(EthAddress) returns (WorkerListReply) {}
+    // WorkerConfirm (as master) confirms incoming request for given Worker address.
+    rpc WorkerConfirm(EthAddress) returns (Empty) {}
+    // WorkerRemove (as master) unbinds given Worker address from Master address.
+    rpc WorkerRemove(WorkerRemoveRequest) returns (Empty) {}
+}
+
+message WorkerRemoveRequest {
+    EthAddress master = 1;
+    EthAddress worker = 2;
+}
+
+message WorkerListReply {
+    repeated DWHWorker workers = 1;
+}
+
+service TokenManagement {
+    // TestTokens increases balance for some amount of test tokens
+    // into live-chian ethereum network.
+    rpc TestTokens(Empty) returns (Empty) {}
+    // Balance provide account balance for live- and side- chains.
+    rpc Balance(Empty) returns (BalanceReply) {}
+    // BalanceOf provide account balance of specified address.
+    rpc BalanceOf(EthAddress) returns (BalanceReply) {}
+    // Deposit transfers funds from masterchain to sidechain
+    rpc Deposit(BigInt) returns (Empty) {}
+    // Withdraw transfers funds from sidechain to masterchain
+    rpc Withdraw(BigInt) returns (Empty) {}
+    // MarketAllowance returns current allowance for BC market
+    rpc MarketAllowance(Empty) returns (BigInt) {}
+    // Transfer transfers funds from one sidechain account to another.
+    rpc Transfer(TokenTransferRequest) returns (Empty) {}
+}
+
+message BalanceReply {
+    BigInt liveBalance = 1;
+    BigInt sideBalance = 2;
+    BigInt liveEthBalance = 3;
+}
+
+service Blacklist {
+    // List addresses into given blacklist
+    rpc List(EthAddress) returns (BlacklistReply) {}
+    // Remove removes given address from blacklist
+    rpc Remove(EthAddress) returns (Empty) {}
+}
+
+service Profiles {
+    // List allows searching for profiles
+    rpc List(ProfilesRequest) returns (ProfilesReply) {}
+    // Status shows detailed info about given profile
+    rpc Status(EthID) returns (Profile) {}
+    // RemoveAttribute allows to remove profile attributes
+    // for the user's own profile
+    rpc RemoveAttribute(BigInt) returns (Empty) {}
+}
+
+message TokenTransferRequest {
+    EthAddress to = 1;
+    BigInt amount = 2;
+}

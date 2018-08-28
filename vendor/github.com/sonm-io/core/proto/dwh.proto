@@ -1,0 +1,318 @@
+syntax = "proto3";
+
+import "bigint.proto";
+import "marketplace.proto";
+import "insonmnia.proto";
+import "timestamp.proto";
+
+package sonm;
+
+enum CmpOp {
+    EQ = 0;
+    GTE = 1;
+    LTE = 2;
+}
+
+enum SortingOrder {
+    Asc = 0;
+    Desc = 1;
+}
+
+message SortingOption {
+    string field = 1;
+    SortingOrder order = 2;
+}
+
+service DWH {
+    rpc GetDeals(DealsRequest) returns (DWHDealsReply) {}
+    rpc GetDealDetails(BigInt) returns (DWHDeal) {}
+    rpc GetDealConditions(DealConditionsRequest) returns (DealConditionsReply) {}
+    rpc GetOrders(OrdersRequest) returns (DWHOrdersReply) {}
+    rpc GetMatchingOrders(MatchingOrdersRequest) returns (DWHOrdersReply) {}
+    rpc GetOrderDetails(BigInt) returns (DWHOrder) {}
+    rpc GetProfiles(ProfilesRequest) returns (ProfilesReply) {}
+    rpc GetProfileInfo(EthID) returns (Profile) {}
+    rpc GetBlacklist(BlacklistRequest) returns (BlacklistReply) {}
+    rpc GetBlacklistsContainingUser(BlacklistRequest) returns (BlacklistsContainingUserReply) {}
+    rpc GetValidators(ValidatorsRequest) returns (ValidatorsReply) {}
+    // Deprecated: use GetChangeRequests.
+    rpc GetDealChangeRequests(BigInt) returns (DealChangeRequestsReply) {}
+    rpc GetChangeRequests(ChangeRequestsRequest) returns (DealChangeRequestsReply) {}
+    rpc GetWorkers(WorkersRequest) returns (WorkersReply) {}
+}
+
+message DealsRequest {
+    DealStatus status = 1;
+    EthAddress supplierID = 2;
+    EthAddress consumerID = 3;
+    EthAddress masterID = 4;
+    BigInt askID = 5;
+    BigInt bidID = 6;
+    MaxMinUint64 duration = 7;
+    MaxMinBig price = 8;
+    CmpUint64 netflags = 9;
+    IdentityLevel askIdentityLevel = 10;
+    IdentityLevel bidIdentityLevel = 11;
+    map<uint64, MaxMinUint64> benchmarks = 12;
+    uint64 limit = 13;
+    uint64 offset = 14;
+    repeated SortingOption sortings = 15;
+    bool withCount = 16;
+    // If provided, supplierID, consumerID, and masterID fields are ignored.
+    // Any of the above IDs must match the provided value.
+    EthAddress anyUserID = 17;
+}
+
+message DWHDealsReply {
+    repeated DWHDeal deals = 1;
+    uint64 count = 2;
+}
+
+message DWHDeal {
+    Deal deal = 1;
+
+    uint64 netflags = 2;
+    uint64 askIdentityLevel = 3;
+    uint64 bidIdentityLevel = 4;
+    bytes supplierCertificates = 5;
+    bytes consumerCertificates = 6;
+    bool activeChangeRequest = 7;
+}
+
+message DealConditionsRequest {
+    BigInt dealID = 1;
+    uint64 limit = 2;
+    uint64 offset = 3;
+    repeated SortingOption sortings = 4;
+    bool withCount = 5;
+}
+
+message DealConditionsReply {
+    repeated DealCondition conditions = 1;
+    uint64 count = 2;
+}
+
+message OrdersRequest {
+    BigInt dealID = 1;
+    OrderType type = 2;
+    OrderStatus status = 3;
+    EthAddress authorID = 4;
+    // No values passed returns all orders, empty address (common.Address{}.Hex()) returns orders
+    // with CounterpartyID not set. To get a list of all orders that suit you, pass an empty address
+    // and your own address.
+    repeated EthAddress counterpartyID = 5;
+    MaxMinUint64 duration = 6;
+    MaxMinBig price = 9;
+    CmpUint64 netflags = 11;
+    repeated IdentityLevel creatorIdentityLevel = 12;
+    map<uint64, MaxMinUint64> benchmarks = 13;
+    MaxMinTimestamp createdTS = 14;
+    uint64 limit = 15;
+    uint64 offset = 16;
+    repeated SortingOption sortings = 17;
+    bool withCount = 18;
+    EthAddress masterID = 19;
+    // IDs associated with sender.
+    repeated EthAddress senderIDs = 20;
+}
+
+message MatchingOrdersRequest {
+    BigInt id = 1;
+    uint64 limit = 2;
+    uint64 offset = 3;
+    bool withCount = 4;
+}
+
+message DWHOrdersReply {
+    repeated DWHOrder orders = 1;
+    uint64 count = 2;
+}
+
+message DWHOrder {
+    Order order = 1;
+
+    uint64 creatorIdentityLevel = 2;
+    string creatorName = 3;
+    string creatorCountry = 4;
+    bytes creatorCertificates = 5;
+    Timestamp CreatedTS = 6;
+    EthAddress masterID = 7;
+}
+
+message DealCondition {
+    uint64 id = 1;
+    EthAddress supplierID = 2;
+    EthAddress consumerID = 3;
+    EthAddress masterID = 4;
+    uint64 duration = 5;
+    BigInt price = 6;
+    Timestamp startTime = 7;
+    Timestamp endTime = 8;
+    BigInt totalPayout = 9;
+    BigInt dealID = 10;
+}
+
+message DWHWorker {
+    EthAddress masterID = 1;
+    EthAddress slaveID = 2;
+    bool confirmed = 3;
+}
+
+enum ProfileRole {
+    AnyRole = 0;
+    Supplier = 1;
+    Consumer = 2;
+}
+
+enum BlacklistOption {
+    WithoutMatching = 0;
+    IncludeAndMark = 1;
+    OnlyMatching = 2;
+}
+
+message ProfilesRequest {
+    ProfileRole role = 1;
+    IdentityLevel identityLevel = 2;
+    repeated string country = 3;
+    // This value is LIKE-matched against both profile Name and UserID (case insensitive).
+    string identifier = 4;
+    BlacklistQuery blacklistQuery = 5;
+    uint64 limit = 6;
+    uint64 offset = 7;
+    repeated SortingOption sortings = 8;
+    bool withCount = 9;
+}
+
+message ProfilesReply {
+    repeated Profile profiles = 1;
+    uint64 count = 2;
+}
+
+message Profile {
+    EthAddress UserID = 1;
+    uint64 IdentityLevel = 2;
+    string Name = 3;
+    string Country = 4;
+    bool IsCorporation = 5;
+    bool IsProfessional = 6;
+    string Certificates = 7;
+    uint64 activeAsks = 8;
+    uint64 activeBids = 9;
+    bool isBlacklisted = 10;
+}
+
+message BlacklistRequest {
+    EthAddress userID = 1;
+    uint64 limit = 2;
+    uint64 offset = 3;
+    bool withCount = 4;
+}
+
+message BlacklistReply {
+    EthAddress ownerID = 1;
+    repeated string addresses = 2;
+    uint64 count = 3;
+}
+
+message BlacklistsContainingUserReply {
+    repeated EthAddress blacklists = 1;
+    uint64 count = 2;
+}
+
+message ValidatorsRequest {
+    CmpUint64 validatorLevel = 1;
+    uint64 limit = 2;
+    uint64 offset = 3;
+    repeated SortingOption sortings = 4;
+    bool withCount = 5;
+}
+
+message ValidatorsReply {
+    repeated DWHValidator validators = 1;
+    uint64 count = 2;
+}
+
+message DWHValidator {
+    Validator validator = 1;
+    string name = 2;
+    string icon = 3;
+    string url = 4;
+    string description = 5;
+    BigInt price = 6;
+}
+
+message Validator {
+    EthAddress id = 1;
+    uint64 level = 2;
+}
+
+message DealChangeRequestsReply {
+    repeated DealChangeRequest requests = 1;
+}
+
+message DealChangeRequest {
+    BigInt id = 1;
+    BigInt dealID = 2;
+    OrderType requestType = 3;
+    uint64 duration = 4;
+    BigInt price = 5;
+    ChangeRequestStatus status = 6;
+    Timestamp createdTS = 7;
+}
+
+message DealPayment {
+    BigInt dealID = 1;
+    BigInt payedAmount = 2;
+    Timestamp paymentTS = 3;
+}
+
+message ChangeRequestsRequest {
+    BigInt dealID = 1;
+    bool onlyActive = 2;
+}
+
+message WorkersRequest {
+    EthAddress MasterID = 1;
+    uint64 limit = 2;
+    uint64 offset = 3;
+    bool withCount = 4;
+}
+
+message WorkersReply {
+    repeated DWHWorker workers = 1;
+    uint64 count = 2;
+}
+
+message Certificate {
+    EthAddress ownerID = 1;
+    EthAddress validatorID = 2;
+    uint64 attribute = 3;
+    uint64 identityLevel = 4;
+    bytes value = 5;
+    BigInt id = 6;
+}
+
+message MaxMinUint64 {
+    uint64 max = 1;
+    uint64 min = 2;
+}
+
+message MaxMinBig {
+    BigInt max = 1;
+    BigInt min = 2;
+}
+
+message MaxMinTimestamp {
+    Timestamp max = 1;
+    Timestamp min = 2;
+}
+
+message CmpUint64 {
+    uint64 value = 1;
+    CmpOp operator = 2;
+}
+
+message BlacklistQuery {
+    EthAddress ownerID = 1;
+    BlacklistOption option = 2;
+}

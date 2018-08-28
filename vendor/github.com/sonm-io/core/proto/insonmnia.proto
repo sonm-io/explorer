@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+import "bigint.proto";
+import "capabilities.proto";
+import "timestamp.proto";
+
+package sonm;
+
+message Empty {}
+
+message ID {
+    string id = 1;
+}
+
+message NumericID {
+    uint64 id = 1;
+}
+
+message EthID {
+    EthAddress id = 1;
+}
+
+message TaskID {
+    // Id is task ID itself
+    string id = 1;
+    BigInt dealID = 2;
+}
+
+message Count {
+    uint64 count = 1;
+}
+
+message CPUUsage {
+    uint64 total = 1;
+}
+
+message MemoryUsage {
+    uint64 maxUsage = 1;
+}
+
+message NetworkUsage {
+    uint64 txBytes = 1;
+    uint64 rxBytes = 2;
+    uint64 txPackets = 3;
+    uint64 rxPackets = 4;
+    uint64 txErrors = 5;
+    uint64 rxErrors = 6;
+    uint64 txDropped = 7;
+    uint64 rxDropped = 8;
+}
+
+message ResourceUsage {
+    CPUUsage cpu = 1;
+    MemoryUsage memory = 2;
+    map<string, NetworkUsage> network = 3;
+}
+
+message TaskLogsRequest {
+    enum Type {
+        STDOUT = 0;
+        STDERR = 1;
+        BOTH = 2;
+    }
+    Type type = 1;
+    string id = 2;
+    string since = 3;
+    bool addTimestamps = 4;
+    bool Follow = 5;
+    string Tail = 6;
+    bool Details = 7;
+    BigInt dealID = 8;
+}
+
+message TaskLogsChunk {
+    bytes data = 1;
+}
+
+message Chunk {
+    bytes chunk = 1;
+}
+
+message Progress {
+    int64 size = 1;
+}
+
+message Duration {
+    int64 nanoseconds = 1;
+}
+
+message EthAddress {
+    bytes address = 1;
+}
+
+message DataSize {
+    uint64 bytes = 1;
+}
+
+message DataSizeRate {
+    uint64 bitsPerSecond = 1;
+}
+
+message Price {
+    BigInt perSecond = 1;
+}
