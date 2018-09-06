@@ -4,38 +4,20 @@ import (
 	"context"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/jinzhu/configor"
 	"github.com/sonm-io/core/blockchain"
 	"github.com/sonm-io/explorer/db"
 	fTypes "github.com/sonm-io/explorer/types"
 	"log"
 	"math/big"
-	"sync"
 	"time"
 )
 
 type Filler struct {
 	client blockchain.CustomEthereumClient
 	db     *db.Connection
-}
 
-type fillerConfig struct {
-	Endpoint string `yaml:"endpoint" required:"true"`
-}
-
-type Config struct {
-	Filler   *fillerConfig `yaml:"filler" required:"true"`
-	Database *db.Config    `yaml:"database" required:"true"`
-}
-
-func NewConfig(path string) (*Config, error) {
-	cfg := &Config{}
-
-	err := configor.Load(cfg, path)
-	if err != nil {
-		return nil, err
-	}
-	return cfg, nil
+	saveChan chan *fTypes.Block
+	loadChan chan uint64
 }
 
 func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
@@ -43,9 +25,12 @@ func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &Filler{
-		client: client,
-		db:     db,
+		client:   client,
+		db:       db,
+		saveChan: make(chan *fTypes.Block),
+		loadChan: make(chan uint64),
 	}, nil
 }
 
@@ -62,14 +47,11 @@ func (f *Filler) Start(ctx context.Context) error {
 	log.Printf("last block: %d", lastBlockNumber)
 	log.Printf("best known block: %d", bestBlockNumber)
 
-	loadCh := make(chan uint64)
-	saveCh := make(chan *fTypes.Block)
-
 	go func() {
 		if bestBlockNumber < lastBlockNumber.Uint64() {
 			for i := bestBlockNumber + 1; i < lastBlockNumber.Uint64(); i++ {
 				log.Println("found new block", i)
-				loadCh <- i
+				f.loadChan <- i
 			}
 		}
 	}()
@@ -77,37 +59,32 @@ func (f *Filler) Start(ctx context.Context) error {
 	t5sec := time.NewTicker(5 * time.Second)
 	defer t5sec.Stop()
 
-	var mu sync.Mutex
-
 	for {
 		select {
 		case <-t5sec.C:
 			go func() {
-				mu.Lock()
-				defer mu.Unlock()
-
 				intervals, err := f.GetUnfilledIntervals()
 				if err != nil {
 					return
 				}
 
 				for _, interval := range intervals {
-					for i := interval.start; i <= interval.finish; i++ {
+					for i := interval.Start; i <= interval.Finish; i++ {
 						log.Println("found new block", i)
-						loadCh <- i
+						f.loadChan <- i
 					}
 				}
 			}()
-		case number := <-loadCh:
+		case number := <-f.loadChan:
 			go func() {
 				log.Println("start processing block: ", number)
 				block, err := f.fillBlock(ctx, big.NewInt(0).SetUint64(number))
 				if err != nil {
 					return
 				}
-				saveCh <- block
+				f.saveChan <- block
 			}()
-		case block := <-saveCh:
+		case block := <-f.saveChan:
 			go func() {
 				err = f.saveBlock(block)
 				if err != nil {
@@ -266,12 +243,7 @@ func (f *Filler) GetBestBlock() (uint64, error) {
 	return bestBlock, nil
 }
 
-type Interval struct {
-	start  uint64
-	finish uint64
-}
-
-func (f *Filler) GetUnfilledIntervals() ([]Interval, error) {
+func (f *Filler) GetUnfilledIntervals() ([]fTypes.Interval, error) {
 	conn := f.db.DBConnection()
 	rows, err := conn.Query(`
 		SELECT number + 1 as start_interval, next_id - 1 as finish_interval
@@ -282,11 +254,11 @@ func (f *Filler) GetUnfilledIntervals() ([]Interval, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var s []Interval
+	var s []fTypes.Interval
 
 	for rows.Next() {
-		var t Interval
-		err := rows.Scan(&t.start, &t.finish)
+		var t fTypes.Interval
+		err := rows.Scan(&t.Start, &t.Finish)
 		if err != nil {
 			return nil, err
 		}
