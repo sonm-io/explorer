@@ -16,7 +16,6 @@ GOCMD := ./cmd
 GO ?= go
 TARGETDIR := target
 
-MIGRATOR     := ${TARGETDIR}/migrator
 FILLER     := ${TARGETDIR}/filler
 
 TAGS = nocgo
@@ -26,11 +25,7 @@ clean: clean/db
 clean/db:
 	rm -rf ./postgres-data
 
-build: build/migrator build/filler
-
-build/migrator:
-	@echo "+ $@"
-	${GO} build -tags "$(TAGS)" -ldflags "$(LDFLAGS)" -o ${MIGRATOR} ${GOCMD}/migrator
+build: build/filler
 
 build/filler:
 	@echo "+ $@"
