@@ -2,7 +2,7 @@ package filler
 
 import (
 	"github.com/jinzhu/configor"
-	"github.com/sonm-io/explorer/db"
+	"github.com/sonm-io/explorer/backend/db"
 )
 
 type fillerConfig struct {

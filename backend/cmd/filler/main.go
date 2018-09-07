@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/sonm-io/core/cmd"
-	"github.com/sonm-io/explorer/db"
-	"github.com/sonm-io/explorer/filler"
+	"github.com/sonm-io/explorer/backend/db"
+	"github.com/sonm-io/explorer/backend/filler"
 )
 
 var (
