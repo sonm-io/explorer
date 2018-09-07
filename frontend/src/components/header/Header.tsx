@@ -4,6 +4,7 @@ import AppBar from "../../../node_modules/@material-ui/core/AppBar/AppBar";
 import Button from "../../../node_modules/@material-ui/core/Button/Button";
 import Toolbar from "../../../node_modules/@material-ui/core/Toolbar/Toolbar";
 import Typography from "../../../node_modules/@material-ui/core/Typography/Typography";
+import {Link} from "react-router-dom";
 
 export class Header extends React.Component {
     public render() {
@@ -12,19 +13,19 @@ export class Header extends React.Component {
                 <AppBar position="static">
                     <Toolbar>
                         <Typography variant="title" color="inherit">
-                            SONM SE
+                            <Link to="/">SONM SE</Link>
                         </Typography>
 
                         <Button>
-                            Home
+                            <Link to="/">Home</Link>
                         </Button>
 
                         <Button>
-                            Transactions
+                            <Link to="/transactions">Transactions</Link>
                         </Button>
 
                         <Button>
-                            Blocks
+                            <Link to="/blocks">Blocks</Link>
                         </Button>
                     </Toolbar>
                 </AppBar>

@@ -1,28 +1,31 @@
 import * as React from 'react';
-import './App.css';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
 
-import Button from '@material-ui/core/Button';
-import Footer from './components/footer/Footer';
-import {Header} from './components/header/Header';
+import './App.css';
+import {Home} from "./components/home/Home";
+import {Blocks} from "./components/blocks/Blocks";
+import {Block} from "./components/block/Block";
+import {Transactions} from "./components/transactions/Transactions";
+import {Transaction} from "./components/transaction/Transaction";
+import {Address} from "./components/address/Address";
+import {Header} from "./components/header/Header";
 
 
 class App extends React.Component {
     public render() {
         return (
             <div className="App">
-                <Header/>
-
-                <div className={"body"}>
-                    <p className="App-intro">
-                        To get started, edit <code>src/App.tsx</code> and save to reload.
-                    </p>
-                    <Button variant={"contained"} color={"primary"}>
-                        Hello material
-                    </Button>
-                </div>
-
-
-                <Footer/>
+                <Router>
+                    <div>
+                        <Header/>
+                        <Route exact path="/" component={Home}/>
+                        <Route path="/blocks" component={Blocks}/>
+                        <Route path="/block" component={Block}/>
+                        <Route path="/transactions" component={Transactions}/>
+                        <Route path="/transaction" component={Transaction}/>
+                        <Route path="/address" component={Address}/>
+                    </div>
+                </Router>
             </div>
         );
     }
