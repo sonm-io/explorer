@@ -23,7 +23,7 @@ services:
     links:
       - database:database
     ports:
-      - 3000:3000
+      - 3544:3000
     depends_on:
       - database
 
