@@ -49,7 +49,7 @@ require (
 	github.com/rjeczalik/notify v0.9.1 // indirect
 	github.com/rs/cors v1.5.0 // indirect
 	github.com/rubenv/sql-migrate v0.0.0-20180704111356-3f452fc0ebeb
-	github.com/sonm-io/core v0.4.10
+	github.com/sonm-io/core v0.4.11-0.20180907115046-bed937e30122
 	github.com/spf13/pflag v1.0.2 // indirect
 	github.com/sshaman1101/grpccmd v0.0.0-20180823122803-67a096fbe38b // indirect
 	github.com/syndtr/goleveldb v0.0.0-20180815032940-ae2bd5eed72d // indirect

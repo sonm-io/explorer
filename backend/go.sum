@@ -153,6 +153,8 @@ github.com/sirupsen/logrus v1.0.6 h1:hcP1GmhGigz/O7h1WVUM5KklBp1JoNS9FggWKdj/j3s
 github.com/sirupsen/logrus v1.0.6/go.mod h1:pMByvHTf9Beacp5x1UXfOR9xyW/9antXMhjMPG0dEzc=
 github.com/sonm-io/core v0.4.10 h1:BRhai75O2+/j91e0oQhdr2OfsjN9P06jNJf1Ui0bpcc=
 github.com/sonm-io/core v0.4.10/go.mod h1:sPeIfGJxbk4s2Xlk43lGxvV0OYhbuOyLL56+FGfXEes=
+github.com/sonm-io/core v0.4.11-0.20180907115046-bed937e30122 h1:0FsfNqTFMW6+YpM5UiexwObyNWz7CiJFuu5/yYd88Ps=
+github.com/sonm-io/core v0.4.11-0.20180907115046-bed937e30122/go.mod h1:sPeIfGJxbk4s2Xlk43lGxvV0OYhbuOyLL56+FGfXEes=
 github.com/sourcegraph/annotate v0.0.0-20160123013949-f4cad6c6324d/go.mod h1:UdhH50NIW0fCiwBSr0co2m7BnFLdv4fQTgdqdJTHFeE=
 github.com/sourcegraph/syntaxhighlight v0.0.0-20170531221838-bd320f5d308e/go.mod h1:HuIsMU8RRBOtsCgI77wP899iHVBQpCmg4ErYMZB+2IA=
 github.com/spf13/cobra v0.0.3 h1:ZlrZ4XsMRm04Fr5pSFxBgfND2EBVa1nLpiy1stUsX/8=

@@ -3,10 +3,9 @@ package filler
 import (
 	"context"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/sonm-io/core/blockchain"
 	"github.com/sonm-io/explorer/backend/db"
-	fTypes "github.com/sonm-io/explorer/backend/types"
+	"github.com/sonm-io/explorer/backend/types"
 	"log"
 	"math/big"
 	"time"
@@ -16,7 +15,7 @@ type Filler struct {
 	client blockchain.CustomEthereumClient
 	db     *db.Connection
 
-	saveChan chan *fTypes.Block
+	saveChan chan *types.Block
 	loadChan chan uint64
 }
 
@@ -29,7 +28,7 @@ func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
 	return &Filler{
 		client:   client,
 		db:       db,
-		saveChan: make(chan *fTypes.Block),
+		saveChan: make(chan *types.Block),
 		loadChan: make(chan uint64),
 	}, nil
 }
@@ -96,15 +95,15 @@ func (f *Filler) Start(ctx context.Context) error {
 	}
 }
 
-func (f *Filler) fillBlock(ctx context.Context, number *big.Int) (*fTypes.Block, error) {
-	result := &fTypes.Block{}
-	block, err := f.loadBlock(ctx, number)
+func (f *Filler) fillBlock(ctx context.Context, number *big.Int) (*types.Block, error) {
+	result := &types.Block{}
+	block, err := f.client.BlockByNumber(ctx, number)
 	if err != nil {
 		return nil, err
 	}
 	result.Block = block
 	for _, tx := range block.Transactions() {
-		rec, err := f.loadTransactionReceipt(ctx, tx.Hash())
+		rec, err := f.client.GetTransactionReceipt(ctx, tx.Hash())
 		if err != nil {
 			return nil, err
 		}
@@ -113,15 +112,7 @@ func (f *Filler) fillBlock(ctx context.Context, number *big.Int) (*fTypes.Block,
 	return result, nil
 }
 
-func (f *Filler) loadBlock(ctx context.Context, number *big.Int) (*types.Block, error) {
-	return f.client.BlockByNumber(ctx, number)
-}
-
-func (f *Filler) loadTransactionReceipt(ctx context.Context, hash common.Hash) (*types.Receipt, error) {
-	return f.client.TransactionReceipt(ctx, hash)
-}
-
-func (f *Filler) saveBlock(block *fTypes.Block) error {
+func (f *Filler) saveBlock(block *types.Block) error {
 	t, err := f.db.NewTransaction()
 	if err != nil {
 		return err
@@ -204,8 +195,8 @@ func (f *Filler) saveBlock(block *fTypes.Block) error {
 			tx.Nonce(),
 			block.Block.Hash().String(),
 			block.Block.NumberU64(),
-			0,  // TODO: add transaction index
-			"", // TODO: add from
+			receipt.TransactionIndex,
+			receipt.From.String(),
 			tx.To().String(),
 			tx.Value().Uint64(),
 			tx.Gas(),
@@ -243,7 +234,7 @@ func (f *Filler) GetBestBlock() (uint64, error) {
 	return bestBlock, nil
 }
 
-func (f *Filler) GetUnfilledIntervals() ([]fTypes.Interval, error) {
+func (f *Filler) GetUnfilledIntervals() ([]types.Interval, error) {
 	conn := f.db.DBConnection()
 	rows, err := conn.Query(`
 		SELECT number + 1 as start_interval, next_id - 1 as finish_interval
@@ -254,10 +245,10 @@ func (f *Filler) GetUnfilledIntervals() ([]fTypes.Interval, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var s []fTypes.Interval
+	var s []types.Interval
 
 	for rows.Next() {
-		var t fTypes.Interval
+		var t types.Interval
 		err := rows.Scan(&t.Start, &t.Finish)
 		if err != nil {
 			return nil, err
