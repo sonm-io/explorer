@@ -26,15 +26,3 @@ services:
       - 3544:3000
     depends_on:
       - database
-
-
-  #advanced:
-  #  build: ./database-golang-app
-  #  working_dir: /go/src/database-golang-app
-  #  command: go run main.go
-  #  volumes:
-  #    - ./database-golang-app:/go/src/database-golang-app
-  #  links:
-  #    - database
-  #  environment:
-  #    - DB_NAME=advanced-golang-db

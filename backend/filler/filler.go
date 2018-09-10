@@ -28,8 +28,8 @@ func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
 	return &Filler{
 		client:   client,
 		db:       db,
-		saveChan: make(chan *types.Block),
-		loadChan: make(chan uint64),
+		saveChan: make(chan *types.Block, 50),
+		loadChan: make(chan uint64, 200),
 	}, nil
 }
 
@@ -79,7 +79,7 @@ func (f *Filler) Start(ctx context.Context) error {
 				log.Println("start processing block: ", number)
 				block, err := f.fillBlock(ctx, big.NewInt(0).SetUint64(number))
 				if err != nil {
-					return
+					log.Println(err)
 				}
 				f.saveChan <- block
 			}()
@@ -87,7 +87,7 @@ func (f *Filler) Start(ctx context.Context) error {
 			go func() {
 				err = f.saveBlock(block)
 				if err != nil {
-					return
+					log.Println(err)
 				}
 				log.Println("block saved: ", block.Block.Number().Uint64())
 			}()
@@ -165,8 +165,8 @@ func (f *Filler) saveBlock(block *types.Block) error {
 		block.Block.MixDigest().String(),
 		len(block.Transactions))
 	if err != nil {
-		log.Fatalf("error while inserting block: %s", err)
-		return err
+		log.Printf("error while inserting block: %s", err)
+		return t.Rollback()
 	}
 	for _, receipt := range block.Transactions {
 		tx := block.Block.Transaction(receipt.TxHash)
@@ -206,8 +206,8 @@ func (f *Filler) saveBlock(block *types.Block) error {
 			r.String(),
 			s.String())
 		if err != nil {
-			log.Fatalf("error while inserting transaction: %s", err)
-			return err
+			log.Printf("error while inserting transaction: %s", err)
+			return t.Rollback()
 		}
 	}
 	err = t.Commit()
