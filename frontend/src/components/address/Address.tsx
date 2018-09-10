@@ -5,8 +5,9 @@ import TableHead from "@material-ui/core/TableHead/TableHead";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
+import {Link} from "react-router-dom";
 
-class Transaction {
+export class Transaction {
     hash: string;
     nonce: number;
     blockHash: string;
@@ -38,12 +39,12 @@ export class Address extends React.Component<any, AddressState> {
     } as AddressState;
 
     componentDidMount() {
-        fetch("http://localhost:3544/transactions?limit=15&order=nonce&from=eq." + this.state.address)
-            .then(responce => {
-                if (!responce.ok) {
-                    throw new Error(responce.statusText);
+        fetch("http://localhost:3544/transactions?limit=15&order=nonce&to=eq." + this.state.address + "&from=eq." + this.state.address)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.statusText);
                 }
-                return responce.json()
+                return response.json()
             })
             .then(result => {
                 this.setState({
@@ -78,7 +79,7 @@ export class Address extends React.Component<any, AddressState> {
                         {this.state.transactions.map(row => {
                             return (
                                 <TableRow key={row.hash}>
-                                    <TableCell numeric>{row.hash}</TableCell>
+                                    <TableCell numeric><Link to={"/transaction/" + row.hash}>{row.hash}</Link></TableCell>
                                     <TableCell numeric>{row.blockNumber}</TableCell>
                                     <TableCell numeric>{row.from}</TableCell>
                                     <TableCell numeric>{row.from == this.state.address ? "out" : "in"}</TableCell>

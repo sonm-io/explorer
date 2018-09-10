@@ -20,9 +20,9 @@ class App extends React.Component {
                         <Header/>
                         <Route exact path="/" component={Home}/>
                         <Route path="/blocks" component={Blocks}/>
-                        <Route path="/block" component={Block}/>
+                        <Route path="/block/:blockHash" component={Block}/>
                         <Route path="/transactions" component={Transactions}/>
-                        <Route path="/transaction" component={Transaction}/>
+                        <Route path="/transaction/:txHash" component={Transaction}/>
                         <Route path="/address/:address" component={Address}/>
                     </div>
                 </Router>
