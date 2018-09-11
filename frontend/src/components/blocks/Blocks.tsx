@@ -5,30 +5,8 @@ import TableHead from "@material-ui/core/TableHead/TableHead";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
-
-
-class Block {
-    number: number;
-    hash: string;
-    parentHash: string;
-    nonce: string;
-    sha3Uncles: string;
-    logsBloom: string;
-    transactionsRoot: string;
-    stateRoot: string;
-    receiptsRoot: string;
-    miner: string;
-    difficulty: number;
-    totalDifficulty: number;
-    size: number;
-    extraData: string;
-    gasLimit: number;
-    gasUsed: number;
-    timestamp: number;
-    mixhash: string;
-    txCount: number;
-}
-
+import {Link} from "react-router-dom";
+import {Block} from "../../types/Block";
 
 interface BlocksState {
     blocks: Block[];
@@ -92,7 +70,8 @@ export class Blocks extends React.Component<any, BlocksState> {
                             {this.state.blocks.map(row => {
                                 return (
                                     <TableRow key={row.number}>
-                                        <TableCell numeric>{row.number}</TableCell>
+                                        <TableCell numeric><Link
+                                            to={"/block/" + row.hash}>{row.number}</Link></TableCell>
                                         <TableCell numeric>{row.timestamp}</TableCell>
                                         <TableCell numeric>{row.txCount}</TableCell>
                                         <TableCell numeric>{row.gasUsed}</TableCell>

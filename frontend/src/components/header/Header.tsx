@@ -15,15 +15,9 @@ export class Header extends React.Component {
                         <Typography variant="title" color="inherit">
                             <Link to="/">SONM SE</Link>
                         </Typography>
-
-                        <Button>
-                            <Link to="/">Home</Link>
-                        </Button>
-
                         <Button>
                             <Link to="/transactions">Transactions</Link>
                         </Button>
-
                         <Button>
                             <Link to="/blocks">Blocks</Link>
                         </Button>

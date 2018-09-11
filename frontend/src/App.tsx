@@ -9,6 +9,7 @@ import {Transactions} from "./components/transactions/Transactions";
 import {Transaction} from "./components/transaction/Transaction";
 import {Address} from "./components/address/Address";
 import {Header} from "./components/header/Header";
+import Grid from "@material-ui/core/Grid/Grid";
 
 
 class App extends React.Component {
@@ -18,12 +19,14 @@ class App extends React.Component {
                 <Router>
                     <div>
                         <Header/>
-                        <Route exact path="/" component={Home}/>
-                        <Route path="/blocks" component={Blocks}/>
-                        <Route path="/block/:blockHash" component={Block}/>
-                        <Route path="/transactions" component={Transactions}/>
-                        <Route path="/transaction/:txHash" component={Transaction}/>
-                        <Route path="/address/:address" component={Address}/>
+                        <Grid container direction="column" justify="flex-start" alignItems="center">
+                            <Route exact path="/" component={Home}/>
+                            <Route path="/blocks" component={Blocks}/>
+                            <Route path="/block/:blockHash" component={Block}/>
+                            <Route path="/transactions" component={Transactions}/>
+                            <Route path="/transaction/:txHash" component={Transaction}/>
+                            <Route path="/address/:address" component={Address}/>
+                        </Grid>
                     </div>
                 </Router>
             </div>
