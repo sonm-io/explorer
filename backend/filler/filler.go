@@ -2,6 +2,7 @@ package filler
 
 import (
 	"context"
+	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/sonm-io/core/blockchain"
 	"github.com/sonm-io/explorer/backend/db"
@@ -28,8 +29,8 @@ func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
 	return &Filler{
 		client:   client,
 		db:       db,
-		saveChan: make(chan *types.Block, 30),
-		loadChan: make(chan uint64, 30),
+		saveChan: make(chan *types.Block),
+		loadChan: make(chan uint64),
 	}, nil
 }
 
@@ -49,47 +50,75 @@ func (f *Filler) Start(ctx context.Context) error {
 	go func() {
 		if bestBlockNumber < lastBlockNumber.Uint64() {
 			for i := bestBlockNumber + 1; i < lastBlockNumber.Uint64(); i++ {
-				log.Println("found new block", i)
 				f.loadChan <- i
 			}
 		}
 	}()
 
-	t5sec := time.NewTicker(5 * time.Second)
-	defer t5sec.Stop()
+	t3sec := time.NewTicker(3 * time.Second)
+	defer t3sec.Stop()
+	t10sec := time.NewTicker(10 * time.Second)
+	defer t10sec.Stop()
+
+	dbPool := make(chan int8, 2000)
 
 	for {
 		select {
-		case <-t5sec.C:
-			go func() {
-				intervals, err := f.GetUnfilledIntervals()
-				if err != nil {
-					return
-				}
+		case <-t10sec.C:
+			intervals, err := f.GetUnfilledIntervals()
+			if err != nil {
+				return err
+			}
 
+			go func() {
 				for _, interval := range intervals {
 					for i := interval.Start; i <= interval.Finish; i++ {
-						log.Println("found new block", i)
 						f.loadChan <- i
 					}
 				}
 			}()
+		case <-t3sec.C:
+			go func() {
+				lastBlockNumber, err := f.client.GetLastBlock(ctx)
+				if err != nil {
+					return
+				}
+				bestBlockNumber, err := f.GetBestBlock()
+				if err != nil {
+					return
+				}
+
+				log.Printf("last block: %d", lastBlockNumber)
+				log.Printf("best known block: %d", bestBlockNumber)
+
+				go func() {
+					if bestBlockNumber < lastBlockNumber.Uint64() {
+						for i := bestBlockNumber + 1; i < lastBlockNumber.Uint64(); i++ {
+							f.loadChan <- i
+						}
+					}
+				}()
+			}()
 		case number := <-f.loadChan:
 			go func() {
-				log.Println("start processing block: ", number)
 				block, err := f.fillBlock(ctx, big.NewInt(0).SetUint64(number))
 				if err != nil {
 					log.Println(err)
+					return
 				}
+				log.Println("block filled: ", number)
 				f.saveChan <- block
 			}()
 		case block := <-f.saveChan:
+			dbPool <- 1
 			go func() {
 				err = f.saveBlock(block)
 				if err != nil {
 					log.Println(err)
+					return
 				}
 				log.Println("block saved: ", block.Block.Number().Uint64())
+				<-dbPool
 			}()
 		}
 	}
@@ -115,7 +144,7 @@ func (f *Filler) fillBlock(ctx context.Context, number *big.Int) (*types.Block, 
 func (f *Filler) saveBlock(block *types.Block) error {
 	t, err := f.db.NewTransaction()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to begin transaction: %s", err)
 	}
 
 	bloom := common.Bytes2Hex(block.Block.Bloom().Bytes())
@@ -240,6 +269,7 @@ func (f *Filler) GetUnfilledIntervals() ([]types.Interval, error) {
 		SELECT number + 1 as start_interval, next_id - 1 as finish_interval
 		FROM (SELECT number, LEAD(number)OVER (ORDER BY number) AS next_id FROM blocks)T
 		WHERE number + 1 <> next_id
+		LIMIT 10000
 	`)
 	if err != nil {
 		return nil, err

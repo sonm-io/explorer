@@ -22,6 +22,7 @@ func NewConnection(cfg *Config) (*Connection, error) {
 	if err != nil {
 		return nil, err
 	}
+	db.SetMaxOpenConns(2030)
 	return &Connection{
 		db: db,
 	}, nil
