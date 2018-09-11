@@ -236,7 +236,7 @@ func (f *Filler) saveBlock(block *types.Block) error {
 			s.String())
 		if err != nil {
 			log.Printf("error while inserting transaction: %s", err)
-g			return t.Rollback()
+			return t.Rollback()
 		}
 	}
 	err = t.Commit()
