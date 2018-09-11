@@ -28,8 +28,8 @@ func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
 	return &Filler{
 		client:   client,
 		db:       db,
-		saveChan: make(chan *types.Block, 50),
-		loadChan: make(chan uint64, 200),
+		saveChan: make(chan *types.Block, 30),
+		loadChan: make(chan uint64, 30),
 	}, nil
 }
 
