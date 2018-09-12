@@ -6,23 +6,9 @@ import TableRow from "@material-ui/core/TableRow/TableRow";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import {Link} from "react-router-dom";
+import {Transaction} from "../../types/Transaction";
 
-export class Transaction {
-    hash: string;
-    nonce: number;
-    blockHash: string;
-    blockNumber: number;
-    transactionIndex: number;
-    from: string;
-    to: string;
-    value: number;
-    gas: number;
-    gasPrice: number;
-    input: string;
-    v: string;
-    r: string;
-    s: string;
-}
+
 
 interface AddressState {
     address: string
