@@ -54,10 +54,24 @@ export class Transaction extends React.Component<any, TransactionState> {
         return (
             <div>
                 <h1>Transaction - {this.state.txHash}</h1>
-                <div>block number: {this.state.transaction.blockNumber}</div>
-                <div>block hash:{this.state.transaction.blockHash}</div>
-                <div>from: <Link to={"/address/"+ this.state.transaction.from}>{this.state.transaction.from}</Link></div>
-                <div>to: <Link to={"/address/"+ this.state.transaction.to}>{this.state.transaction.to}</Link></div>
+                <div>
+                    block number:
+                    <Link to={"/block/" + this.state.transaction.blockHash}>
+                        {this.state.transaction.blockNumber}
+                    </Link>
+                </div>
+                <div>
+                    block hash:
+                    <Link to={"/block/" + this.state.transaction.blockHash}>
+                        {this.state.transaction.blockHash}
+                    </Link>
+                </div>
+                <div>from:
+                    <Link to={"/address/" + this.state.transaction.from}>{this.state.transaction.from}</Link>
+                </div>
+                <div>to:
+                    <Link to={"/address/" + this.state.transaction.to}>{this.state.transaction.to}</Link>
+                </div>
                 <div>value: {this.state.transaction.value}</div>
                 <div>gas: {this.state.transaction.gas}</div>
                 <div>gas price: {this.state.transaction.gasPrice}</div>

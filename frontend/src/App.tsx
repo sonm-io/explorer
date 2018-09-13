@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
 import {Home} from "./components/home/Home";
 import {Blocks} from "./components/blocks/Blocks";
@@ -34,16 +34,18 @@ class App extends React.Component {
     public render() {
         return (
             <MuiThemeProvider theme={theme}>
-                <Router forceRefresh={true}>
+                <Router>
                     <div className="App">
                         <Header/>
                         <Grid container direction="column" justify="flex-start" alignItems="center">
-                            <Route exact path="/" component={Home}/>
-                            <Route path="/blocks" component={Blocks}/>
-                            <Route path="/block/:blockHash" component={Block}/>
-                            <Route path="/transactions" component={Transactions}/>
-                            <Route path="/transaction/:txHash" component={Transaction}/>
-                            <Route path="/address/:address" component={Address}/>
+                            <Switch>
+                                <Route exact path="/" component={Home}/>
+                                <Route path="/blocks" component={Blocks}/>
+                                <Route path="/block/:blockHash" component={Block}/>
+                                <Route path="/transactions" component={Transactions}/>
+                                <Route path="/transaction/:txHash" component={Transaction}/>
+                                <Route path="/address/:address" component={Address}/>
+                            </Switch>
                         </Grid>
                     </div>
                 </Router>

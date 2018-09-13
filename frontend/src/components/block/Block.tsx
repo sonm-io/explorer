@@ -8,32 +8,35 @@ import {Link} from "react-router-dom";
 
 interface BlockState {
     block: B,
-    blockHash: string,
-    blockNumber: number,
     loading: boolean,
     error?: never
 }
 
 
 export class Block extends React.Component<any, BlockState> {
-
     state = {
-        blockHash: this.props.match.params.blockHash,
         block: new B(),
         loading: false
     } as BlockState;
 
-
     componentWillReceiveProps(props: any) {
+        console.log("receive props");
+        console.log(this.props.match);
+        this.setState({
+            loading: false,
+            block: new B(),
+        } as BlockState);
         this.loadBLock(this.props.match.params.blockHash);
     }
 
     componentDidMount() {
+        console.log("did mount");
         this.loadBLock(this.props.match.params.blockHash);
     }
 
-    loadBLock(hash: string){
+    loadBLock(hash: string) {
         let url = "http://localhost:3544/blocks?hash=eq." + hash;
+        console.log(hash);
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -43,8 +46,10 @@ export class Block extends React.Component<any, BlockState> {
             })
             .then(result => {
                 console.log("loaded");
-                if (result.length == 0) {
-                    throw new Error("block doesn't exist")
+                console.log(result.length);
+                if (result.length === 0) {
+                    console.log('block doesnt exist');
+                    throw new Error('block doesnt exist');
                 }
                 this.setState({
                     loading: true,
@@ -54,15 +59,26 @@ export class Block extends React.Component<any, BlockState> {
             .catch(err => {
                 this.setState({
                     loading: true,
-                    block: new B(),
                     error: err
                 } as BlockState)
             })
     }
 
     render() {
-
+        console.log(this.state);
         if (this.state.error != null) {
+            return (
+                <h1>error - {this.state.error}</h1>
+            )
+        }
+
+        if (!this.state.loading) {
+            return (
+                <h1>Loading...</h1>
+            )
+        }
+
+        if (this.state.block == null) {
             return (
                 <h1>error - {this.state.error}</h1>
             )
@@ -84,7 +100,7 @@ export class Block extends React.Component<any, BlockState> {
 
                     <Grid item xs={2}>Parent Hash</Grid>
                     <Grid item xs={10}>
-                        <Link replace={true} to={"/block/" + this.state.block.parentHash}>
+                        <Link to={"/block/" + this.state.block.parentHash}>
                             {this.state.block.parentHash}
                         </Link>
                     </Grid>
