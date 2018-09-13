@@ -30,7 +30,7 @@ export class Blocks extends React.Component<any, BlocksState> {
             })
             .then(
                 (result) => {
-                    console.log(result);
+
                     this.setState({
                         blocks: result,
                         loading: true

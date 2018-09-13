@@ -24,8 +24,16 @@ export class Block extends React.Component<any, BlockState> {
     } as BlockState;
 
 
+    componentWillReceiveProps(props: any) {
+        this.loadBLock(this.props.match.params.blockHash);
+    }
+
     componentDidMount() {
-        let url = "http://localhost:3544/blocks?hash=eq." + this.props.match.params.blockHash;
+        this.loadBLock(this.props.match.params.blockHash);
+    }
+
+    loadBLock(hash: string){
+        let url = "http://localhost:3544/blocks?hash=eq." + hash;
         fetch(url)
             .then(response => {
                 if (!response.ok) {
