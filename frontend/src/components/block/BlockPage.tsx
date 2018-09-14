@@ -13,7 +13,7 @@ interface BlockState {
 }
 
 
-export class Block extends React.Component<any, BlockState> {
+class BlockPage extends React.Component<any, BlockState> {
     state = {
         block: new B(),
         loading: false
@@ -124,3 +124,5 @@ export class Block extends React.Component<any, BlockState> {
         )
     }
 }
+
+export default BlockPage;

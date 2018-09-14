@@ -1,14 +1,13 @@
 import * as React from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
-import {Home} from "./components/home/Home";
-import {Blocks} from "./components/blocks/Blocks";
-import {Block} from "./components/block/Block";
-import {Transactions} from "./components/transactions/Transactions";
-import {Transaction} from "./components/transaction/Transaction";
-import {Address} from "./components/address/Address";
+import Home from "./components/home/Home";
+import BlocksPage from "./components/blocks/BlocksPage";
+import BlockPage from "./components/block/BlockPage";
+import TransactionsPage from "./components/transactions/TransactionsPage";
+import TransactionPage from "./components/transaction/TransactionPage";
+import AddressPage from "./components/address/AddressPage";
 import Header from "./components/header/Header";
-import Grid from "@material-ui/core/Grid/Grid";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 
@@ -42,16 +41,14 @@ class App extends React.Component {
                             inputRoot: "inputRoot",
                             inputInput: "inputInput"
                         }}/>
-                        <Grid container direction="column" justify="flex-start" alignItems="center">
-                            <Switch>
-                                <Route exact path="/" component={Home}/>
-                                <Route path="/blocks" component={Blocks}/>
-                                <Route path="/block/:blockHash" component={Block}/>
-                                <Route path="/transactions" component={Transactions}/>
-                                <Route path="/transaction/:txHash" component={Transaction}/>
-                                <Route path="/address/:address" component={Address}/>
-                            </Switch>
-                        </Grid>
+                        <Switch>
+                            <Route exact path="/" component={Home}/>
+                            <Route path="/blocks" component={BlocksPage}/>
+                            <Route path="/block/:blockHash" component={BlockPage}/>
+                            <Route path="/transactions" component={TransactionsPage}/>
+                            <Route path="/transaction/:txHash" component={TransactionPage}/>
+                            <Route path="/address/:address" component={AddressPage}/>
+                        </Switch>
                     </div>
                 </Router>
             </MuiThemeProvider>

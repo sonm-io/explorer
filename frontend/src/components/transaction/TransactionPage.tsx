@@ -12,7 +12,7 @@ interface TransactionState {
 }
 
 
-export class Transaction extends React.Component<any, TransactionState> {
+class TransactionPage extends React.Component<any, TransactionState> {
     state = {
         txHash: this.props.match.params.txHash,
         loading: false,
@@ -80,3 +80,5 @@ export class Transaction extends React.Component<any, TransactionState> {
         )
     }
 }
+
+export default TransactionPage;

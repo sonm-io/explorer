@@ -16,7 +16,7 @@ interface TransactionState {
     error?: never
 }
 
-export class Transactions extends React.Component<any, TransactionState> {
+class TransactionsPage extends React.Component<any, TransactionState> {
 
     state = {
         transactions: [],
@@ -83,3 +83,5 @@ export class Transactions extends React.Component<any, TransactionState> {
         )
     }
 }
+
+export default TransactionsPage;

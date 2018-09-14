@@ -17,7 +17,7 @@ interface AddressState {
     error?: never
 }
 
-export class Address extends React.Component<any, AddressState> {
+class AddressPage extends React.Component<any, AddressState> {
     state = {
         address: this.props.match.params.address,
         loading: false,
@@ -79,3 +79,5 @@ export class Address extends React.Component<any, AddressState> {
         )
     }
 }
+
+export default AddressPage;
