@@ -7,7 +7,7 @@ import {Block} from "./components/block/Block";
 import {Transactions} from "./components/transactions/Transactions";
 import {Transaction} from "./components/transaction/Transaction";
 import {Address} from "./components/address/Address";
-import {Header} from "./components/header/Header";
+import Header from "./components/header/Header";
 import Grid from "@material-ui/core/Grid/Grid";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
@@ -23,9 +23,9 @@ const theme = createMuiTheme({
         },
         secondary: {
             light: '#ff7961',
-            main: '#f44336',
-            dark: '#ba000d',
-            contrastText: '#000',
+            main: '#60dff4',
+            dark: '#9c2cba',
+            contrastText: '#fff',
         },
     },
 });
@@ -36,7 +36,12 @@ class App extends React.Component {
             <MuiThemeProvider theme={theme}>
                 <Router>
                     <div className="App">
-                        <Header/>
+                        <Header classes={{
+                            search: "search",
+                            searchIcon: "searchIcon",
+                            inputRoot: "inputRoot",
+                            inputInput: "inputInput"
+                        }}/>
                         <Grid container direction="column" justify="flex-start" alignItems="center">
                             <Switch>
                                 <Route exact path="/" component={Home}/>
