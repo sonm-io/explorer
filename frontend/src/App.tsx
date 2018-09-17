@@ -33,7 +33,7 @@ class App extends React.Component {
     public render() {
         return (
             <MuiThemeProvider theme={theme}>
-                <Router>
+                <Router forceRefresh={true}>
                     <div className="App">
                         <Header classes={{
                             search: "search",
@@ -44,7 +44,7 @@ class App extends React.Component {
                         <Switch>
                             <Route exact path="/" component={Home}/>
                             <Route path="/blocks" component={BlocksPage}/>
-                            <Route path="/block/:blockHash" component={BlockPage}/>
+                            <Route exact path="/block/:blockHash" component={BlockPage}/>
                             <Route path="/transactions" component={TransactionsPage}/>
                             <Route path="/transaction/:txHash" component={TransactionPage}/>
                             <Route path="/address/:address" component={AddressPage}/>

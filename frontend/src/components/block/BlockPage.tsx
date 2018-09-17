@@ -3,7 +3,7 @@ import * as React from "react";
 import {Block as B} from "../../types/Block";
 import Paper from "@material-ui/core/Paper/Paper";
 import Grid from "@material-ui/core/Grid/Grid";
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 
 
 interface BlockState {
@@ -13,15 +13,13 @@ interface BlockState {
 }
 
 
-class BlockPage extends React.Component<any, BlockState> {
+class BlockPage extends React.PureComponent<any, BlockState> {
     state = {
         block: new B(),
         loading: false
     } as BlockState;
 
     componentWillReceiveProps(props: any) {
-        console.log("receive props");
-        console.log(this.props.match);
         this.setState({
             loading: false,
             block: new B(),
@@ -30,13 +28,11 @@ class BlockPage extends React.Component<any, BlockState> {
     }
 
     componentDidMount() {
-        console.log("did mount");
         this.loadBLock(this.props.match.params.blockHash);
     }
 
     loadBLock(hash: string) {
         let url = "http://localhost:3544/blocks?hash=eq." + hash;
-        console.log(hash);
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -45,8 +41,6 @@ class BlockPage extends React.Component<any, BlockState> {
                 return response.json()
             })
             .then(result => {
-                console.log("loaded");
-                console.log(result.length);
                 if (result.length === 0) {
                     console.log('block doesnt exist');
                     throw new Error('block doesnt exist');
@@ -65,7 +59,6 @@ class BlockPage extends React.Component<any, BlockState> {
     }
 
     render() {
-        console.log(this.state);
         if (this.state.error != null) {
             return (
                 <h1>error - {this.state.error}</h1>
@@ -125,4 +118,4 @@ class BlockPage extends React.Component<any, BlockState> {
     }
 }
 
-export default BlockPage;
+export default withRouter(BlockPage);
