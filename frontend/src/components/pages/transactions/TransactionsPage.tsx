@@ -62,16 +62,16 @@ class TransactionsPage extends React.Component<any, TransactionState> {
                         {this.state.transactions.map(row => {
                             return (
                                 <TableRow key={row.hash}>
-                                    <TableCell numeric>
+                                    <TableCell>
                                         <Link to={"/transaction/" + row.hash}>{row.hash}</Link>
                                     </TableCell>
-                                    <TableCell numeric>
+                                    <TableCell>
                                         <Link to={"/block/" + row.blockHash}>{row.blockNumber}</Link>
                                     </TableCell>
-                                    <TableCell numeric>
+                                    <TableCell>
                                         <Link to={"/address/" + row.from}>{row.from}</Link>
                                     </TableCell>
-                                    <TableCell numeric>
+                                    <TableCell>
                                         <Link to={"/address/" + row.to}>{row.to}</Link>
                                     </TableCell>
                                 </TableRow>
