@@ -1,12 +1,16 @@
-import SearchIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import Input from "@material-ui/core/Input/Input";
 import * as React from "react";
 import {Theme, WithStyles} from "@material-ui/core";
 import createStyles from "@material-ui/core/styles/createStyles";
 import {fade} from "@material-ui/core/styles/colorManipulator";
 import withStyles from "@material-ui/core/styles/withStyles";
+import SearchIcon from '@material-ui/icons/Search';
 
 class SearchBar extends React.Component<WithStyles, any> {
+    constructor(props: any) {
+        super(props)
+    }
+
     search() {
         console.log("search bar action");
     }
