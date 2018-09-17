@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
-import Home from "./components/home/Home";
+import HomePage from "./components/home/HomePage";
 import BlocksPage from "./components/blocks/BlocksPage";
 import BlockPage from "./components/block/BlockPage";
 import TransactionsPage from "./components/transactions/TransactionsPage";
@@ -42,7 +42,7 @@ class App extends React.Component {
                             inputInput: "inputInput"
                         }}/>
                         <Switch>
-                            <Route exact path="/" component={Home}/>
+                            <Route exact path="/" component={HomePage}/>
                             <Route path="/blocks" component={BlocksPage}/>
                             <Route exact path="/block/:blockHash" component={BlockPage}/>
                             <Route path="/transactions" component={TransactionsPage}/>
