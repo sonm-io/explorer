@@ -7,103 +7,10 @@ import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import {Link} from "react-router-dom";
 import {Block} from "../../../types/Block";
-import {Theme, WithStyles} from "@material-ui/core";
-import createStyles from "@material-ui/core/styles/createStyles";
-import withStyles from "@material-ui/core/styles/withStyles";
+import {WithStyles} from "@material-ui/core";
 import TableFooter from "@material-ui/core/TableFooter/TableFooter";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
-import IconButton from "@material-ui/core/IconButton/IconButton";
-import LastPageIcon from '@material-ui/icons/LastPage';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import {KeyboardArrowLeft, KeyboardArrowRight} from "@material-ui/icons";
-
-const actionsStyles = (theme: Theme) => createStyles({
-    root: {
-        flexShrink: 0,
-        color: theme.palette.text.secondary,
-        marginLeft: theme.spacing.unit * 2.5,
-    },
-});
-
-
-interface TablePaginationActionsProps extends WithStyles {
-    classes: {
-        root: string
-    }
-    count: number,
-    page: number,
-    rowsPerPage: number,
-
-    onChangePage(event: any, page: number): void,
-}
-
-class TablePaginationActions extends React.Component<TablePaginationActionsProps, any> {
-
-    handleFirstPageButtonClick(event: any) {
-        this.props.onChangePage(event, 0);
-    };
-
-    handleBackButtonClick(event: any) {
-        this.props.onChangePage(
-            event,
-            this.props.page - 1
-        );
-    };
-
-    handleNextButtonClick(event: any) {
-        this.props.onChangePage(
-            event,
-            this.props.page + 1);
-    };
-
-    handleLastPageButtonClick(event: any) {
-        this.props.onChangePage(
-            event,
-            Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1),
-        );
-    };
-
-    render() {
-        const {classes, count, page, rowsPerPage} = this.props;
-
-        return (
-            <div className={classes.root}>
-                <IconButton
-                    onClick={this.handleFirstPageButtonClick}
-                    disabled={page === 0}
-                    aria-label="First Page"
-                >
-                    <FirstPageIcon/>
-
-                </IconButton>
-                <IconButton
-                    onClick={this.handleBackButtonClick}
-                    disabled={page === 0}
-                    aria-label="Previous Page"
-                >
-                    <KeyboardArrowLeft/>
-                </IconButton>
-                <IconButton
-                    onClick={this.handleNextButtonClick}
-                    disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-                    aria-label="Next Page"
-                >
-                    <KeyboardArrowRight/>
-                </IconButton>
-                <IconButton
-                    onClick={this.handleLastPageButtonClick}
-                    disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-                    aria-label="Last Page"
-                >
-                    <LastPageIcon/>
-                </IconButton>
-            </div>
-        );
-    }
-}
-
-
-const TablePaginationActionsWrapped = withStyles(actionsStyles)(TablePaginationActions);
+import {TablePaginationActionsWrapped} from "./parts/TablePaginationActions";
 
 
 interface BlocksState {
@@ -172,57 +79,51 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
                     <h1>error!</h1>
                 </Paper>
             )
-        } else {
-            return (
-                <Table>
-                    <TableHead>
-                        <TableRow hover={true}>
-                            <TableCell variant={"head"}>Height</TableCell>
-                            <TableCell variant={"head"}>Age</TableCell>
-                            <TableCell variant={"head"}>Txn</TableCell>
-                            <TableCell variant={"head"}>GasUsed</TableCell>
-                            <TableCell variant={"head"}>GasLimit</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {this.state.blocks.map(row => {
-                            return (
-                                <TableRow key={row.number}>
-                                    <TableCell className={"tableCell"} numeric>
-                                        <Link to={"/block/" + row.hash}>{row.number}</Link>
-                                    </TableCell>
-                                    <TableCell className={"tableCell"} numeric>{row.timestamp}</TableCell>
-                                    <TableCell className={"tableCell"} numeric>{row.txCount}</TableCell>
-                                    <TableCell className={"tableCell"} numeric>{row.gasUsed}</TableCell>
-                                    <TableCell className={"tableCell"} numeric>{row.gasLimit}</TableCell>
-                                </TableRow>
-                            );
-                        })}
-                    </TableBody>
-
-                    <TableFooter>
-                        <TableRow>
-                            <TablePagination
-                                colSpan={3}
-                                count={this.state.blocks.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onChangePage={this.handleChangePage}
-                                onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                ActionsComponent={TablePaginationActionsWrapped}
-                            />
-                        </TableRow>
-                    </TableFooter>
-                </Table>
-            )
         }
+
+        return (
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell variant={"head"}>Height</TableCell>
+                        <TableCell variant={"head"}>Age</TableCell>
+                        <TableCell variant={"head"}>Txn</TableCell>
+                        <TableCell variant={"head"}>GasUsed</TableCell>
+                        <TableCell variant={"head"}>GasLimit</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {this.state.blocks.map(row => {
+                        return (
+                            <TableRow key={row.number}>
+                                <TableCell>
+                                    <Link to={"/block/" + row.hash}>{row.number}</Link>
+                                </TableCell>
+                                <TableCell>{row.timestamp}</TableCell>
+                                <TableCell>{row.txCount}</TableCell>
+                                <TableCell>{row.gasUsed}</TableCell>
+                                <TableCell>{row.gasLimit}</TableCell>
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TablePagination
+                            colSpan={3}
+                            count={this.state.blocks.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                            ActionsComponent={TablePaginationActionsWrapped}
+                        />
+                    </TableRow>
+                </TableFooter>
+            </Table>
+        )
     }
 }
 
-const styles = (theme: Theme) => createStyles({
-    tableCell: {
-        textAlign: "left",
-    }
-});
 
-export default withStyles(styles)(BlocksPage);
+export default BlocksPage;
