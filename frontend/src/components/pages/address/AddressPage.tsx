@@ -6,7 +6,7 @@ import TableRow from "@material-ui/core/TableRow/TableRow";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import {Link} from "react-router-dom";
-import {Transaction} from "../../types/Transaction";
+import {Transaction} from "../../../types/Transaction";
 
 
 

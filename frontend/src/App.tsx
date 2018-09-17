@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
-import HomePage from "./components/home/HomePage";
-import BlocksPage from "./components/blocks/BlocksPage";
-import BlockPage from "./components/block/BlockPage";
-import TransactionsPage from "./components/transactions/TransactionsPage";
-import TransactionPage from "./components/transaction/TransactionPage";
-import AddressPage from "./components/address/AddressPage";
+import HomePage from "./components/pages/home/HomePage";
+import BlocksPage from "./components/pages/blocks/BlocksPage";
+import BlockPage from "./components/pages/block/BlockPage";
+import TransactionsPage from "./components/pages/transactions/TransactionsPage";
+import TransactionPage from "./components/pages/transaction/TransactionPage";
+import AddressPage from "./components/pages/address/AddressPage";
 import Header from "./components/header/Header";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";

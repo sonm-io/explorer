@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import {Transaction as Tx} from "../../types/Transaction";
+import {Transaction as Tx} from "../../../types/Transaction";
 import Paper from "@material-ui/core/Paper/Paper";
 import {Link} from "react-router-dom";
 

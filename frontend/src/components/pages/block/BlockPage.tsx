@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import {Block as B} from "../../types/Block";
+import {Block as B} from "../../../types/Block";
 import Paper from "@material-ui/core/Paper/Paper";
 import Grid from "@material-ui/core/Grid/Grid";
 import {Link, withRouter} from "react-router-dom";

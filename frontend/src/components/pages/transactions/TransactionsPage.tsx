@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import {Transaction as Tx} from "../../types/Transaction";
+import {Transaction as Tx} from "../../../types/Transaction";
 import Paper from "@material-ui/core/Paper/Paper";
 import Table from "@material-ui/core/Table/Table";
 import TableHead from "@material-ui/core/TableHead/TableHead";
