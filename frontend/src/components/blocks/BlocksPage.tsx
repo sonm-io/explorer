@@ -38,10 +38,6 @@ interface TablePaginationActionsProps extends WithStyles {
 }
 
 class TablePaginationActions extends React.Component<TablePaginationActionsProps, any> {
-    constructor(props: TablePaginationActionsProps) {
-        super(props);
-        console.log(this.props);
-    }
 
     handleFirstPageButtonClick(event: any) {
         this.props.onChangePage(event, 0);
