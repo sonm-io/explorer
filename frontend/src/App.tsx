@@ -35,12 +35,7 @@ class App extends React.Component {
             <MuiThemeProvider theme={theme}>
                 <Router forceRefresh={true}>
                     <div className="App">
-                        <Header classes={{
-                            search: "search",
-                            searchIcon: "searchIcon",
-                            inputRoot: "inputRoot",
-                            inputInput: "inputInput"
-                        }}/>
+                        <Header/>
                         <Switch>
                             <Route exact path="/" component={HomePage}/>
                             <Route path="/blocks" component={BlocksPage}/>
