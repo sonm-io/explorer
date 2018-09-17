@@ -8,25 +8,25 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 class SearchBar extends React.Component<WithStyles, any> {
     search() {
-
+        console.log("search bar action");
     }
 
     render() {
         const {classes} = this.props;
         return (
-                <div className={classes.search}>
-                    <div className={classes.searchIcon} onClick={this.search}>
-                        <SearchIcon/>
-                    </div>
-                    <Input
-                        placeholder="Search by address/TxHash"
-                        disableUnderline
-                        classes={{
-                            root: classes.inputRoot,
-                            input: classes.inputInput,
-                        }}
-                    />
+            <div className={classes.search}>
+                <div className={classes.searchIcon} onClick={this.search}>
+                    <SearchIcon/>
                 </div>
+                <Input
+                    placeholder="Search by address/TxHash"
+                    disableUnderline
+                    classes={{
+                        root: classes.inputRoot,
+                        input: classes.inputInput,
+                    }}
+                />
+            </div>
         )
     }
 }

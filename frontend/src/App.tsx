@@ -8,26 +8,9 @@ import TransactionsPage from "./components/pages/transactions/TransactionsPage";
 import TransactionPage from "./components/pages/transaction/TransactionPage";
 import AddressPage from "./components/pages/address/AddressPage";
 import Header from "./components/header/Header";
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
+import {theme} from "./theme";
 
-
-const theme = createMuiTheme({
-    palette: {
-        primary: {
-            light: '#757ce8',
-            main: '#0b1d26',
-            dark: '#002884',
-            contrastText: '#fff',
-        },
-        secondary: {
-            light: '#ff7961',
-            main: '#60dff4',
-            dark: '#9c2cba',
-            contrastText: '#fff',
-        },
-    },
-});
 
 class App extends React.Component {
     public render() {
