@@ -3,6 +3,7 @@ import * as React from "react";
 import {Transaction as Tx} from "../../../types/Transaction";
 import Paper from "@material-ui/core/Paper/Paper";
 import {Link} from "react-router-dom";
+import Grid from "@material-ui/core/Grid/Grid";
 
 interface TransactionState {
     txHash: string,
@@ -53,30 +54,49 @@ class TransactionPage extends React.Component<any, TransactionState> {
 
         return (
             <div>
-                <h1>Transaction - {this.state.txHash}</h1>
-                <div>
-                    block number:
-                    <Link to={"/block/" + this.state.transaction.blockHash}>
-                        {this.state.transaction.blockNumber}
-                    </Link>
-                </div>
-                <div>
-                    block hash:
-                    <Link to={"/block/" + this.state.transaction.blockHash}>
-                        {this.state.transaction.blockHash}
-                    </Link>
-                </div>
-                <div>from:
-                    <Link to={"/address/" + this.state.transaction.from}>{this.state.transaction.from}</Link>
-                </div>
-                <div>to:
-                    <Link to={"/address/" + this.state.transaction.to}>{this.state.transaction.to}</Link>
-                </div>
-                <div>value: {this.state.transaction.value}</div>
-                <div>gas: {this.state.transaction.gas}</div>
-                <div>gas price: {this.state.transaction.gasPrice}</div>
-            </div>
+                <h1 style={{padding: 16}}>Transaction details</h1>
 
+                <Paper style={{padding: 16}}>
+
+
+                    <Grid container spacing={16}>
+
+                        <Grid item xs={2}>Hash</Grid>
+                        <Grid item xs={10}>{this.state.txHash}</Grid>
+
+                        <Grid item xs={2}>Block</Grid>
+                        <Grid item xs={10}>
+                            <Link to={"/block/" + this.state.transaction.blockHash}>
+                                {this.state.transaction.blockNumber}
+                            </Link>
+                        </Grid>
+
+                        <Grid item xs={2}>From</Grid>
+                        <Grid item xs={10}>
+                            <Link to={"/address/" + this.state.transaction.from}>
+                                {this.state.transaction.from}
+                            </Link>
+                        </Grid>
+
+                        <Grid item xs={2}>To</Grid>
+                        <Grid item xs={10}>
+                            <Link to={"/address/" + this.state.transaction.to}>
+                                {this.state.transaction.to}
+                            </Link>
+                        </Grid>
+
+                        <Grid item xs={2}>Value</Grid>
+                        <Grid item xs={10}>{this.state.transaction.value}</Grid>
+
+                        <Grid item xs={2}>Gas</Grid>
+                        <Grid item xs={10}>{this.state.transaction.gas}</Grid>
+
+                        <Grid item xs={2}>Gas Price</Grid>
+                        <Grid item xs={10}>{this.state.transaction.gasPrice}</Grid>
+
+                    </Grid>
+                </Paper>
+            </div>
         )
     }
 }

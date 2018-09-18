@@ -59,7 +59,7 @@ class BlockPage extends React.PureComponent<any, BlockState> {
     }
 
     render() {
-        if (this.state.error != null) {
+        if ((this.state.error != null) || (this.state.block == null)) {
             return (
                 <h1>error - {this.state.error}</h1>
             )
@@ -71,49 +71,51 @@ class BlockPage extends React.PureComponent<any, BlockState> {
             )
         }
 
-        if (this.state.block == null) {
-            return (
-                <h1>error - {this.state.error}</h1>
-            )
-        }
-
         return (
-            <Paper>
-                <h1>Block #{this.state.block.number}</h1>
+            <div>
+                <h1 style={{padding: 16}}>Block details</h1>
 
-                <Grid container spacing={8}>
-                    <Grid item xs={2}>Hash</Grid>
-                    <Grid item xs={10}>{this.state.block.hash}</Grid>
+                <Paper style={{padding: 16}}>
 
-                    <Grid item xs={2}>Timestamp</Grid>
-                    <Grid item xs={10}>{this.state.block.timestamp}</Grid>
+                    <Grid container spacing={16}>
 
-                    <Grid item xs={2}>Transactions</Grid>
-                    <Grid item xs={10}>{this.state.block.txCount}</Grid>
+                        <Grid item xs={2}>Height</Grid>
+                        <Grid item xs={10}>{this.state.block.number}</Grid>
 
-                    <Grid item xs={2}>Parent Hash</Grid>
-                    <Grid item xs={10}>
-                        <Link to={"/block/" + this.state.block.parentHash}>
-                            {this.state.block.parentHash}
-                        </Link>
+
+                        <Grid item xs={2}>Hash</Grid>
+                        <Grid item xs={10}>{this.state.block.hash}</Grid>
+
+                        <Grid item xs={2}>Timestamp</Grid>
+                        <Grid item xs={10}>{this.state.block.timestamp}</Grid>
+
+                        <Grid item xs={2}>Transactions</Grid>
+                        <Grid item xs={10}>{this.state.block.txCount}</Grid>
+
+                        <Grid item xs={2}>Parent Hash</Grid>
+                        <Grid item xs={10}>
+                            <Link to={"/block/" + this.state.block.parentHash}>
+                                {this.state.block.parentHash}
+                            </Link>
+                        </Grid>
+
+                        <Grid item xs={2}>Gas Used</Grid>
+                        <Grid item xs={10}>{this.state.block.gasUsed}</Grid>
+
+                        <Grid item xs={2}>Gas Limit</Grid>
+                        <Grid item xs={10}>{this.state.block.gasLimit}</Grid>
+
+                        <Grid item xs={2}>Mined by</Grid>
+                        <Grid item xs={10}>{this.state.block.miner}</Grid>
+
+                        <Grid item xs={2}>Nonce</Grid>
+                        <Grid item xs={10}>{this.state.block.nonce}</Grid>
+
+                        <Grid item xs={2}>Size</Grid>
+                        <Grid item xs={10}>{this.state.block.size}</Grid>
                     </Grid>
-
-                    <Grid item xs={2}>Gas Used</Grid>
-                    <Grid item xs={10}>{this.state.block.gasUsed}</Grid>
-
-                    <Grid item xs={2}>Gas Limit</Grid>
-                    <Grid item xs={10}>{this.state.block.gasLimit}</Grid>
-
-                    <Grid item xs={2}>Mined by</Grid>
-                    <Grid item xs={10}>{this.state.block.miner}</Grid>
-
-                    <Grid item xs={2}>Nonce</Grid>
-                    <Grid item xs={10}>{this.state.block.nonce}</Grid>
-
-                    <Grid item xs={2}>Size</Grid>
-                    <Grid item xs={10}>{this.state.block.size}</Grid>
-                </Grid>
-            </Paper>
+                </Paper>
+            </div>
         )
     }
 }
