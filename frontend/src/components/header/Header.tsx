@@ -13,17 +13,17 @@ class Header extends React.Component {
             <header className="App-header">
                 <AppBar position="static">
                     <Toolbar>
-                        <NavLink to="/">
+                        <NavLink to="/" style={{textDecoration: 'none'}}>
                             <NavButton>
                                 Home
                             </NavButton>
                         </NavLink>
-                        <NavLink to="/transactions">
+                        <NavLink to="/transactions" style={{textDecoration: 'none'}}>
                             <NavButton>
                                 Transactions
                             </NavButton>
                         </NavLink>
-                        <NavLink to="/blocks">
+                        <NavLink to="/blocks" style={{textDecoration: 'none'}}>
                             <NavButton>
                                 Blocks
                             </NavButton>
