@@ -5,17 +5,80 @@ import createStyles from "@material-ui/core/styles/createStyles";
 import {fade} from "@material-ui/core/styles/colorManipulator";
 import withStyles from "@material-ui/core/styles/withStyles";
 import SearchIcon from '@material-ui/icons/Search';
+import {Redirect} from "react-router";
 
-class SearchBar extends React.Component<WithStyles, any> {
+
+interface SearchBarState {
+    inputValue: string,
+    redirect: boolean,
+    redirectTo: string;
+}
+
+class SearchBar extends React.Component<WithStyles, SearchBarState> {
     constructor(props: any) {
-        super(props)
+        super(props);
+
+        this.state = {
+            inputValue: "",
+            redirect: false,
+            redirectTo: "",
+        } as SearchBarState;
+
+        this.search = this.search.bind(this);
+        this.updateInputValue = this.updateInputValue.bind(this);
+        this.redirect = this.redirect.bind(this);
+    }
+
+    redirect(to: string) {
+        this.setState({
+            redirect: true,
+            redirectTo: to,
+        } as SearchBarState);
     }
 
     search() {
         console.log("search bar action");
+        console.log(this.state.inputValue);
+
+        const value = this.state.inputValue.trim();
+
+        if (value === "") {
+            return
+        }
+
+        try {
+            const blockNumber = parseInt(value);
+            console.log("its block number ", blockNumber);
+            this.redirect("/block/" + value);
+        } catch (e) {
+            console.log("its not block number");
+        }
+
+        if (value.length === 66) {
+            console.log("its txHash");
+            this.redirect("/transaction/" + value);
+        } else if (value.length === 42) {
+            console.log("its address");
+            this.redirect("/address/" + value);
+        } else {
+            // TODO: redirect to not found
+        }
+
     }
 
+    updateInputValue(event: any) {
+        this.setState({
+            inputValue: event.target.value
+        });
+    }
+
+
     render() {
+        if (this.state.redirect) {
+            return (
+                <Redirect to={this.state.redirectTo}/>
+            )
+        }
         const {classes} = this.props;
         return (
             <div className={classes.search}>
@@ -23,6 +86,8 @@ class SearchBar extends React.Component<WithStyles, any> {
                     <SearchIcon/>
                 </div>
                 <Input
+                    value={this.state.inputValue}
+                    onChange={this.updateInputValue}
                     placeholder="Search by address/TxHash"
                     disableUnderline
                     classes={{
@@ -65,7 +130,7 @@ const styles = (theme: Theme) => createStyles({
     },
     inputRoot: {
         color: 'inherit',
-        width: '80%',
+        width: '75%',
         marginLeft: theme.spacing.unit * 9
     },
     inputInput: {
