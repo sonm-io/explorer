@@ -7,7 +7,7 @@ import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import {Link} from "react-router-dom";
 import {Transaction} from "../../../types/Transaction";
-
+import Grid from "@material-ui/core/Grid/Grid";
 
 
 interface AddressState {
@@ -25,7 +25,9 @@ class AddressPage extends React.Component<any, AddressState> {
     } as AddressState;
 
     componentDidMount() {
-        fetch("http://localhost:3544/transactions?limit=15&order=nonce&to=eq." + this.state.address + "&from=eq." + this.state.address)
+        const url = "http://localhost:3544/transactions?select=*&limit=15&or=(from.eq." + this.state.address + ",to.eq." + this.state.address + ")&order=nonce.desc"
+        console.log(url);
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(response.statusText);
@@ -49,33 +51,37 @@ class AddressPage extends React.Component<any, AddressState> {
     render() {
         console.log(this.state);
         return (
-            <Paper>
-                <h1>Address - {this.state.address}</h1>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Height</TableCell>
-                            <TableCell>Age</TableCell>
-                            <TableCell>Txn</TableCell>
-                            <TableCell>GasUsed</TableCell>
-                            <TableCell>GasLimit</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {this.state.transactions.map(row => {
-                            return (
-                                <TableRow key={row.hash}>
-                                    <TableCell numeric><Link to={"/transaction/" + row.hash}>{row.hash}</Link></TableCell>
-                                    <TableCell numeric>{row.blockNumber}</TableCell>
-                                    <TableCell numeric>{row.from}</TableCell>
-                                    <TableCell numeric>{row.from == this.state.address ? "out" : "in"}</TableCell>
-                                    <TableCell numeric>{row.to}</TableCell>
-                                </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Paper>
+            <Grid>
+                <h1 style={{padding: 16}}>Address - {this.state.address}</h1>
+
+                <Paper>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Hash</TableCell>
+                                <TableCell>Block</TableCell>
+                                <TableCell>Txn</TableCell>
+                                <TableCell>From</TableCell>
+                                <TableCell>To</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {this.state.transactions.map(row => {
+                                return (
+                                    <TableRow key={row.hash}>
+                                        <TableCell><Link
+                                            to={"/transaction/" + row.hash}>{row.hash}</Link></TableCell>
+                                        <TableCell>{row.blockNumber}</TableCell>
+                                        <TableCell>{row.from}</TableCell>
+                                        <TableCell>{row.from == this.state.address ? "out" : "in"}</TableCell>
+                                        <TableCell>{row.to}</TableCell>
+                                    </TableRow>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Paper>
+            </Grid>
         )
     }
 }
