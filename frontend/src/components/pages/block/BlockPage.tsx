@@ -31,8 +31,8 @@ class BlockPage extends React.PureComponent<any, BlockState> {
         this.loadBLock(this.props.match.params.blockHash);
     }
 
-    loadBLock(hash: string) {
-        let url = "http://localhost:3544/blocks?hash=eq." + hash;
+    loadBLock(number: string) {
+        let url = "http://localhost:3544/blocks?number=eq." + number;
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -94,7 +94,7 @@ class BlockPage extends React.PureComponent<any, BlockState> {
 
                         <Grid item xs={2}>Parent Hash</Grid>
                         <Grid item xs={10}>
-                            <Link to={"/block/" + this.state.block.parentHash}>
+                            <Link to={"/block/" + String(this.state.block.number - 1)}>
                                 {this.state.block.parentHash}
                             </Link>
                         </Grid>

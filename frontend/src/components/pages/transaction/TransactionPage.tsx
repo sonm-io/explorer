@@ -66,7 +66,7 @@ class TransactionPage extends React.Component<any, TransactionState> {
 
                         <Grid item xs={2}>Block</Grid>
                         <Grid item xs={10}>
-                            <Link to={"/block/" + this.state.transaction.blockHash}>
+                            <Link to={"/block/" + this.state.transaction.blockNumber}>
                                 {this.state.transaction.blockNumber}
                             </Link>
                         </Grid>

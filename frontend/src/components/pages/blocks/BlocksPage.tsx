@@ -97,7 +97,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
                         return (
                             <TableRow key={row.number}>
                                 <TableCell>
-                                    <Link to={"/block/" + row.hash}>{row.number}</Link>
+                                    <Link to={"/block/" + row.number}>{row.number}</Link>
                                 </TableCell>
                                 <TableCell>{row.timestamp}</TableCell>
                                 <TableCell>{row.txCount}</TableCell>
