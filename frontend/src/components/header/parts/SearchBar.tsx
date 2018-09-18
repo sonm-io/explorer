@@ -37,9 +37,6 @@ class SearchBar extends React.Component<WithStyles, SearchBarState> {
     }
 
     search() {
-        console.log("search bar action");
-        console.log(this.state.inputValue);
-
         const value = this.state.inputValue.trim();
 
         if (value === "") {
@@ -47,18 +44,15 @@ class SearchBar extends React.Component<WithStyles, SearchBarState> {
         }
 
         try {
-            const blockNumber = parseInt(value);
-            console.log("its block number ", blockNumber);
+            parseInt(value);
             this.redirect("/block/" + value);
         } catch (e) {
             console.log("its not block number");
         }
 
         if (value.length === 66) {
-            console.log("its txHash");
             this.redirect("/transaction/" + value);
         } else if (value.length === 42) {
-            console.log("its address");
             this.redirect("/address/" + value);
         } else {
             // TODO: redirect to not found
