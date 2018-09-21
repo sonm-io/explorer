@@ -10,18 +10,34 @@ interface TransactionState {
     loading: boolean
     transaction: Tx
     error?: never
+
+    page: number,
+    rowsPerPage: number,
 }
 
 
 class TransactionPage extends React.Component<any, TransactionState> {
+    constructor(props: any) {
+        super(props);
+
+        this.loadTransaction = this.loadTransaction.bind(this);
+    }
+
     state = {
         txHash: this.props.match.params.txHash,
         loading: false,
-        transaction: new Tx()
+        transaction: new Tx(),
+        page: 0,
+        rowsPerPage: 10,
     } as TransactionState;
 
     componentDidMount() {
-        fetch("http://localhost:3544/transactions?limit=15&order=nonce&hash.eq" + this.state.txHash)
+        this.loadTransaction()
+    }
+
+    loadTransaction() {
+        const url = "http://localhost:3544/transactions?order=nonce&hash.eq" + this.state.txHash;
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(response.statusText)
@@ -43,11 +59,18 @@ class TransactionPage extends React.Component<any, TransactionState> {
     }
 
     render() {
-        console.log(this.state);
         if (this.state.error != null) {
             return (
                 <Paper>
                     <h1>{this.state.error}</h1>
+                </Paper>
+            )
+        }
+
+        if (!this.state.loading){
+            return(
+                <Paper>
+                    <h1>Loading...</h1>
                 </Paper>
             )
         }

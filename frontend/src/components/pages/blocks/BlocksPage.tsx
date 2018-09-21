@@ -21,6 +21,9 @@ interface BlocksState {
     error?: never;
 }
 
+const START_PAGE = 0;
+const DEFAULT_ROWS_PER_PAGE = 10;
+
 class BlocksPage extends React.Component<WithStyles, BlocksState> {
     constructor(props: any) {
         super(props);
@@ -32,8 +35,8 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
     state = {
         blocks: [],
         loading: false,
-        page: 0,
-        rowsPerPage: 15,
+        page: START_PAGE,
+        rowsPerPage: DEFAULT_ROWS_PER_PAGE,
     } as BlocksState;
 
     componentDidMount() {
@@ -73,7 +76,6 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
     }
 
     handleChangePage(event: any, page: number) {
-        console.log("current page: ", page);
         this.setState({
             page: page,
             loading: false,
@@ -86,7 +88,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
 
     render() {
         const {rowsPerPage, page} = this.state;
-        console.log(rowsPerPage);
+
         if (this.state.error != null) {
             return (
                 <Paper>
@@ -133,7 +135,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
                     <TableRow>
                         <TablePagination
                             colSpan={3}
-                            count={2000000}
+                            count={2000000} // TODO: load state before & in time
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onChangePage={this.handleChangePage}
