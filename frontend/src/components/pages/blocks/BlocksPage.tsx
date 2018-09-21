@@ -22,6 +22,13 @@ interface BlocksState {
 }
 
 class BlocksPage extends React.Component<WithStyles, BlocksState> {
+    constructor(props: any) {
+        super(props);
+        this.handleChangePage = this.handleChangePage.bind(this);
+        this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
+        this.loadBlocks = this.loadBlocks.bind(this);
+    }
+
     state = {
         blocks: [],
         loading: false,
@@ -30,11 +37,16 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
     } as BlocksState;
 
     componentDidMount() {
-        this.loadBlocks()
+        this.loadBlocks();
     }
 
     loadBlocks() {
-        fetch("http://localhost:3544/blocks?limit=15&order=number.desc")
+        console.log(this.state);
+        const offset = this.state.rowsPerPage * this.state.page;
+        const limit = this.state.rowsPerPage;
+        const url = "http://localhost:3544/blocks?order=number.desc&limit=" + limit + "&offset=" + offset;
+        console.log(url);
+        fetch(url)
             .then(res => {
                 if (!res.ok) {
                     throw new Error(res.statusText)
@@ -52,7 +64,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
             .catch(error => {
                 this.setState({
                     blocks: [],
-                    page: 0,
+                    page: 1,
                     rowsPerPage: 15,
                     loading: true,
                     error: error,
@@ -60,10 +72,12 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
             })
     }
 
-
     handleChangePage(event: any, page: number) {
         console.log("current page: ", page);
-        this.state.page = page;
+        this.setState({
+            page: page,
+            loading: false,
+        } as BlocksState, this.loadBlocks);
     }
 
     handleChangeRowsPerPage() {
@@ -72,11 +86,19 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
 
     render() {
         const {rowsPerPage, page} = this.state;
-
+        console.log(rowsPerPage);
         if (this.state.error != null) {
             return (
                 <Paper>
                     <h1>error!</h1>
+                </Paper>
+            )
+        }
+
+        if (!this.state.loading) {
+            return (
+                <Paper>
+                    <h1>Loading...</h1>
                 </Paper>
             )
         }
@@ -111,7 +133,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
                     <TableRow>
                         <TablePagination
                             colSpan={3}
-                            count={this.state.blocks.length}
+                            count={2000000}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onChangePage={this.handleChangePage}
