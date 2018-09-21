@@ -135,7 +135,10 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
                     <TableRow>
                         <TablePagination
                             colSpan={3}
-                            count={2000000} // TODO: load state before & in time
+                            count={2000000}
+                            // TODO: load state before & in time:
+                            // колличество блоков будет постоянно меняться
+                            // при использовании offset на страницу будут догружаться
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onChangePage={this.handleChangePage}

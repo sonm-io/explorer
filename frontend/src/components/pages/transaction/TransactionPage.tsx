@@ -10,9 +10,6 @@ interface TransactionState {
     loading: boolean
     transaction: Tx
     error?: never
-
-    page: number,
-    rowsPerPage: number,
 }
 
 
@@ -27,8 +24,6 @@ class TransactionPage extends React.Component<any, TransactionState> {
         txHash: this.props.match.params.txHash,
         loading: false,
         transaction: new Tx(),
-        page: 0,
-        rowsPerPage: 10,
     } as TransactionState;
 
     componentDidMount() {
