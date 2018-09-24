@@ -12,13 +12,18 @@ class HomePage extends React.Component {
                 direction="column"
                 alignItems="center"
                 justify="center"
-                style={{ minHeight: '100vh' }}
+                style={{minHeight: '100vh'}}
             >
 
                 <Grid item xs={3}>
-                    <h1>SONM SE</h1>
+                    <h1 style={{textAlign: "center"}}>
+                        SONM SE
+                    </h1>
                     <SearchBar classes={{
-
+                        search: "search",
+                        searchIcon: "searchIcon",
+                        inputInput: "inputInput",
+                        inputRoot: "inputRoot",
                     }}/>
                 </Grid>
 
@@ -26,5 +31,6 @@ class HomePage extends React.Component {
         )
     }
 }
+
 
 export default HomePage;
