@@ -4,8 +4,8 @@ logging:
   level: "debug"
 
 database:
-  user: app
-  password: app
+  user: postgres
+  password: postgres
   database: app
 
 migrator:
