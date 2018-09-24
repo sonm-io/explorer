@@ -35,7 +35,8 @@ CREATE UNLOGGED TABLE transactions (
   "input"            TEXT,
   "v"                TEXT,
   "r"                TEXT,
-  "s"                TEXT
+  "s"                TEXT,
+  "status"           NUMERIC NOT NULL
 );
 
 CREATE VIEW view_last_block

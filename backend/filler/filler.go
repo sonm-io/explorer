@@ -219,7 +219,8 @@ func (f *Filler) saveBlock(block *types.Block) error {
 				input,
 				v,
 				r,
-				s) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+				s, 
+				status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
 			tx.Hash().String(),
 			tx.Nonce(),
 			block.Block.Hash().String(),
@@ -233,7 +234,8 @@ func (f *Filler) saveBlock(block *types.Block) error {
 			data,
 			v.String(),
 			r.String(),
-			s.String())
+			s.String(),
+			receipt.Status)
 		if err != nil {
 			log.Printf("error while inserting transaction: %s", err)
 			return t.Rollback()
