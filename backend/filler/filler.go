@@ -2,11 +2,13 @@ package filler
 
 import (
 	"context"
+	"fmt"
 	"github.com/sonm-io/core/blockchain"
 	"github.com/sonm-io/explorer/backend/db"
 	"github.com/sonm-io/explorer/backend/types"
 	"log"
 	"math/big"
+	"sync"
 	"time"
 )
 
@@ -16,6 +18,13 @@ type Filler struct {
 
 	saveChan chan *types.Block
 	loadChan chan uint64
+
+	state struct {
+		mu sync.RWMutex
+
+		lastBlock uint64
+		bestBlock uint64
+	}
 }
 
 func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
@@ -27,42 +36,40 @@ func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
 	return &Filler{
 		client:   client,
 		db:       db,
-		saveChan: make(chan *types.Block),
-		loadChan: make(chan uint64),
+		saveChan: make(chan *types.Block, 500),
+		loadChan: make(chan uint64, 50),
 	}, nil
 }
 
 func (f *Filler) Start(ctx context.Context) error {
-	lastBlockNumber, err := f.client.GetLastBlock(ctx)
-	if err != nil {
-		return err
-	}
-	bestBlockNumber, err := f.db.GetBestBlock()
+	err := f.loadBestBlock()
 	if err != nil {
 		return err
 	}
 
-	log.Printf("last block: %d", lastBlockNumber)
-	log.Printf("best known block: %d", bestBlockNumber)
-
-	go func() {
-		if bestBlockNumber < lastBlockNumber.Uint64() {
-			for i := bestBlockNumber + 1; i < lastBlockNumber.Uint64(); i++ {
-				f.loadChan <- i
-			}
-		}
-	}()
+	err = f.loadLastBlock(ctx)
+	if err != nil {
+		return err
+	}
 
 	t3sec := time.NewTicker(3 * time.Second)
 	defer t3sec.Stop()
 	t10sec := time.NewTicker(10 * time.Second)
 	defer t10sec.Stop()
 
-	dbPool := make(chan int8, 2000)
-
 	for {
 		select {
 		case <-t10sec.C:
+			err := f.loadBestBlock()
+			if err != nil {
+				return err
+			}
+
+			err = f.loadLastBlock(ctx)
+			if err != nil {
+				return err
+			}
+
 			intervals, err := f.db.GetUnfilledIntervals()
 			if err != nil {
 				return err
@@ -77,21 +84,12 @@ func (f *Filler) Start(ctx context.Context) error {
 			}()
 		case <-t3sec.C:
 			go func() {
-				lastBlockNumber, err := f.client.GetLastBlock(ctx)
-				if err != nil {
-					return
-				}
-				bestBlockNumber, err := f.db.GetBestBlock()
-				if err != nil {
-					return
-				}
-
-				log.Printf("last block: %d", lastBlockNumber)
-				log.Printf("best known block: %d", bestBlockNumber)
+				log.Printf("last block: %d", f.state.lastBlock)
+				log.Printf("best known block: %d", f.state.bestBlock)
 
 				go func() {
-					if bestBlockNumber < lastBlockNumber.Uint64() {
-						for i := bestBlockNumber + 1; i < lastBlockNumber.Uint64(); i++ {
+					if f.state.bestBlock < f.state.lastBlock {
+						for i := f.state.bestBlock + 1; i < f.state.lastBlock; i++ {
 							f.loadChan <- i
 						}
 					}
@@ -105,21 +103,42 @@ func (f *Filler) Start(ctx context.Context) error {
 					return
 				}
 				log.Println("block filled: ", number)
-				f.saveChan <- block
-			}()
-		case block := <-f.saveChan:
-			dbPool <- 1
-			go func() {
 				err = f.db.SaveBlock(block)
 				if err != nil {
 					log.Println(err)
 					return
 				}
 				log.Println("block saved: ", block.Block.Number().Uint64())
-				<-dbPool
+				// f.saveChan <- block
 			}()
 		}
 	}
+}
+
+func (f *Filler) loadLastBlock(ctx context.Context) error {
+	lastBlockNumber, err := f.client.GetLastBlock(ctx)
+	if err != nil {
+		return err
+	}
+	if !lastBlockNumber.IsUint64() {
+		return fmt.Errorf("lastBlockNumber is not unit64")
+	}
+	f.state.mu.Lock()
+	f.state.lastBlock = lastBlockNumber.Uint64()
+	f.state.mu.Unlock()
+	return nil
+}
+
+func (f *Filler) loadBestBlock() error {
+	bestBlockNumber, err := f.db.GetBestBlock()
+	if err != nil {
+		return err
+	}
+
+	f.state.mu.Lock()
+	f.state.lastBlock = bestBlockNumber
+	f.state.mu.Unlock()
+	return nil
 }
 
 func (f *Filler) fillBlock(ctx context.Context, number *big.Int) (*types.Block, error) {
