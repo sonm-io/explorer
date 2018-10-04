@@ -10,13 +10,14 @@ import {Link} from "react-router-dom";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import {TablePaginationActionsWrapped} from "../blocks/parts/TablePaginationActions";
 import TableFooter from "@material-ui/core/TableFooter/TableFooter";
-import Paper from "@material-ui/core/Paper/Paper";
+import ErrorForm from "../../errors/Error";
+import Loader from "../../loader/Loader";
 
 
 interface TransactionState {
     transactions: Tx[],
     loading: boolean,
-    error?: never
+    error?: string
 
     page: number,
     rowsPerPage: number,
@@ -56,18 +57,17 @@ class TransactionsPage extends React.Component<any, TransactionState> {
                 }
                 return response.json();
             })
-
             .then(result => {
                 this.setState({
                     transactions: result,
                     loading: true,
                 } as TransactionState);
             })
-            .catch(err => {
+            .catch(error => {
                 this.setState({
                     loading: true,
-                    error: err,
-                } as TransactionState);
+                    error: error.toString()
+                })
             })
     }
 
@@ -85,19 +85,16 @@ class TransactionsPage extends React.Component<any, TransactionState> {
     render() {
         const {page, rowsPerPage} = this.state;
 
-        if (this.state.error != null){
+        if (this.state.error != null) {
+            const err = this.state.error.toString();
             return (
-                <Paper>
-                    error! {this.state.error}
-                </Paper>
+                <ErrorForm error={err}/>
             )
         }
 
-        if (!this.state.loading){
+        if (!this.state.loading) {
             return (
-                <Paper>
-                    <h1>Loading...</h1>
-                </Paper>
+                <Loader/>
             )
         }
 

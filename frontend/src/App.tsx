@@ -10,6 +10,7 @@ import AddressPage from "./components/pages/address/AddressPage";
 import Header from "./components/header/Header";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import {theme} from "./theme";
+import NotFound from "./components/errors/NotFound";
 
 
 class App extends React.Component {
@@ -26,6 +27,7 @@ class App extends React.Component {
                             <Route path="/transactions" component={TransactionsPage}/>
                             <Route path="/transaction/:txHash" component={TransactionPage}/>
                             <Route path="/address/:address" component={AddressPage}/>
+                            <Route path="*" component={NotFound}/>
                         </Switch>
                     </div>
                 </Router>
