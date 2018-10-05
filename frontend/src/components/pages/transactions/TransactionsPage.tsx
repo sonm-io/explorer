@@ -49,7 +49,7 @@ class TransactionsPage extends React.Component<any, TransactionState> {
     loadTransactions() {
         const limit = this.state.rowsPerPage;
         const offset = this.state.page * this.state.rowsPerPage;
-        const url = "http://localhost:3544/transactions?order=blockNumber&limit=" + limit + "&offset=" + offset;
+        const url = "http://127.0.0.1:3544/transactions?order=blockNumber&limit=" + limit + "&offset=" + offset;
         fetch(url)
             .then(response => {
                 if (!response.ok) {

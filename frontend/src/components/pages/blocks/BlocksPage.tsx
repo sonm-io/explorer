@@ -48,7 +48,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
         console.log(this.state);
         const offset = this.state.rowsPerPage * this.state.page;
         const limit = this.state.rowsPerPage;
-        const url = "http://localhost:3544/blocks?order=number.desc&limit=" + limit + "&offset=" + offset;
+        const url = "http://127.0.0.1:3544/blocks?order=number.desc&limit=" + limit + "&offset=" + offset;
         console.log(url);
         fetch(url)
             .then(res => {

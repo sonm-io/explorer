@@ -31,7 +31,7 @@ class TransactionPage extends React.Component<any, TransactionState> {
     }
 
     loadTransaction() {
-        const url = "http://localhost:3544/transactions?order=nonce&hash.eq" + this.state.txHash;
+        const url = "http://127.0.0.1:3544/transactions?order=nonce&hash.eq" + this.state.txHash;
         fetch(url)
             .then(response => {
                 if (!response.ok) {
