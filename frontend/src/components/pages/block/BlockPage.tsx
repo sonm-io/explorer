@@ -32,7 +32,7 @@ class BlockPage extends React.PureComponent<any, BlockState> {
     }
 
     loadBLock(number: string) {
-        let url = "http://localhost:3544/blocks?number=eq." + number;
+        let url = "http://127.0.0.1:3544/blocks?number=eq." + number;
         fetch(url)
             .then(response => {
                 if (!response.ok) {

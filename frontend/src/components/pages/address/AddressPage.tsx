@@ -25,7 +25,7 @@ class AddressPage extends React.Component<any, AddressState> {
     } as AddressState;
 
     componentDidMount() {
-        const url = "http://localhost:3544/transactions?select=*&limit=15&or=(from.eq." + this.state.address + ",to.eq." + this.state.address + ")&order=nonce.desc"
+        const url = "http://127.0.0.1:3544/transactions?select=*&limit=15&or=(from.eq." + this.state.address + ",to.eq." + this.state.address + ")&order=nonce.desc"
         console.log(url);
         fetch(url)
             .then(response => {

@@ -12,9 +12,8 @@ class HomePage extends React.Component {
                 direction="column"
                 alignItems="center"
                 justify="center"
-                style={{minHeight: '100vh'}}
+                style={{minHeight: '80vh'}}
             >
-
                 <Grid item xs={3}>
                     <h1 style={{textAlign: "center"}}>
                         SONM SE

@@ -1,5 +1,4 @@
 import * as React from "react";
-import Paper from "@material-ui/core/Paper/Paper";
 import Table from "@material-ui/core/Table/Table";
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import TableRow from "@material-ui/core/TableRow/TableRow";
@@ -11,6 +10,8 @@ import {WithStyles} from "@material-ui/core";
 import TableFooter from "@material-ui/core/TableFooter/TableFooter";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import {TablePaginationActionsWrapped} from "./parts/TablePaginationActions";
+import ErrorForm from "../../errors/Error";
+import Loader from "../../loader/Loader";
 
 
 interface BlocksState {
@@ -18,7 +19,7 @@ interface BlocksState {
     loading: boolean;
     page: number,
     rowsPerPage: number,
-    error?: never;
+    error?: string;
 }
 
 const START_PAGE = 0;
@@ -47,7 +48,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
         console.log(this.state);
         const offset = this.state.rowsPerPage * this.state.page;
         const limit = this.state.rowsPerPage;
-        const url = "http://localhost:3544/blocks?order=number.desc&limit=" + limit + "&offset=" + offset;
+        const url = "http://127.0.0.1:3544/blocks?order=number.desc&limit=" + limit + "&offset=" + offset;
         console.log(url);
         fetch(url)
             .then(res => {
@@ -70,7 +71,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
                     page: 1,
                     rowsPerPage: 15,
                     loading: true,
-                    error: error,
+                    error: error.toString(),
                 } as BlocksState)
             })
     }
@@ -87,23 +88,19 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
     }
 
     render() {
-        const {rowsPerPage, page} = this.state;
-
         if (this.state.error != null) {
             return (
-                <Paper>
-                    <h1>error!</h1>
-                </Paper>
+                <ErrorForm error={this.state.error}/>
             )
         }
 
         if (!this.state.loading) {
             return (
-                <Paper>
-                    <h1>Loading...</h1>
-                </Paper>
+                <Loader/>
             )
         }
+
+        const {rowsPerPage, page} = this.state;
 
         return (
             <Table>
