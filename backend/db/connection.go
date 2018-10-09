@@ -6,7 +6,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	_ "github.com/lib/pq"
 	"github.com/sonm-io/explorer/backend/types"
-	"log"
 	"math/big"
 )
 
@@ -117,8 +116,8 @@ func (conn *Connection) SaveBlock(block *types.Block) error {
 		block.Block.MixDigest().String(),
 		len(block.Transactions))
 	if err != nil {
-		log.Printf("error while inserting block: %s", err)
-		return t.Rollback()
+		t.Rollback()
+		return fmt.Errorf("error while inserting block %d: %s", block.Block.NumberU64(), err)
 	}
 	for _, receipt := range block.Transactions {
 		tx := block.Block.Transaction(receipt.TxHash)
@@ -144,8 +143,8 @@ func (conn *Connection) SaveBlock(block *types.Block) error {
 			s.String(),
 			receipt.Status)
 		if err != nil {
-			log.Printf("error while inserting transaction: %s", err)
-			return t.Rollback()
+			t.Rollback()
+			return fmt.Errorf("error while inserting transaction: %s", err)
 		}
 	}
 	err = t.Commit()
