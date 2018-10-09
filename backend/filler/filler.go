@@ -62,7 +62,7 @@ func (f *Filler) Start(ctx context.Context) error {
 					var intervalCount = 0
 					for i := f.state.bestBlock + 1; i < f.state.lastBlock; i++ {
 						intervalCount++
-						if intervalCount > 3000 {
+						if intervalCount > 1000 {
 							done <- true
 							return
 						}
