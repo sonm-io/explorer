@@ -6,7 +6,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	_ "github.com/lib/pq"
 	"github.com/sonm-io/explorer/backend/types"
-	"log"
 	"math/big"
 )
 
@@ -45,7 +44,7 @@ func (conn *Connection) Close() error {
 }
 
 func (conn *Connection) GetBestBlock() (uint64, error) {
-	rows, err := conn.db.Query(`SELECT coalesce(max(number), 0) AS bestBlock FROM blocks;`)
+	rows, err := conn.db.Query(selectBestBlockQuery)
 	if err != nil {
 		return 0, err
 	}
@@ -61,12 +60,7 @@ func (conn *Connection) GetBestBlock() (uint64, error) {
 }
 
 func (conn *Connection) GetUnfilledIntervals() ([]types.Interval, error) {
-	rows, err := conn.db.Query(`
-		SELECT number + 1 as start_interval, next_id - 1 as finish_interval
-		FROM (SELECT number, LEAD(number)OVER (ORDER BY number) AS next_id FROM blocks)T
-		WHERE number + 1 <> next_id
-		LIMIT 10000
-	`)
+	rows, err := conn.db.Query(selectUnfilledIntervalsQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -101,27 +95,7 @@ func (conn *Connection) SaveBlock(block *types.Block) error {
 
 	extra := common.Bytes2Hex(block.Block.Extra())
 
-	_, err = t.Exec(`INSERT INTO blocks(
-			number,
-			hash,
-			"parentHash",
-			nonce,
-			"sha3Uncles",
-			"logsBloom",
-			"transactionsRoot",
-			"stateRoot",
-			"receiptsRoot",
-			miner,
-			difficulty,
-			"totalDifficulty",
-			size,
-			"extraData",
-			"gasLimit",
-			"gasUsed",
-			timestamp,
-			"mixhash",
-			"txCount"
-			) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`,
+	_, err = t.Exec(insertBlockQuery,
 		block.Block.NumberU64(),
 		block.Block.Hash().String(),
 		block.Block.ParentHash().String(),
@@ -142,8 +116,8 @@ func (conn *Connection) SaveBlock(block *types.Block) error {
 		block.Block.MixDigest().String(),
 		len(block.Transactions))
 	if err != nil {
-		log.Printf("error while inserting block: %s", err)
-		return t.Rollback()
+		t.Rollback()
+		return fmt.Errorf("error while inserting block %d: %s", block.Block.NumberU64(), err)
 	}
 	for _, receipt := range block.Transactions {
 		tx := block.Block.Transaction(receipt.TxHash)
@@ -152,23 +126,7 @@ func (conn *Connection) SaveBlock(block *types.Block) error {
 
 		data := common.Bytes2Hex(tx.Data())
 
-		_, err := t.Exec(
-			`INSERT INTO transactions(
-				hash,
-				nonce ,
-				"blockHash",
-				"blockNumber",
-				"transactionIndex",
-				"from",
-				"to",
-				"value",
-				gas,
-				"gasPrice",
-				input,
-				v,
-				r,
-				s, 
-				status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+		_, err := t.Exec(insertTransactionQuery,
 			tx.Hash().String(),
 			tx.Nonce(),
 			block.Block.Hash().String(),
@@ -185,8 +143,8 @@ func (conn *Connection) SaveBlock(block *types.Block) error {
 			s.String(),
 			receipt.Status)
 		if err != nil {
-			log.Printf("error while inserting transaction: %s", err)
-			return t.Rollback()
+			t.Rollback()
+			return fmt.Errorf("error while inserting transaction: %s", err)
 		}
 	}
 	err = t.Commit()
