@@ -1,0 +1,36 @@
+dist: xenial
+sudo: "required"
+
+language: "go"
+
+go:
+    - 1.11
+
+env:
+  global:
+    - GO111MODULE=on
+    - PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+  matrix:
+    - BUILD_TYPE=Tests
+    - BUILD_TYPE=Debian
+    - BUILD_TYPE=Contracts
+
+services:
+    - "docker"
+
+before_install:
+  - sudo apt-get update
+
+script:
+    - |
+      case "${BUILD_TYPE}" in
+        Backend)
+          make backend
+          ;;
+        Frontend)
+          make frontend
+          ;;
+        *)
+          echo "Unknown BUILD_TYPE value"
+          exit 1
+      esac

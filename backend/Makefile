@@ -16,9 +16,11 @@ GOCMD := ./cmd
 GO ?= go
 TARGETDIR := target
 
-FILLER     := ${TARGETDIR}/filler
+FILLER := ${TARGETDIR}/filler
 
 TAGS = nocgo
+
+all: fmt vet build
 
 clean: clean/db
 

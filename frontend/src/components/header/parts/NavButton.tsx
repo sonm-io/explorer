@@ -1,7 +1,7 @@
 import Button from "@material-ui/core/Button/Button";
 import withStyles from "@material-ui/core/styles/withStyles";
 
-const navButton = withStyles({
+const NavButton = withStyles({
     root: {
         border: 0,
         color: '#848e92',
@@ -16,4 +16,4 @@ const navButton = withStyles({
 })(Button);
 
 // TODO: fix naming
-export default navButton;
+export default NavButton;
