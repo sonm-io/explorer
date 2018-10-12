@@ -11,9 +11,8 @@ env:
     - GO111MODULE=on
     - PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
   matrix:
-    - BUILD_TYPE=Tests
-    - BUILD_TYPE=Debian
-    - BUILD_TYPE=Contracts
+    - BUILD_TYPE=Backend
+    - BUILD_TYPE=Frontend
 
 services:
     - "docker"
