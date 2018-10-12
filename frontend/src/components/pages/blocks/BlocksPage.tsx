@@ -1,24 +1,27 @@
 import * as React from "react";
+
 import Table from "@material-ui/core/Table/Table";
-import TableHead from "@material-ui/core/TableHead/TableHead";
-import TableRow from "@material-ui/core/TableRow/TableRow";
-import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
+import TableCell from "@material-ui/core/TableCell/TableCell";
+import TableFooter from "@material-ui/core/TableFooter/TableFooter";
+import TableHead from "@material-ui/core/TableHead/TableHead";
+import TablePagination from "@material-ui/core/TablePagination/TablePagination";
+import TableRow from "@material-ui/core/TableRow/TableRow";
+import {tablePaginationActionsWrapped} from "./parts/TablePaginationActions";
+
 import {Link} from "react-router-dom";
 import {Block} from "../../../types/Block";
-import {WithStyles} from "@material-ui/core";
-import TableFooter from "@material-ui/core/TableFooter/TableFooter";
-import TablePagination from "@material-ui/core/TablePagination/TablePagination";
-import {TablePaginationActionsWrapped} from "./parts/TablePaginationActions";
+
 import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
 
+import {WithStyles} from "@material-ui/core";
 
 interface BlocksState {
     blocks: Block[];
     loading: boolean;
-    page: number,
-    rowsPerPage: number,
+    page: number;
+    rowsPerPage: number;
     error?: string;
 }
 
@@ -33,71 +36,71 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
         this.loadBlocks = this.loadBlocks.bind(this);
     }
 
-    state = {
+    public state = {
         blocks: [],
         loading: false,
         page: START_PAGE,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
     } as BlocksState;
 
-    componentDidMount() {
+    public componentDidMount() {
         this.loadBlocks();
     }
 
-    loadBlocks() {
+    public loadBlocks() {
         console.log(this.state);
         const offset = this.state.rowsPerPage * this.state.page;
         const limit = this.state.rowsPerPage;
         const url = "http://127.0.0.1:3544/blocks?order=number.desc&limit=" + limit + "&offset=" + offset;
         console.log(url);
         fetch(url)
-            .then(res => {
+            .then((res) => {
                 if (!res.ok) {
-                    throw new Error(res.statusText)
+                    throw new Error(res.statusText);
                 }
-                return res.json()
+                return res.json();
             })
             .then(
                 (result) => {
                     this.setState({
                         blocks: result,
-                        loading: true
-                    } as BlocksState)
+                        loading: true,
+                    } as BlocksState);
                 }
             )
-            .catch(error => {
+            .catch((error) => {
                 this.setState({
                     blocks: [],
                     page: 1,
                     rowsPerPage: 15,
                     loading: true,
                     error: error.toString(),
-                } as BlocksState)
-            })
+                } as BlocksState);
+            });
     }
 
-    handleChangePage(event: any, page: number) {
+    public handleChangePage(event: any, page: number) {
         this.setState({
-            page: page,
+            page,
             loading: false,
         } as BlocksState, this.loadBlocks);
     }
 
-    handleChangeRowsPerPage() {
+    public handleChangeRowsPerPage() {
 
     }
 
-    render() {
+    public render() {
         if (this.state.error != null) {
             return (
                 <ErrorForm error={this.state.error}/>
-            )
+            );
         }
 
         if (!this.state.loading) {
             return (
                 <Loader/>
-            )
+            );
         }
 
         const {rowsPerPage, page} = this.state;
@@ -114,7 +117,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.state.blocks.map(row => {
+                    {this.state.blocks.map((row) => {
                         return (
                             <TableRow key={row.number}>
                                 <TableCell>
@@ -140,14 +143,13 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
                             page={page}
                             onChangePage={this.handleChangePage}
                             onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActionsWrapped}
+                            ActionsComponent={tablePaginationActionsWrapped}
                         />
                     </TableRow>
                 </TableFooter>
             </Table>
-        )
+        );
     }
 }
-
 
 export default BlocksPage;

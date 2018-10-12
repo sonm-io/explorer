@@ -1,17 +1,16 @@
-import * as React from 'react';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import * as React from "react";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 
-import HomePage from "./components/pages/home/HomePage";
-import BlocksPage from "./components/pages/blocks/BlocksPage";
-import BlockPage from "./components/pages/block/BlockPage";
-import TransactionsPage from "./components/pages/transactions/TransactionsPage";
-import TransactionPage from "./components/pages/transaction/TransactionPage";
-import AddressPage from "./components/pages/address/AddressPage";
-import Header from "./components/header/Header";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
-import {theme} from "./theme";
 import NotFound from "./components/errors/NotFound";
-
+import Header from "./components/header/Header";
+import AddressPage from "./components/pages/address/AddressPage";
+import BlockPage from "./components/pages/block/BlockPage";
+import BlocksPage from "./components/pages/blocks/BlocksPage";
+import HomePage from "./components/pages/home/HomePage";
+import TransactionPage from "./components/pages/transaction/TransactionPage";
+import TransactionsPage from "./components/pages/transactions/TransactionsPage";
+import {theme} from "./theme";
 
 class App extends React.Component {
     public render() {

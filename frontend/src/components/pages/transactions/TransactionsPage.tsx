@@ -1,26 +1,25 @@
 import * as React from "react";
 
-import {Transaction as Tx} from "../../../types/Transaction";
 import Table from "@material-ui/core/Table/Table";
-import TableHead from "@material-ui/core/TableHead/TableHead";
-import TableRow from "@material-ui/core/TableRow/TableRow";
-import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableBody from "@material-ui/core/TableBody/TableBody";
-import {Link} from "react-router-dom";
-import TablePagination from "@material-ui/core/TablePagination/TablePagination";
-import {TablePaginationActionsWrapped} from "../blocks/parts/TablePaginationActions";
+import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableFooter from "@material-ui/core/TableFooter/TableFooter";
+import TableHead from "@material-ui/core/TableHead/TableHead";
+import TablePagination from "@material-ui/core/TablePagination/TablePagination";
+import TableRow from "@material-ui/core/TableRow/TableRow";
+import {Link} from "react-router-dom";
+import {Transaction as Tx} from "../../../types/Transaction";
 import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
-
+import {tablePaginationActionsWrapped} from "../blocks/parts/TablePaginationActions";
 
 interface TransactionState {
-    transactions: Tx[],
-    loading: boolean,
-    error?: string
+    transactions: Tx[];
+    loading: boolean;
+    error?: string;
 
-    page: number,
-    rowsPerPage: number,
+    page: number;
+    rowsPerPage: number;
 }
 
 const START_PAGE = 0;
@@ -35,67 +34,67 @@ class TransactionsPage extends React.Component<any, TransactionState> {
         this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     }
 
-    state = {
+    public state = {
         transactions: [],
         loading: false,
         page: START_PAGE,
         rowsPerPage: DEFAULT_ROWS_PER_PAGE,
     } as TransactionState;
 
-    componentDidMount() {
-        this.loadTransactions()
+    public componentDidMount() {
+        this.loadTransactions();
     }
 
-    loadTransactions() {
+    public loadTransactions() {
         const limit = this.state.rowsPerPage;
         const offset = this.state.page * this.state.rowsPerPage;
         const url = "http://127.0.0.1:3544/transactions?order=blockNumber.desc&limit=" + limit + "&offset=" + offset;
         fetch(url)
-            .then(response => {
+            .then((response) => {
                 if (!response.ok) {
                     throw new Error(response.statusText);
                 }
                 return response.json();
             })
-            .then(result => {
+            .then((result) => {
                 this.setState({
                     transactions: result,
                     loading: true,
                 } as TransactionState);
             })
-            .catch(error => {
+            .catch((error) => {
                 this.setState({
                     loading: true,
-                    error: error.toString()
-                })
-            })
+                    error: error.toString(),
+                });
+            });
     }
 
-    handleChangePage(event: any, page: number) {
+    public handleChangePage(event: any, page: number) {
         this.setState({
-            page: page,
+            page,
             loading: false,
         } as TransactionState, this.loadTransactions);
     }
 
-    handleChangeRowsPerPage() {
+    public handleChangeRowsPerPage() {
 
     }
 
-    render() {
+    public render() {
         const {page, rowsPerPage} = this.state;
 
         if (this.state.error != null) {
             const err = this.state.error.toString();
             return (
                 <ErrorForm error={err}/>
-            )
+            );
         }
 
         if (!this.state.loading) {
             return (
                 <Loader/>
-            )
+            );
         }
 
         return (
@@ -109,7 +108,7 @@ class TransactionsPage extends React.Component<any, TransactionState> {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.state.transactions.map(row => {
+                    {this.state.transactions.map((row) => {
                         return (
                             <TableRow key={row.hash}>
                                 <TableCell>
@@ -140,12 +139,12 @@ class TransactionsPage extends React.Component<any, TransactionState> {
                             page={page}
                             onChangePage={this.handleChangePage}
                             onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActionsWrapped}
+                            ActionsComponent={tablePaginationActionsWrapped}
                         />
                     </TableRow>
                 </TableFooter>
             </Table>
-        )
+        );
     }
 }
 
