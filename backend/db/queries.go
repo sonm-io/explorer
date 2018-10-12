@@ -1,18 +1,15 @@
 package db
 
-const selectBestBlockQuery =
-	`SELECT coalesce(max(number), 0) AS bestBlock FROM blocks;`
+const selectBestBlockQuery = `SELECT coalesce(max(number), 0) AS bestBlock FROM blocks;`
 
-const selectUnfilledIntervalsQuery =
-	`
+const selectUnfilledIntervalsQuery = `
 	SELECT number + 1 as start_interval, next_id - 1 as finish_interval
 	FROM (SELECT number, LEAD(number)OVER (ORDER BY number) AS next_id FROM blocks)T
 	WHERE number + 1 <> next_id
 	LIMIT 10000
 	`
 
-const insertBlockQuery =
-	`INSERT INTO blocks(
+const insertBlockQuery = `INSERT INTO blocks(
 			number,
 			hash,
 			"parentHash",
@@ -35,8 +32,7 @@ const insertBlockQuery =
 			) VALUES 
 			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`
 
-const insertTransactionQuery =
-	`INSERT INTO transactions(
+const insertTransactionQuery = `INSERT INTO transactions(
 				hash,
 				nonce ,
 				"blockHash",
