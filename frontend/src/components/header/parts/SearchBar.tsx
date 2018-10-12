@@ -1,16 +1,15 @@
-import Input from "@material-ui/core/Input/Input";
-import * as React from "react";
 import {Theme, WithStyles} from "@material-ui/core";
-import createStyles from "@material-ui/core/styles/createStyles";
+import Input from "@material-ui/core/Input/Input";
 import {fade} from "@material-ui/core/styles/colorManipulator";
+import createStyles from "@material-ui/core/styles/createStyles";
 import withStyles from "@material-ui/core/styles/withStyles";
 import SearchIcon from '@material-ui/icons/Search';
+import * as React from "react";
 import {Redirect} from "react-router";
 
-
 interface SearchBarState {
-    inputValue: string,
-    redirect: boolean,
+    inputValue: string;
+    redirect: boolean;
     redirectTo: string;
 }
 
@@ -29,18 +28,18 @@ class SearchBar extends React.Component<WithStyles, SearchBarState> {
         this.redirect = this.redirect.bind(this);
     }
 
-    redirect(to: string) {
+    public redirect(to: string) {
         this.setState({
             redirect: true,
             redirectTo: to,
         } as SearchBarState);
     }
 
-    search() {
+    public search() {
         const value = this.state.inputValue.trim();
 
         if (value === "") {
-            return
+            return;
         }
 
         try {
@@ -60,18 +59,17 @@ class SearchBar extends React.Component<WithStyles, SearchBarState> {
 
     }
 
-    updateInputValue(event: any) {
+    public updateInputValue(event: any) {
         this.setState({
-            inputValue: event.target.value
+            inputValue: event.target.value,
         });
     }
 
-
-    render() {
+    public render() {
         if (this.state.redirect) {
             return (
                 <Redirect to={this.state.redirectTo}/>
-            )
+            );
         }
         const {classes} = this.props;
         return (
@@ -90,7 +88,7 @@ class SearchBar extends React.Component<WithStyles, SearchBarState> {
                     }}
                 />
             </div>
-        )
+        );
     }
 }
 
@@ -125,7 +123,7 @@ const styles = (theme: Theme) => createStyles({
     inputRoot: {
         color: 'inherit',
         width: '75%',
-        marginLeft: theme.spacing.unit * 9
+        marginLeft: theme.spacing.unit * 9,
     },
     inputInput: {
         paddingTop: theme.spacing.unit,

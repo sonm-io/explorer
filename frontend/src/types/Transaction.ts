@@ -1,16 +1,16 @@
 export class Transaction {
-    hash: string;
-    nonce: number;
-    blockHash: string;
-    blockNumber: number;
-    transactionIndex: number;
-    from: string;
-    to: string;
-    value: number;
-    gas: number;
-    gasPrice: number;
-    input: string;
-    v: string;
-    r: string;
-    s: string;
+    public hash: string;
+    public nonce: number;
+    public blockHash: string;
+    public blockNumber: number;
+    public transactionIndex: number;
+    public from: string;
+    public to: string;
+    public value: number;
+    public gas: number;
+    public gasPrice: number;
+    public input: string;
+    public v: string;
+    public r: string;
+    public s: string;
 }

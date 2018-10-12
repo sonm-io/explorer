@@ -1,17 +1,16 @@
 import * as React from "react";
 
-import {Transaction as Tx} from "../../../types/Transaction";
+import Grid from "@material-ui/core/Grid/Grid";
 import Paper from "@material-ui/core/Paper/Paper";
 import {Link} from "react-router-dom";
-import Grid from "@material-ui/core/Grid/Grid";
+import {Transaction as Tx} from "../../../types/Transaction";
 
 interface TransactionState {
-    txHash: string,
-    loading: boolean
-    transaction: Tx
-    error?: never
+    txHash: string;
+    loading: boolean;
+    transaction: Tx;
+    error?: never;
 }
-
 
 class TransactionPage extends React.Component<any, TransactionState> {
     constructor(props: any) {
@@ -20,54 +19,54 @@ class TransactionPage extends React.Component<any, TransactionState> {
         this.loadTransaction = this.loadTransaction.bind(this);
     }
 
-    state = {
+    public state = {
         txHash: this.props.match.params.txHash,
         loading: false,
         transaction: new Tx(),
     } as TransactionState;
 
-    componentDidMount() {
-        this.loadTransaction()
+    public componentDidMount() {
+        this.loadTransaction();
     }
 
-    loadTransaction() {
+    private loadTransaction() {
         const url = "http://127.0.0.1:3544/transactions?order=nonce&hash.eq" + this.state.txHash;
         fetch(url)
-            .then(response => {
+            .then((response) => {
                 if (!response.ok) {
-                    throw new Error(response.statusText)
+                    throw new Error(response.statusText);
                 }
-                return response.json()
+                return response.json();
             })
-            .then(result => {
+            .then((result) => {
                 this.setState({
                     loading: true,
-                    transaction: result[0]
-                } as TransactionState)
+                    transaction: result[0],
+                } as TransactionState);
             })
-            .catch(err => {
+            .catch((err) => {
                 this.setState({
+                    error: err,
                     loading: true,
-                    error: err
-                } as TransactionState)
-            })
+                } as TransactionState);
+            });
     }
 
-    render() {
+    public render() {
         if (this.state.error != null) {
             return (
                 <Paper>
                     <h1>{this.state.error}</h1>
                 </Paper>
-            )
+            );
         }
 
-        if (!this.state.loading){
-            return(
+        if (!this.state.loading) {
+            return (
                 <Paper>
                     <h1>Loading...</h1>
                 </Paper>
-            )
+            );
         }
 
         return (
@@ -75,8 +74,6 @@ class TransactionPage extends React.Component<any, TransactionState> {
                 <h1 style={{padding: 16}}>Transaction details</h1>
 
                 <Paper style={{padding: 16}}>
-
-
                     <Grid container spacing={16}>
 
                         <Grid item xs={2}>Hash</Grid>
@@ -115,7 +112,7 @@ class TransactionPage extends React.Component<any, TransactionState> {
                     </Grid>
                 </Paper>
             </div>
-        )
+        );
     }
 }
 

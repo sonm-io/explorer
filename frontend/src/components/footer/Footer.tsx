@@ -3,7 +3,6 @@ import * as React from "react";
 import Grid from "@material-ui/core/Grid/Grid";
 import Typography from "@material-ui/core/Typography/Typography";
 
-
 const footers = [
     {
         title: 'Company',
@@ -24,16 +23,16 @@ const footers = [
 ];
 
 class Footer extends React.Component {
-    render() {
+    public render() {
         return (
             <footer>
                 <Grid container spacing={32} justify="space-evenly">
-                    {footers.map(footer => (
+                    {footers.map((footer) => (
                         <Grid item xs key={footer.title}>
                             <Typography variant="title" color="textPrimary" gutterBottom>
                                 footer
                             </Typography>
-                            {footer.description.map(item => (
+                            {footer.description.map((item) => (
                                 <Typography key={item} variant="subheading" color="textSecondary">
                                     {item}
                                 </Typography>
@@ -42,7 +41,7 @@ class Footer extends React.Component {
                     ))}
                 </Grid>
             </footer>
-        )
+        );
     }
 }
 

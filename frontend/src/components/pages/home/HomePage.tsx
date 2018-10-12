@@ -1,10 +1,9 @@
-import * as React from "react";
 import Grid from "@material-ui/core/Grid/Grid";
+import * as React from "react";
 import SearchBar from "./parts/SearchBar";
 
-
 class HomePage extends React.Component {
-    render() {
+    public render() {
         return (
             <Grid
                 container
@@ -27,9 +26,8 @@ class HomePage extends React.Component {
                 </Grid>
 
             </Grid>
-        )
+        );
     }
 }
-
 
 export default HomePage;
