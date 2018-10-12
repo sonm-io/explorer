@@ -3,7 +3,7 @@ import * as React from "react";
 import {NavLink} from "react-router-dom";
 import AppBar from "../../../node_modules/@material-ui/core/AppBar/AppBar";
 import Toolbar from "../../../node_modules/@material-ui/core/Toolbar/Toolbar";
-import navButton from "./parts/NavButton";
+import NavButton from "./parts/NavButton";
 import SearchBar from "./parts/SearchBar";
 
 class Header extends React.Component {
@@ -13,19 +13,19 @@ class Header extends React.Component {
                 <AppBar position="static">
                     <Toolbar>
                         <NavLink to="/" style={{textDecoration: 'none'}}>
-                            <navButton>
+                            <NavButton>
                                 Home
-                            </navButton>
+                            </NavButton>
                         </NavLink>
                         <NavLink to="/transactions" style={{textDecoration: 'none'}}>
-                            <navButton>
+                            <NavButton>
                                 Transactions
-                            </navButton>
+                            </NavButton>
                         </NavLink>
                         <NavLink to="/blocks" style={{textDecoration: 'none'}}>
-                            <navButton>
+                            <NavButton>
                                 Blocks
-                            </navButton>
+                            </NavButton>
                         </NavLink>
                         <SearchBar classes={{
                             search: "search",
