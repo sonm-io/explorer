@@ -92,14 +92,15 @@ func (f *Filler) Start(ctx context.Context) error {
 			}()
 		case number := <-f.loadChan:
 			go func() {
-				block, err := f.fillBlock(ctx, big.NewInt(0).SetUint64(number))
+				block := &types.Block{}
+				err := block.FillBlock(ctx, f.client, big.NewInt(0).SetUint64(number))
 				if err != nil {
 					log.Println(err)
 					return
 				}
 				log.Println("block filled: ", number)
 
-				err = f.db.SaveBlock(block)
+				err = f.db.ProcessBlock(block)
 				if err != nil {
 					log.Printf("failed to save block: %d, %v", number, err)
 					return
@@ -134,21 +135,4 @@ func (f *Filler) loadBestBlock() error {
 	f.state.bestBlock = bestBlockNumber
 	f.state.mu.Unlock()
 	return nil
-}
-
-func (f *Filler) fillBlock(ctx context.Context, number *big.Int) (*types.Block, error) {
-	result := &types.Block{}
-	block, err := f.client.BlockByNumber(ctx, number)
-	if err != nil {
-		return nil, err
-	}
-	result.Block = block
-	for _, tx := range block.Transactions() {
-		rec, err := f.client.GetTransactionReceipt(ctx, tx.Hash())
-		if err != nil {
-			return nil, err
-		}
-		result.Transactions = append(result.Transactions, rec)
-	}
-	return result, nil
 }

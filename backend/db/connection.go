@@ -83,7 +83,7 @@ func (conn *Connection) GetUnfilledIntervals() ([]types.Interval, error) {
 	return s, nil
 }
 
-func (conn *Connection) SaveBlock(block *types.Block) error {
+func (conn *Connection) ProcessBlock(block *types.Block) error {
 	t, err := conn.NewTransaction()
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %s", err)
@@ -125,6 +125,8 @@ func (conn *Connection) SaveBlock(block *types.Block) error {
 		v, r, s := tx.RawSignatureValues()
 
 		data := common.Bytes2Hex(tx.Data())
+
+
 
 		_, err := t.Exec(insertTransactionQuery,
 			tx.Hash().String(),
