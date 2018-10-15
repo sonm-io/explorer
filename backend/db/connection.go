@@ -119,31 +119,29 @@ func (conn *Connection) ProcessBlock(block *types.Block) error {
 		t.Rollback()
 		return fmt.Errorf("error while inserting block %d: %s", block.Block.NumberU64(), err)
 	}
-	for _, receipt := range block.Transactions {
-		tx := block.Block.Transaction(receipt.TxHash)
+	for _, tx := range block.Transactions {
+		source := block.Block.Transaction(tx.Receipt.TxHash)
 
-		v, r, s := tx.RawSignatureValues()
+		v, r, s := source.RawSignatureValues()
 
-		data := common.Bytes2Hex(tx.Data())
-
-
+		data := common.Bytes2Hex(source.Data())
 
 		_, err := t.Exec(insertTransactionQuery,
-			tx.Hash().String(),
-			tx.Nonce(),
+			source.Hash().String(),
+			source.Nonce(),
 			block.Block.Hash().String(),
 			block.Block.NumberU64(),
-			receipt.TransactionIndex,
-			receipt.From.String(),
-			tx.To().String(),
-			tx.Value().Uint64(),
-			tx.Gas(),
-			tx.GasPrice().Uint64(),
+			tx.Receipt.TransactionIndex,
+			tx.Receipt.From.String(),
+			source.To().String(),
+			source.Value().Uint64(),
+			source.Gas(),
+			source.GasPrice().Uint64(),
 			data,
 			v.String(),
 			r.String(),
 			s.String(),
-			receipt.Status)
+			tx.Receipt.Status)
 		if err != nil {
 			t.Rollback()
 			return fmt.Errorf("error while inserting transaction: %s", err)
