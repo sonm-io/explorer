@@ -6,6 +6,7 @@ CREATE UNLOGGED TABLE logs (
   "firstTopic"  TEXT,
   "secondTopic" TEXT,
   "thirdTopic"  TEXT,
+  "fourthTopic" TEXT,
   "firstArg"    TEXT,
   "secondArg"   TEXT,
   "thirdArg"    TEXT,
