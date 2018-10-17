@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
+	eth "github.com/ethereum/go-ethereum/core/types"
 	_ "github.com/lib/pq"
 	"github.com/sonm-io/explorer/backend/types"
 	"math/big"
@@ -83,19 +84,52 @@ func (conn *Connection) GetUnfilledIntervals() ([]types.Interval, error) {
 	return s, nil
 }
 
-func (conn *Connection) SaveBlock(block *types.Block) error {
+func (conn *Connection) ProcessBlock(block *types.Block) error {
 	t, err := conn.NewTransaction()
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %s", err)
 	}
 
+	err = conn.saveBlock(t, block)
+	if err != nil {
+		t.Rollback()
+		return err
+	}
+
+	for _, tx := range block.Transactions {
+		err = conn.saveTransaction(t, block, tx)
+		if err != nil {
+			t.Rollback()
+			return fmt.Errorf("error while inserting transaction: %s", err)
+		}
+
+		for _, l := range tx.Logs {
+			if err := conn.saveLog(t, l); err != nil {
+				t.Rollback()
+				return fmt.Errorf("failed to save log: %v", err)
+			}
+		}
+
+		if err := conn.saveArgs(t, tx); err != nil {
+			t.Rollback()
+			return fmt.Errorf("faile to save args: %v", err)
+		}
+	}
+	err = t.Commit()
+	if err != nil {
+		return fmt.Errorf("failed to complete database transaction: %v", err)
+	}
+	return nil
+}
+
+func (conn *Connection) saveBlock(t *sql.Tx, block *types.Block) error {
 	bloom := common.Bytes2Hex(block.Block.Bloom().Bytes())
 
 	size := big.NewInt(0).SetUint64(uint64(block.Block.Size()))
 
 	extra := common.Bytes2Hex(block.Block.Extra())
 
-	_, err = t.Exec(insertBlockQuery,
+	_, err := t.Exec(insertBlockQuery,
 		block.Block.NumberU64(),
 		block.Block.Hash().String(),
 		block.Block.ParentHash().String(),
@@ -116,40 +150,122 @@ func (conn *Connection) SaveBlock(block *types.Block) error {
 		block.Block.MixDigest().String(),
 		len(block.Transactions))
 	if err != nil {
-		t.Rollback()
 		return fmt.Errorf("error while inserting block %d: %s", block.Block.NumberU64(), err)
 	}
-	for _, receipt := range block.Transactions {
-		tx := block.Block.Transaction(receipt.TxHash)
+	return nil
+}
 
-		v, r, s := tx.RawSignatureValues()
+func (conn *Connection) saveTransaction(t *sql.Tx, block *types.Block, tx *types.Transaction) error {
+	source := block.Block.Transaction(tx.Receipt.TxHash)
+	v, r, s := source.RawSignatureValues()
+	data := common.Bytes2Hex(source.Data())
 
-		data := common.Bytes2Hex(tx.Data())
+	_, err := t.Exec(insertTransactionQuery,
+		source.Hash().String(),
+		source.Nonce(),
+		block.Block.Hash().String(),
+		block.Block.NumberU64(),
+		tx.Receipt.TransactionIndex,
+		tx.Receipt.From.String(),
+		source.To().String(),
+		source.Value().Uint64(),
+		source.Gas(),
+		source.GasPrice().Uint64(),
+		data,
+		v.String(),
+		r.String(),
+		s.String(),
+		tx.Receipt.Status)
+	if err != nil {
+		return fmt.Errorf("error while inserting transaction: %s", err)
+	}
+	return nil
+}
 
-		_, err := t.Exec(insertTransactionQuery,
-			tx.Hash().String(),
-			tx.Nonce(),
-			block.Block.Hash().String(),
-			block.Block.NumberU64(),
-			receipt.TransactionIndex,
-			receipt.From.String(),
-			tx.To().String(),
-			tx.Value().Uint64(),
-			tx.Gas(),
-			tx.GasPrice().Uint64(),
-			data,
-			v.String(),
-			r.String(),
-			s.String(),
-			receipt.Status)
-		if err != nil {
-			t.Rollback()
-			return fmt.Errorf("error while inserting transaction: %s", err)
+func (conn *Connection) saveLog(t *sql.Tx, l *eth.Log) error {
+	var firstTopic, secondTopic, thirdTopic, fourthTopic string
+
+	if len(l.Topics) > 0 {
+		firstTopic = l.Topics[0].String()
+	}
+	if len(l.Topics) > 1 {
+		secondTopic = l.Topics[1].String()
+	}
+	if len(l.Topics) > 2 {
+		thirdTopic = l.Topics[2].String()
+	}
+	if len(l.Topics) > 3 {
+		fourthTopic = l.Topics[3].String()
+	}
+
+	var firstArg, secondArg, thirdArg string
+	data := string(l.Data)
+
+	if len(data) > 0 && len(data) > 63 {
+		firstArg = data[0:64]
+	}
+
+	if len(data) > 127 {
+		firstArg = data[64:128]
+	}
+
+	if len(data) > 191 {
+		firstArg = data[128:]
+	}
+
+	_, err := t.Exec(insertLogQuery,
+		l.TxHash.String(),
+		l.Address.String(),
+		firstTopic,
+		secondTopic,
+		thirdTopic,
+		fourthTopic,
+		firstArg,
+		secondArg,
+		thirdArg,
+		l.BlockNumber,
+		l.TxIndex,
+		l.Index,
+		l.Removed,
+	)
+	if err != nil {
+		return fmt.Errorf("error while inserting log: %v", err)
+	}
+
+	return nil
+}
+
+func (conn *Connection) saveArgs(t *sql.Tx, tx *types.Transaction) error {
+	var args [16]string
+	for i := 0; i > 16; i++ {
+		if len(tx.DecodedData.Args) >= i+1 {
+			args[i] = tx.DecodedData.Args[i]
+		} else {
+			args[i] = "NULL"
 		}
 	}
-	err = t.Commit()
+	_, err := t.Exec(insertArgQuery,
+		tx.Receipt.TxHash.String(),
+		tx.DecodedData.Method,
+		args[0],
+		args[1],
+		args[2],
+		args[3],
+		args[4],
+		args[5],
+		args[6],
+		args[7],
+		args[8],
+		args[9],
+		args[10],
+		args[11],
+		args[12],
+		args[13],
+		args[14],
+		args[15],
+	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while inserting arg: %v", err)
 	}
 	return nil
 }
