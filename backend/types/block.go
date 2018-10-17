@@ -56,13 +56,13 @@ type Block struct {
 func (b *Block) FillBlock(ctx context.Context, client blockchain.CustomEthereumClient, number *big.Int) error {
 	block, err := client.BlockByNumber(ctx, number)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to getting block: %v", err)
 	}
 	var transactions []*Transaction
 	for _, t := range block.Transactions() {
 		rec, err := client.GetTransactionReceipt(ctx, t.Hash())
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to getting transaction receipt: %v", err)
 		}
 		tx := &Transaction{
 			Receipt: rec,
