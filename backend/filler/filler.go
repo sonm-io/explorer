@@ -59,16 +59,11 @@ func (f *Filler) Start(ctx context.Context) error {
 				log.Printf("best known block: %d", f.state.bestBlock)
 
 				if f.state.bestBlock < f.state.lastBlock {
-					var intervalCount = 0
 					for i := f.state.bestBlock + 1; i < f.state.lastBlock; i++ {
-						intervalCount++
-						if intervalCount > 1000 {
-							done <- true
-							return
-						}
 						f.loadChan <- i
 					}
 				}
+				done <- true
 			}()
 		case <-done:
 			intervals, err := f.db.GetUnfilledIntervals()
