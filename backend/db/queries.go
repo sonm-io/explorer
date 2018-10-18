@@ -6,7 +6,7 @@ const selectUnfilledIntervalsQuery = `
 	SELECT number + 1 as start_interval, next_id - 1 as finish_interval
 	FROM (SELECT number, LEAD(number)OVER (ORDER BY number) AS next_id FROM blocks)T
 	WHERE number + 1 <> next_id
-	LIMIT 10000
+	LIMIT 1000
 	`
 
 const insertBlockQuery = `INSERT INTO blocks(
