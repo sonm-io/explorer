@@ -3,6 +3,7 @@ import * as React from "react";
 import Grid from "@material-ui/core/Grid/Grid";
 import Paper from "@material-ui/core/Paper/Paper";
 import {Link} from "react-router-dom";
+import {ENDPOINT} from "../../../App";
 import {Transaction as Tx} from "../../../types/Transaction";
 
 interface TransactionState {
@@ -30,7 +31,7 @@ class TransactionPage extends React.Component<any, TransactionState> {
     }
 
     private loadTransaction() {
-        const url = "http://127.0.0.1:3544/transactions?order=nonce&hash.eq" + this.state.txHash;
+        const url = ENDPOINT + "/transactions?order=nonce&hash.eq" + this.state.txHash;
         fetch(url)
             .then((response) => {
                 if (!response.ok) {

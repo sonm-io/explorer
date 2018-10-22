@@ -8,6 +8,7 @@ import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import {Link} from "react-router-dom";
+import {ENDPOINT} from "../../../App";
 import {Transaction} from "../../../types/Transaction";
 
 interface AddressState {
@@ -25,7 +26,7 @@ class AddressPage extends React.Component<any, AddressState> {
     } as AddressState;
 
     public componentDidMount() {
-        const url = "http://127.0.0.1:3544/transactions?select=*&limit=15&or=(from.eq." + this.state.address + ",to.eq." + this.state.address + ")&order=nonce.desc";
+        const url = ENDPOINT + "/transactions?select=*&limit=15&or=(from.eq." + this.state.address + ",to.eq." + this.state.address + ")&order=nonce.desc";
         console.log(url);
         fetch(url)
             .then((response) => {
