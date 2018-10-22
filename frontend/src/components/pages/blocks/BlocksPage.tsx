@@ -16,6 +16,7 @@ import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
 
 import {WithStyles} from "@material-ui/core";
+import {ENDPOINT} from "../../../App";
 
 interface BlocksState {
     blocks: Block[];
@@ -51,7 +52,7 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
         console.log(this.state);
         const offset = this.state.rowsPerPage * this.state.page;
         const limit = this.state.rowsPerPage;
-        const url = "http://127.0.0.1:3544/blocks?order=number.desc&limit=" + limit + "&offset=" + offset;
+        const url = ENDPOINT + "/blocks?order=number.desc&limit=" + limit + "&offset=" + offset;
         console.log(url);
         fetch(url)
             .then((res) => {

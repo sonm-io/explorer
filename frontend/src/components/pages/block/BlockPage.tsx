@@ -3,6 +3,7 @@ import * as React from "react";
 import Grid from "@material-ui/core/Grid/Grid";
 import Paper from "@material-ui/core/Paper/Paper";
 import {Link, withRouter} from "react-router-dom";
+import {ENDPOINT} from "../../../App";
 import {Block as B} from "../../../types/Block";
 
 interface BlockState {
@@ -30,7 +31,7 @@ class BlockPage extends React.PureComponent<any, BlockState> {
     }
 
     public loadBLock(number: string) {
-        const url = "http://127.0.0.1:3544/blocks?number=eq." + number;
+        const url = ENDPOINT + "/blocks?number=eq." + number;
         fetch(url)
             .then((response) => {
                 if (!response.ok) {
