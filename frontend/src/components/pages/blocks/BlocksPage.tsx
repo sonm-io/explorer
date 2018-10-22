@@ -87,8 +87,11 @@ class BlocksPage extends React.Component<WithStyles, BlocksState> {
         } as BlocksState, this.loadBlocks);
     }
 
-    public handleChangeRowsPerPage() {
-
+    public handleChangeRowsPerPage(event: any) {
+        this.setState({
+            rowsPerPage: event.target.value,
+            loading: false,
+        } as BlocksState, this.loadBlocks);
     }
 
     public render() {
