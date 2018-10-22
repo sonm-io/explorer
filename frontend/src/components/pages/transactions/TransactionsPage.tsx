@@ -78,8 +78,11 @@ class TransactionsPage extends React.Component<any, TransactionState> {
         } as TransactionState, this.loadTransactions);
     }
 
-    public handleChangeRowsPerPage() {
-
+    public handleChangeRowsPerPage(event: any) {
+        this.setState({
+            rowsPerPage: event.target.value,
+            loading: false,
+        } as TransactionState, this.loadTransactions);
     }
 
     public render() {
