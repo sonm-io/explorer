@@ -8,18 +8,12 @@ import (
 	"github.com/sonm-io/explorer/backend/filler"
 )
 
-var (
-	configFlag  string
-	versionFlag bool
-	appVersion  string
-)
-
 func main() {
-	cmd.NewCmd("filler", appVersion, &configFlag, &versionFlag, run).Execute()
+	cmd.NewCmd(run).Execute()
 }
 
-func run() error {
-	cfg, err := filler.NewConfig(configFlag)
+func run(app cmd.AppContext) error {
+	cfg, err := filler.NewConfig(app.ConfigPath)
 	if err != nil {
 		return fmt.Errorf("failed to parse config: %s", err)
 	}
