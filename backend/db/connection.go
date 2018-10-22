@@ -167,7 +167,7 @@ func (conn *Connection) saveTransaction(t *sql.Tx, block *types.Block, tx *types
 		block.Block.NumberU64(),
 		tx.Receipt.TransactionIndex,
 		tx.Receipt.From.String(),
-		source.To().String(),
+		tx.Receipt.To.String(),
 		source.Value().Uint64(),
 		source.Gas(),
 		source.GasPrice().Uint64(),
