@@ -15,7 +15,7 @@ class HomePage extends React.Component {
             >
                 <Grid item xs={3}>
                     <h1 style={{textAlign: "center"}}>
-                        SONM SE
+                        SONM Blockchain Explorer
                     </h1>
                     <SearchBar classes={{
                         search: "search",
