@@ -6,11 +6,14 @@ import {Link} from "react-router-dom";
 import {ENDPOINT} from "../../../App";
 import {Transaction as Tx} from "../../../types/Transaction";
 
+import ErrorForm from "../../errors/Error";
+import Loader from "../../loader/Loader";
+
 interface TransactionState {
     txHash: string;
     loading: boolean;
     transaction: Tx;
-    error?: never;
+    error?: string;
 }
 
 class TransactionPage extends React.Component<any, TransactionState> {
@@ -62,11 +65,15 @@ class TransactionPage extends React.Component<any, TransactionState> {
             );
         }
 
+        if (this.state.error != null) {
+            return (
+                <ErrorForm error={this.state.error}/>
+            );
+        }
+
         if (!this.state.loading) {
             return (
-                <Paper>
-                    <h1>Loading...</h1>
-                </Paper>
+                <Loader/>
             );
         }
 

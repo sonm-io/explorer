@@ -82,7 +82,7 @@ class SearchBar extends React.Component<WithStyles, SearchBarState> {
                     <Input
                         value={this.state.inputValue}
                         onChange={this.updateInputValue}
-                        placeholder="Search by address/TxHash"
+                        placeholder="Search by Address / TxHash / BlockNumber"
                         disableUnderline
                         classes={{
                             root: classes.inputRoot,
