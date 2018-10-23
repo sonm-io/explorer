@@ -7,6 +7,7 @@ import Header from "./components/header/Header";
 import AddressPage from "./components/pages/address/AddressPage";
 import BlockPage from "./components/pages/block/BlockPage";
 import BlocksPage from "./components/pages/blocks/BlocksPage";
+import ContractsPage from "./components/pages/contracts/ContractsPage";
 import HomePage from "./components/pages/home/HomePage";
 import TransactionPage from "./components/pages/transaction/TransactionPage";
 import TransactionsPage from "./components/pages/transactions/TransactionsPage";
@@ -28,6 +29,7 @@ class App extends React.Component {
                             <Route path="/transactions" component={TransactionsPage}/>
                             <Route path="/transaction/:txHash" component={TransactionPage}/>
                             <Route path="/address/:address" component={AddressPage}/>
+                            <Route path="/contracts" component={ContractsPage}/>
                             <Route path="*" component={NotFound}/>
                         </Switch>
                     </div>

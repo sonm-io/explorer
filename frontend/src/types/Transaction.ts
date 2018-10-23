@@ -13,4 +13,5 @@ export class Transaction {
     public v: string;
     public r: string;
     public s: string;
+    public status: boolean;
 }
