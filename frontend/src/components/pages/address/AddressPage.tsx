@@ -76,6 +76,9 @@ class AddressPage extends React.Component<any, AddressState> {
                                         <TableCell>{row.from}</TableCell>
                                         <TableCell>{row.from === this.state.address ? "out" : "in"}</TableCell>
                                         <TableCell>{row.to}</TableCell>
+                                        <TableCell>
+                                            {row.status ? "success" : "fail"}
+                                        </TableCell>
                                     </TableRow>
                                 );
                             })}

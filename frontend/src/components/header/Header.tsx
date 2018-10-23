@@ -27,6 +27,11 @@ class Header extends React.Component {
                                 Blocks
                             </NavButton>
                         </NavLink>
+                        <NavLink to="/contracts" style={{textDecoration: 'none'}}>
+                            <NavButton>
+                                Contracts
+                            </NavButton>
+                        </NavLink>
                         <SearchBar classes={{
                             search: "search",
                             searchIcon: "searchIcon",

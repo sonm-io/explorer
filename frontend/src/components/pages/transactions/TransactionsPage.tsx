@@ -109,6 +109,7 @@ class TransactionsPage extends React.Component<any, TransactionState> {
                         <TableCell>Block</TableCell>
                         <TableCell>From</TableCell>
                         <TableCell>To</TableCell>
+                        <TableCell>Status</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -126,6 +127,9 @@ class TransactionsPage extends React.Component<any, TransactionState> {
                                 </TableCell>
                                 <TableCell>
                                     <Link to={"/address/" + row.to}>{row.to}</Link>
+                                </TableCell>
+                                <TableCell>
+                                    {row.status ? "success" : "fail"}
                                 </TableCell>
                             </TableRow>
                         );
