@@ -5,11 +5,13 @@ import Paper from "@material-ui/core/Paper/Paper";
 import {Link, withRouter} from "react-router-dom";
 import {ENDPOINT} from "../../../App";
 import {Block as B} from "../../../types/Block";
+import ErrorForm from "../../errors/Error";
+import Loader from "../../loader/Loader";
 
 interface BlockState {
     block: B;
     loading: boolean;
-    error?: never;
+    error?: string;
 }
 
 class BlockPage extends React.PureComponent<any, BlockState> {
@@ -58,15 +60,20 @@ class BlockPage extends React.PureComponent<any, BlockState> {
     }
 
     public render() {
-        if ((this.state.error != null) || (this.state.block == null)) {
+        if (this.state.error != null) {
             return (
-                <h1>error - {this.state.error}</h1>
+                <ErrorForm error={this.state.error}/>
+            );
+        }
+        if (this.state.block == null) {
+            return (
+                <ErrorForm error={"Block not found"}/>
             );
         }
 
         if (!this.state.loading) {
             return (
-                <h1>Loading...</h1>
+                <Loader/>
             );
         }
 

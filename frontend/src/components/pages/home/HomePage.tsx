@@ -13,7 +13,7 @@ class HomePage extends React.Component {
                 justify="center"
                 style={{minHeight: '80vh'}}
             >
-                <Grid item xs={3}>
+                <Grid item xs={8}>
                     <h1 style={{textAlign: "center"}}>
                         SONM Blockchain Explorer
                     </h1>
@@ -24,7 +24,6 @@ class HomePage extends React.Component {
                         inputRoot: "inputRoot",
                     }}/>
                 </Grid>
-
             </Grid>
         );
     }
