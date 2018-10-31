@@ -34,7 +34,7 @@ func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
 	return &Filler{
 		client:   client,
 		db:       db,
-		loadChan: make(chan uint64, 500),
+		loadChan: make(chan uint64, 300),
 	}, nil
 }
 
@@ -76,7 +76,7 @@ func (f *Filler) Start(ctx context.Context) error {
 				for _, interval := range intervals {
 					for i := interval.Start; i <= interval.Finish; i++ {
 						intervalCount++
-						if intervalCount > 1000 {
+						if intervalCount > 200 {
 							done <- true
 							return
 						}
