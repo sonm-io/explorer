@@ -3,7 +3,7 @@ import * as React from "react";
 import Grid from "@material-ui/core/Grid/Grid";
 import Paper from "@material-ui/core/Paper/Paper";
 import {Link, withRouter} from "react-router-dom";
-import {ENDPOINT} from "../../../App";
+import {EndpointAddr} from "src/config";
 import {Block as B} from "../../../types/Block";
 import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
@@ -33,7 +33,7 @@ class BlockPage extends React.PureComponent<any, BlockState> {
     }
 
     public loadBLock(number: string) {
-        const url = ENDPOINT + "/blocks?number=eq." + number;
+        const url = EndpointAddr + "/blocks?number=eq." + number;
         fetch(url)
             .then((response) => {
                 if (!response.ok) {

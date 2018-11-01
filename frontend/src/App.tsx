@@ -13,8 +13,6 @@ import TransactionPage from "./components/pages/transaction/TransactionPage";
 import TransactionsPage from "./components/pages/transactions/TransactionsPage";
 import {theme} from "./theme";
 
-export const ENDPOINT = "http://127.0.0.1:3544";
-
 class App extends React.Component {
     public render() {
         return (

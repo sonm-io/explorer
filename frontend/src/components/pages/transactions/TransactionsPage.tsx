@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead/TableHead";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import {Link} from "react-router-dom";
-import {ENDPOINT} from "../../../App";
+import {EndpointAddr} from "src/config";
 import {Transaction as Tx} from "../../../types/Transaction";
 import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
@@ -49,7 +49,7 @@ class TransactionsPage extends React.Component<any, TransactionState> {
     public loadTransactions() {
         const limit = this.state.rowsPerPage;
         const offset = this.state.page * this.state.rowsPerPage;
-        const url = ENDPOINT + "/transactions?order=blockNumber.desc&limit=" + limit + "&offset=" + offset;
+        const url = EndpointAddr + "/transactions?order=blockNumber.desc&limit=" + limit + "&offset=" + offset;
         fetch(url)
             .then((response) => {
                 if (!response.ok) {
