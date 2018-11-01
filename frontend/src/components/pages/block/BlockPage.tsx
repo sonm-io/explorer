@@ -9,27 +9,31 @@ import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
 
 interface BlockState {
-    block: B;
+    blockNumber?: number;
+    block?: B;
     loading: boolean;
     error?: string;
 }
 
-class BlockPage extends React.PureComponent<any, BlockState> {
-    public state = {
-        block: new B(),
-        loading: false,
-    } as BlockState;
+class BlockPage extends React.Component<any, BlockState> {
 
-    public componentWillReceiveProps(props: any) {
-        this.setState({
-            loading: false,
-            block: new B(),
-        } as BlockState);
-        this.loadBLock(this.props.match.params.blockHash);
-    }
+    public state: BlockState = {
+        loading: true,
+    };
 
     public componentDidMount() {
         this.loadBLock(this.props.match.params.blockHash);
+    }
+
+    public shouldComponentUpdate(nextProps: any, nextState: BlockState) {
+        return this.state.blockNumber !== nextState.blockNumber;
+    }
+
+    public componentWillReceiveProps(nextProps: any) {
+        if (this.props.match.params.blockHash !== nextProps.match.params.blockHash) {
+            this.setState({ loading: true });
+            this.loadBLock(nextProps.match.params.blockHash);
+        }
     }
 
     public loadBLock(number: string) {
@@ -47,20 +51,21 @@ class BlockPage extends React.PureComponent<any, BlockState> {
                     throw new Error('block doesnt exist');
                 }
                 this.setState({
-                    loading: true,
+                    loading: false,
                     block: result[0],
-                } as BlockState);
+                    blockNumber: result[0].number,
+                });
             })
             .catch((err) => {
                 this.setState({
-                    loading: true,
+                    loading: false,
                     error: err,
-                } as BlockState);
+                });
             });
     }
 
     public render() {
-        if (this.state.error != null) {
+        if (this.state.error !== undefined) {
             return (
                 <ErrorForm error={this.state.error}/>
             );
@@ -71,7 +76,7 @@ class BlockPage extends React.PureComponent<any, BlockState> {
             );
         }
 
-        if (!this.state.loading) {
+        if (this.state.loading) {
             return (
                 <Loader/>
             );
