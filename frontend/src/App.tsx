@@ -19,7 +19,7 @@ class App extends React.Component {
     public render() {
         return (
             <MuiThemeProvider theme={theme}>
-                <Router forceRefresh={true}>
+                <Router>
                     <div className="App">
                         <Header/>
                         <Switch>
