@@ -2,7 +2,7 @@ package filler
 
 import (
 	"github.com/jinzhu/configor"
-	"github.com/sonm-io/explorer/backend/db"
+	"github.com/sonm-io/explorer/backend/storage"
 )
 
 type fillerConfig struct {
@@ -10,8 +10,8 @@ type fillerConfig struct {
 }
 
 type Config struct {
-	Filler   *fillerConfig `yaml:"filler" required:"true"`
-	Database *db.Config    `yaml:"database" required:"true"`
+	Filler   *fillerConfig   `yaml:"filler" required:"true"`
+	Database *storage.Config `yaml:"database" required:"true"`
 }
 
 func NewConfig(path string) (*Config, error) {

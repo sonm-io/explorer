@@ -1,4 +1,4 @@
-package db
+package storage
 
 import (
 	"database/sql"
@@ -10,7 +10,7 @@ import (
 	"math/big"
 )
 
-type Connection struct {
+type Storage struct {
 	db *sql.DB
 }
 
@@ -18,33 +18,27 @@ type Config struct {
 	User     string `yaml:"user" default:"app"`
 	Password string `yaml:"password" default:"app"`
 	Database string `yaml:"database" default:"app"`
+	Port     uint16 `yaml:"port" default:"5432"`
+	Host     string `yaml:"host" default:"localhost"`
 }
 
-func NewConnection(cfg *Config) (*Connection, error) {
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", cfg.User, cfg.Password, cfg.Database)
+func NewStorage(cfg *Config) (*Storage, error) {
+	connStr := getConnString(cfg.Database, cfg.User, cfg.Password, cfg.Host, cfg.Port)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
-	db.SetMaxOpenConns(500)
-	return &Connection{
+
+	return &Storage{
 		db: db,
 	}, nil
 }
 
-func (conn *Connection) DBConnection() *sql.DB {
-	return conn.db
-}
-
-func (conn *Connection) NewTransaction() (*sql.Tx, error) {
-	return conn.db.Begin()
-}
-
-func (conn *Connection) Close() error {
+func (conn *Storage) Close() error {
 	return conn.db.Close()
 }
 
-func (conn *Connection) GetBestBlock() (uint64, error) {
+func (conn *Storage) GetBestBlock() (uint64, error) {
 	rows, err := conn.db.Query(selectBestBlockQuery)
 	if err != nil {
 		return 0, err
@@ -60,14 +54,14 @@ func (conn *Connection) GetBestBlock() (uint64, error) {
 	return bestBlock, nil
 }
 
-func (conn *Connection) GetUnfilledIntervals() ([]types.Interval, error) {
+func (conn *Storage) GetUnfilledIntervals() ([]types.Interval, error) {
 	rows, err := conn.db.Query(selectUnfilledIntervalsQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var s []types.Interval
 
+	var s []types.Interval
 	for rows.Next() {
 		var t types.Interval
 		err := rows.Scan(&t.Start, &t.Finish)
@@ -80,12 +74,11 @@ func (conn *Connection) GetUnfilledIntervals() ([]types.Interval, error) {
 	if rows.Err() != nil {
 		return nil, rows.Err()
 	}
-
 	return s, nil
 }
 
-func (conn *Connection) ProcessBlock(block *types.Block) error {
-	t, err := conn.NewTransaction()
+func (conn *Storage) ProcessBlock(block *types.Block) error {
+	t, err := conn.db.Begin()
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %s", err)
 	}
@@ -115,6 +108,7 @@ func (conn *Connection) ProcessBlock(block *types.Block) error {
 			return fmt.Errorf("faile to save args: %v", err)
 		}
 	}
+
 	err = t.Commit()
 	if err != nil {
 		return fmt.Errorf("failed to complete database transaction: %v", err)
@@ -122,7 +116,11 @@ func (conn *Connection) ProcessBlock(block *types.Block) error {
 	return nil
 }
 
-func (conn *Connection) saveBlock(t *sql.Tx, block *types.Block) error {
+func (conn *Storage) processBlock() {
+
+}
+
+func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
 	bloom := common.Bytes2Hex(block.Block.Bloom().Bytes())
 
 	size := big.NewInt(0).SetUint64(uint64(block.Block.Size()))
@@ -155,7 +153,7 @@ func (conn *Connection) saveBlock(t *sql.Tx, block *types.Block) error {
 	return nil
 }
 
-func (conn *Connection) saveTransaction(t *sql.Tx, block *types.Block, tx *types.Transaction) error {
+func (conn *Storage) saveTransaction(t *sql.Tx, block *types.Block, tx *types.Transaction) error {
 	source := block.Block.Transaction(tx.Receipt.TxHash)
 	v, r, s := source.RawSignatureValues()
 	data := common.Bytes2Hex(source.Data())
@@ -182,7 +180,7 @@ func (conn *Connection) saveTransaction(t *sql.Tx, block *types.Block, tx *types
 	return nil
 }
 
-func (conn *Connection) saveLog(t *sql.Tx, l *eth.Log) error {
+func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
 	var firstTopic, secondTopic, thirdTopic, fourthTopic string
 
 	if len(l.Topics) > 0 {
@@ -235,7 +233,7 @@ func (conn *Connection) saveLog(t *sql.Tx, l *eth.Log) error {
 	return nil
 }
 
-func (conn *Connection) saveArgs(t *sql.Tx, tx *types.Transaction) error {
+func (conn *Storage) saveArgs(t *sql.Tx, tx *types.Transaction) error {
 	var args [16]string
 	for i := 0; i > 16; i++ {
 		if len(tx.DecodedData.Args) >= i+1 {

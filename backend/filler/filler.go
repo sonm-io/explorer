@@ -4,16 +4,17 @@ import (
 	"context"
 	"fmt"
 	"github.com/sonm-io/core/blockchain"
-	"github.com/sonm-io/explorer/backend/db"
+	"github.com/sonm-io/explorer/backend/storage"
 	"github.com/sonm-io/explorer/backend/types"
 	"log"
 	"math/big"
 	"sync"
+	"time"
 )
 
 type Filler struct {
 	client blockchain.CustomEthereumClient
-	db     *db.Connection
+	db     *storage.Storage
 
 	loadChan chan uint64
 
@@ -25,32 +26,43 @@ type Filler struct {
 	}
 }
 
-func NewFiller(cfg *Config, db *db.Connection) (*Filler, error) {
+func NewFiller(cfg *Config) (*Filler, error) {
 	client, err := blockchain.NewClient(cfg.Filler.Endpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := storage.NewStorage(cfg.Database)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Filler{
 		client:   client,
-		db:       db,
-		loadChan: make(chan uint64, 300),
+		db:       s,
+		loadChan: make(chan uint64, 100),
 	}, nil
 }
 
 func (f *Filler) Start(ctx context.Context) error {
 
-	done := make(chan bool)
-	go func() { done <- true }()
+	doneFill := make(chan bool)
+	doneIntervals := make(chan bool)
+	sem := make(chan struct{}, 50)
+	go func() { doneFill <- true }()
 
 	for {
 		select {
-		case <-done:
+		case <-doneFill:
 			go func() {
 				err := f.loadBestBlock()
 				if err != nil {
 					return
 				}
+
+				ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+				defer cancel()
+
 				err = f.loadLastBlock(ctx)
 				if err != nil {
 					return
@@ -63,29 +75,24 @@ func (f *Filler) Start(ctx context.Context) error {
 						f.loadChan <- i
 					}
 				}
-				done <- true
+				doneIntervals <- true
 			}()
-		case <-done:
-			intervals, err := f.db.GetUnfilledIntervals()
-			if err != nil {
-				return err
-			}
-
+		case <-doneIntervals:
 			go func() {
-				var intervalCount = 0
+				intervals, err := f.db.GetUnfilledIntervals()
+				if err != nil {
+					return
+				}
+
 				for _, interval := range intervals {
 					for i := interval.Start; i <= interval.Finish; i++ {
-						intervalCount++
-						if intervalCount > 200 {
-							done <- true
-							return
-						}
 						f.loadChan <- i
 					}
 				}
-				done <- true
+				doneFill <- true
 			}()
 		case number := <-f.loadChan:
+			sem <- struct{}{}
 			go func() {
 				block := &types.Block{}
 				err := block.FillBlock(ctx, f.client, big.NewInt(0).SetUint64(number))
@@ -101,9 +108,14 @@ func (f *Filler) Start(ctx context.Context) error {
 					return
 				}
 				log.Println("block saved: ", number)
+				<-sem
 			}()
 		}
 	}
+}
+
+func (f *Filler) Stop() {
+	defer f.db.Close()
 }
 
 func (f *Filler) loadLastBlock(ctx context.Context) error {

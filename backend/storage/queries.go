@@ -1,4 +1,4 @@
-package db
+package storage
 
 const selectBestBlockQuery = `SELECT coalesce(max(number), 0) AS bestBlock FROM blocks;`
 

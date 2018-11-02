@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/sonm-io/core/cmd"
-	"github.com/sonm-io/explorer/backend/db"
 	"github.com/sonm-io/explorer/backend/filler"
 )
 
@@ -15,21 +14,17 @@ func main() {
 func run(app cmd.AppContext) error {
 	cfg, err := filler.NewConfig(app.ConfigPath)
 	if err != nil {
-		return fmt.Errorf("failed to parse config: %s", err)
+		return fmt.Errorf("failed to load config file: %s", err)
 	}
 
-	database, err := db.NewConnection(cfg.Database)
-	if err != nil {
-		return err
-	}
-	defer database.Close()
-
-	f, err := filler.NewFiller(cfg, database)
+	f, err := filler.NewFiller(cfg)
 	if err != nil {
 		return fmt.Errorf("failed to create filler instance: %s", err)
 	}
 
-	if err := f.Start(context.TODO()); err != nil {
+	ctx := context.Background()
+
+	if err := f.Start(ctx); err != nil {
 		return fmt.Errorf("filler stoped occuring error: %s", err)
 	}
 

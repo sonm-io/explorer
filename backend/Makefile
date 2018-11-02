@@ -20,7 +20,7 @@ FILLER := ${TARGETDIR}/filler
 
 TAGS = nocgo
 
-all: fmt vet build
+all: fmt vet test build
 
 clean: clean/db
 
@@ -41,3 +41,11 @@ fmt:
 vet:
 	@echo "+ $@"
 	@go tool vet $(shell ls -1 -d */ | grep -v -e vendor)
+
+test:
+	@echo "+ $@"
+	${GO} test -tags nocgo $(shell go list ./...)
+
+coverage:
+	@echo "+ $@"
+	${GO} test -tags nocgo $(shell go list ./...) -coverprofile=coverage.out && ${GO} tool cover -html=coverage.out
