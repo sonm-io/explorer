@@ -8,7 +8,7 @@ import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import {Link} from "react-router-dom";
-import {ENDPOINT} from "../../../App";
+import {EndpointAddr} from "src/config";
 import {Transaction} from "../../../types/Transaction";
 
 import TableFooter from "@material-ui/core/TableFooter/TableFooter";
@@ -55,7 +55,7 @@ class AddressPage extends React.Component<any, AddressState> {
     public loadTransactions() {
         const limit = this.state.rowsPerPage;
         const offset = this.state.page * this.state.rowsPerPage;
-        const url = ENDPOINT + "/transactions?select=*&limit=" + limit + "&offset=" + offset + "&or=(from.eq." + this.state.address + ",to.eq." + this.state.address + ")&order=nonce.desc";
+        const url = EndpointAddr + "/transactions?select=*&limit=" + limit + "&offset=" + offset + "&or=(from.eq." + this.state.address + ",to.eq." + this.state.address + ")&order=nonce.desc";
         console.log(url);
         fetch(url)
             .then((response) => {
