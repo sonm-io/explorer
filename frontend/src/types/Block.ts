@@ -1,4 +1,4 @@
-export class Block {
+export class Block { // ToDo convert to interface
     public number: number;
     public hash: string;
     public parentHash: string;
