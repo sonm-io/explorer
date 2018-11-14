@@ -11,6 +11,7 @@ import ContractsPage from "./components/pages/contracts/ContractsPage";
 import HomePage from "./components/pages/home/HomePage";
 import TransactionPage from "./components/pages/transaction/TransactionPage";
 import TransactionsPage from "./components/pages/transactions/TransactionsPage";
+import TestPage from 'src/components/pages/test';
 import {theme} from "./theme";
 
 class App extends React.Component {
@@ -28,6 +29,7 @@ class App extends React.Component {
                             <Route path="/transaction/:txHash" component={TransactionPage}/>
                             <Route path="/address/:address" component={AddressPage}/>
                             <Route path="/contracts" component={ContractsPage}/>
+                            <Route path="/test" component={TestPage}/>
                             <Route path="*" component={NotFound}/>
                         </Switch>
                     </div>
