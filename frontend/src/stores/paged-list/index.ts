@@ -1,9 +1,9 @@
 import createStore, { Store } from 'unistore';
-import { IListState } from './list-types';
+import { IListState } from './types';
 
 type TFetch<TItem> = (page: number, pageSize: number) => Promise<TItem[]>;
 
-export const initStore = <TItem>(pageSize = 20, page = 1): Store<IListState<TItem>> => {
+const initStore = <TItem>(pageSize = 20, page = 1): Store<IListState<TItem>> => {
     const list: TItem[] = [];
     return createStore({
         list,
@@ -13,7 +13,7 @@ export const initStore = <TItem>(pageSize = 20, page = 1): Store<IListState<TIte
     });
 };
 
-export const initActions = <TItem>(fetch: TFetch<TItem>) =>
+const initActions = <TItem>(fetch: TFetch<TItem>) =>
     (store: Store<IListState<TItem>>) => ({
         changePageSize: async (_: any, pageSize: number): Promise<void> => {
             return new Promise<void>((resolve) => {
@@ -34,3 +34,8 @@ export const initActions = <TItem>(fetch: TFetch<TItem>) =>
             });
         },
     });
+
+export default {
+    initStore,
+    initActions,
+};

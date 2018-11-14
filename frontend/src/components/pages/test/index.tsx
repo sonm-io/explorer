@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Provider, connect } from 'unistore/react';
-import { IListState } from './list-types';
-import { initStore, initActions } from './list-store';
+import { IListState } from 'src/stores/paged-list/types';
+import PagedList from 'src/stores/paged-list';
 import { ITestItem, Test } from './TestPage';
 
 const list: ITestItem[] = Array.from(Array(55)).map((_, i) => ({
@@ -23,9 +23,9 @@ const fetch = async (page: number, pageSize: number) => {
     });
 };
 
-const store = initStore<ITestItem>();
+const store = PagedList.initStore<ITestItem>();
 
-const actions = initActions(fetch);
+const actions = PagedList.initActions(fetch);
 
 const TestPage = connect((s: IListState<ITestItem>, a: any) => ({...s, ...a}), actions)(Test);
 

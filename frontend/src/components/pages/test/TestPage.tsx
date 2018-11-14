@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IList } from './list-types';
+import { IList } from 'src/stores/paged-list/types';
 
 export interface ITestItem {
     name: string;
