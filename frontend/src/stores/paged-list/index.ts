@@ -1,7 +1,7 @@
 import createStore, { Store } from 'unistore';
 import { IListState } from './types';
 
-type TFetch<TItem> = (page: number, pageSize: number) => Promise<TItem[] | string>;
+export type TFetch<TItem> = (page: number, pageSize: number) => Promise<TItem[] | string>;
 
 const initStore = <TItem>(pageSize = 10, page = 1): Store<IListState<TItem>> => {
     const list: TItem[] = [];
