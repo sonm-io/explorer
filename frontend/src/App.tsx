@@ -6,7 +6,7 @@ import NotFound from "./components/errors/NotFound";
 import Header from "./components/header/Header";
 import AddressPage from "./components/pages/address/AddressPage";
 import BlockPage from "./components/pages/block/BlockPage";
-import BlocksPage from "./components/pages/blocks/BlocksPage";
+import BlocksPage from "./components/pages/blocks";
 import ContractsPage from "./components/pages/contracts/ContractsPage";
 import HomePage from "./components/pages/home/HomePage";
 import TransactionPage from "./components/pages/transaction/TransactionPage";
