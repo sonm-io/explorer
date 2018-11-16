@@ -5,11 +5,11 @@ interface IPageParams {
     limit: number;
 }
 
-const list = (queryTplFactory: (pageParams: IPageParams) => string) =>
+const list = (queryFactory: (pageParams: IPageParams) => string) =>
     async (page: number, pageSize: number) => {
         const offset = pageSize * page;
         const limit = pageSize;
-        const query = queryTplFactory({ offset, limit });
+        const query = queryFactory({ offset, limit });
         const url = `${EndpointAddr}/${query}`;
         console.log(url);
         return await fetch(url)
@@ -26,3 +26,6 @@ const list = (queryTplFactory: (pageParams: IPageParams) => string) =>
 
 export const blocks = list(({offset, limit}) =>
     `blocks?order=number.desc&limit=${limit}&offset=${offset}`);
+
+export const transactions = list(({offset, limit}) =>
+    `/transactions?order=blockNumber.desc&limit=${limit}&offset=${offset}`);

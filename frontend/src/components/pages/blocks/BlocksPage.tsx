@@ -23,11 +23,11 @@ export class BlocksPage extends React.Component<IList<Block>> {
         this.props.fetch(page);
     }
 
-    private handleChangeRowsPerPage = (event: any) => {
+    private handleChangePageSize = (event: any) => {
         this.props.changePageSize(event.target.value);
     }
 
-    private renderBlocks() {
+    private renderMain() {
         const p = this.props;
         return (
             <Table>
@@ -66,7 +66,7 @@ export class BlocksPage extends React.Component<IList<Block>> {
                             rowsPerPage={p.pageSize}
                             page={p.page}
                             onChangePage={this.handleChangePage}
-                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                            onChangeRowsPerPage={this.handleChangePageSize}
                             ActionsComponent={tablePaginationActionsWrapped}
                         />
                     </TableRow>
@@ -81,6 +81,6 @@ export class BlocksPage extends React.Component<IList<Block>> {
             ? <ErrorForm error={p.error}/>
             : p.loading
             ? <Loader/>
-            : this.renderBlocks();
+            : this.renderMain();
     }
 }

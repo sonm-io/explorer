@@ -10,7 +10,7 @@ import BlocksPage from "./components/pages/blocks";
 import ContractsPage from "./components/pages/contracts/ContractsPage";
 import HomePage from "./components/pages/home/HomePage";
 import TransactionPage from "./components/pages/transaction/TransactionPage";
-import TransactionsPage from "./components/pages/transactions/TransactionsPage";
+import TransactionsPage from "./components/pages/transactions";
 import TestPage from 'src/components/pages/test';
 import {theme} from "./theme";
 
