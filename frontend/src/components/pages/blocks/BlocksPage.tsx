@@ -15,7 +15,7 @@ import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
 
 import { Block } from 'src/types/Block';
-import { IList } from 'src/stores/paged-list/types';
+import { IList } from 'src/components/list';
 
 export class BlocksPage extends React.Component<IList<Block>> {
 
@@ -29,6 +29,7 @@ export class BlocksPage extends React.Component<IList<Block>> {
 
     private renderMain() {
         const p = this.props;
+
         return (
             <Table>
                 <TableHead>
@@ -77,6 +78,8 @@ export class BlocksPage extends React.Component<IList<Block>> {
 
     public render() {
         const p = this.props;
+        console.log('render BlocksPage');
+        console.log(p.list);
         return p.error !== undefined
             ? <ErrorForm error={p.error}/>
             : p.loading

@@ -29,3 +29,6 @@ export const blocks = list(({offset, limit}) =>
 
 export const transactions = list(({offset, limit}) =>
     `/transactions?order=blockNumber.desc&limit=${limit}&offset=${offset}`);
+
+export const transactionsByAddress = (address: string) => list(({offset, limit}) =>
+    `/transactions?select=*&limit=${limit}&offset=${offset}&or=(from.eq.${address},to.eq.${address})&order=nonce.desc`);

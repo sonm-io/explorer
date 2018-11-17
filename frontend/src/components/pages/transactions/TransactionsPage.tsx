@@ -12,9 +12,13 @@ import { Transaction } from "src/types/Transaction";
 import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
 import { tablePaginationActionsWrapped } from "../blocks/parts/TablePaginationActions"; // ToDo: why we use this generic component from blocks? possibly it must be extracted from blocks.
-import { IList } from 'src/stores/paged-list/types';
+import { IList } from 'src/components/list';
 
-export class TransactionsPage extends React.Component<IList<Transaction>, never> {
+export interface ITransactionsPageProps extends IList<Transaction> {
+    address?: string;
+}
+
+export class TransactionsPage extends React.Component<ITransactionsPageProps, never> {
 
     private handleChangePage = (event: any, page: number) => {
         this.props.fetch(page);
@@ -24,7 +28,7 @@ export class TransactionsPage extends React.Component<IList<Transaction>, never>
         this.props.changePageSize(event.target.value);
     }
 
-    private renderMain() {
+    private renderTable = () => {
         const p = this.props;
         return (
             <Table>
@@ -77,6 +81,23 @@ export class TransactionsPage extends React.Component<IList<Transaction>, never>
                     </TableRow>
                 </TableFooter>
             </Table>
+        );
+    }
+
+    private renderHeader = () => {
+        const p = this.props;
+        return (
+            <h1 style={{padding: 16}}>Address - {p.address}</h1>
+        );
+    }
+
+    private renderMain = () => {
+        const p = this.props;
+        return (
+            <div>
+                {p.address !== undefined ? this.renderHeader() : null}
+                {this.renderTable()}
+            </div>
         );
     }
 

@@ -1,19 +1,22 @@
-import { connect } from 'unistore/react';
-import PagedList, { TFetch } from 'src/stores/paged-list';
-import { IListState } from 'src/stores/paged-list/types';
+import * as unistore from 'unistore/react';
+import { Store } from 'unistore';
+import { PagedListActions, IPagedListCtl } from 'src/stores/paged-list';
+import { IListState, IListActions } from 'src/stores/paged-list';
 import createRoot from 'src/components/root';
+import { TCmpCtor } from 'src/types';
 
-type TCmpCtor<P={}, S={}> = new(props: P, context?: any) => React.Component<P, S>;
+export interface IList<TItem> extends IListState<TItem>, IListActions {}
 
-export const createListPage = <TItem>(Cmp: TCmpCtor, fetchData: TFetch<TItem>) => {
-    const store = PagedList.initStore<TItem>();
-    const actions = PagedList.initActions(fetchData);
-    const ConnectedCmp = connect((s: IListState<TItem>, a: any) => ({...s, ...a}), actions)(Cmp);
-    const boundActions = {
-        fetch: store.action(actions(store).fetch),
-    };
+export const connect = <TItem, P extends IList<TItem>>(
+        actions: (store: Store<IListState<TItem>>) => PagedListActions<TItem, IListState<TItem>>,
+        Cmp: TCmpCtor<P>
+    ) => unistore.connect((s: IListState<TItem>, a: any) => ({...s, ...a}), actions)(Cmp);
 
-    const fetch1stPage = () => boundActions.fetch(1);
-
-    return createRoot(store, ConnectedCmp, fetch1stPage);
+export const createListPage = <TItem, P extends IList<TItem>>(
+    Cmp: TCmpCtor<P>,
+    controller: IPagedListCtl<TItem>
+) => {
+    const ConnectedCmp = connect<TItem, IList<TItem>>(controller.actions, Cmp);
+    const fetch1stPage = () => controller.boundedActions.fetch && controller.boundedActions.fetch(1);
+    return createRoot(controller.store, ConnectedCmp, fetch1stPage);
 };
