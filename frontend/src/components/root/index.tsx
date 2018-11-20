@@ -19,13 +19,4 @@ const createRoot = (store: Store<{}>, Children: any, onDidMount?: () => void) =>
     }
 );
 
-// (
-//     <Root
-//         store={store}
-//         onDidMount={onDidMount}
-//     >
-//         {React.createElement(children)}
-//     </Root>
-// );
-
 export default createRoot;

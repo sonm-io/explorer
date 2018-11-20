@@ -1,5 +1,5 @@
 import createStore, { Store } from 'unistore';
-import { IController } from './common';
+import { IController, StoreActionsBase } from './common';
 
 export interface IListState<TItem> {
     list: TItem[];
@@ -39,11 +39,12 @@ export const initState = <TItem>(pageSize = 10, page = 1): IListState<TItem> => 
 export const initStore = <TItem>(pageSize = 10, page = 1): Store<IListState<TItem>> =>
     createStore(initState(pageSize, page));
 
-export class PagedListActions<TItem, TState extends IListState<TItem>> {
+export class PagedListActions<TItem, TState extends  IListState<TItem>> extends StoreActionsBase {
     constructor(
         fetchMethod: TFetchPage<TItem>,
         store: Store<TState>
     ) {
+        super();
         this.fetchMethod = fetchMethod;
         this.store = store;
     }
@@ -62,7 +63,7 @@ export class PagedListActions<TItem, TState extends IListState<TItem>> {
         const result = await this.fetchMethod(p, state.pageSize);
         console.log('PagedList / fetch');
         console.log(result);
-        const upd = typeof(result) === 'string'
+        const upd: Pick<IListState<TItem>, any> = typeof(result) === 'string'
             ? { error: undefined }
             : { list: result };
         const update: Pick<IListState<TItem>, 'loading'> = {
@@ -88,7 +89,9 @@ export const init = <TItem>(
         store,
         actions,
         boundedActions: {
-            fetch: (page?: number) => fetchAct(page),
+            fetch: (page?: number) => {
+                fetchAct(page);
+            },
         },
     };
 };
