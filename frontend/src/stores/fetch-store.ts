@@ -1,5 +1,4 @@
 import { Store } from 'unistore';
-import { StoreActionsBase } from './common';
 
 export interface IFetchState {
     isPending: boolean;
@@ -10,14 +9,13 @@ export class FetchActions<
     TState extends IFetchState,
     TFetchArgs extends [],
     TFetchResult
-> extends StoreActionsBase {
+> {
     constructor(
         store: Store<TState>,
         fetchMethod: (...args: TFetchArgs) => Promise<TFetchResult>,
         getArgs: (state: TState) => TFetchArgs,
         updateStore: (store: Store<TState>, result: TFetchResult) => void
     ) {
-        super();
         this.store = store;
         this.fetchMethod = fetchMethod;
         this.getArgs = getArgs;

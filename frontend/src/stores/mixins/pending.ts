@@ -1,43 +1,38 @@
-import { Ctor } from "src/types";
+import { Store } from "unistore";
 
-interface IPending {
-    pendingSet: Map<string, boolean>;
-    startPending: (name: string) => string;
-    stopPending: (name: string) => void;
+export interface IPending {
+    pendingSet: Map<number, boolean>;
 }
 
-export const Pending = <TBase extends Ctor>(Base: TBase) => {
-    return class PendingClass extends Base implements IPending {
-        private pendingIdx = 0;
-        public pendingSet = new Map<string, boolean>();
+let pendingIdx: number = 0;
 
-        public startPending = (name: string): string => {
-            const pendingId = `${name}_${this.pendingIdx++}`;
-            this.pendingSet.set(pendingId, true);
-            return pendingId;
-        }
-
-        public stopPending = (pendingId: string): void => {
-            this.pendingSet.delete(pendingId);
-        }
-    };
+const startPending = (store: Store<IPending>): number => {
+    const pendingId = pendingIdx++;
+    const state = store.getState();
+    const pendingSet = new Map(state.pendingSet);
+    pendingSet.set(pendingId, true);
+    store.setState({ pendingSet });
+    return pendingId;
 };
 
-export const pending = (
-    target: IPending,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
+const stopPending = (store: Store<IPending>, pendingId: number): void => {
+    const state = store.getState();
+    const pendingSet = new Map(state.pendingSet);
+    pendingSet.delete(pendingId);
+    console.log(state.pendingSet);
+    store.setState({ pendingSet });
+};
+
+export const pending = <T extends IPending>(
+    store: Store<T>,
+    asyncFn: (...args: any[]) => Promise<any>
 ) => {
-    const method = descriptor.value;
-
-    descriptor.value = async function(...args: any[]) {
-        const me = this as IPending;
-        const pendingId = me.startPending(propertyKey);
-
+    return async function(...args: any[]) {
+        const pendingId = startPending(store);
         try {
-            return await method.apply(me, args);
+            return await asyncFn.apply(this, args);
         } finally {
-            me.stopPending(pendingId);
+            stopPending(store, pendingId);
         }
     };
 };

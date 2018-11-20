@@ -79,10 +79,10 @@ export class BlocksPage extends React.Component<IList<Block>> {
     public render() {
         const p = this.props;
         console.log('render BlocksPage');
-        console.log(p.list);
+        console.log(p.pendingSet.size);
         return p.error !== undefined
             ? <ErrorForm error={p.error}/>
-            : p.loading
+            : p.pendingSet.size > 0
             ? <Loader/>
             : this.renderMain();
     }

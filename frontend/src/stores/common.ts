@@ -1,6 +1,4 @@
 import { Store, BoundAction } from "unistore";
-import { HandleErrors } from "./mixins/catch-errors";
-import { Pending } from "./mixins/pending";
 
 type TBoundActions<TActions> = {
     [K in keyof TActions]: BoundAction;
@@ -23,5 +21,3 @@ export const getBoundActions = <TState, TActions>(
         return acc;
     }, {} as TBoundActions<TActions>);
 };
-
-export const StoreActionsBase = HandleErrors(Pending(class {}));

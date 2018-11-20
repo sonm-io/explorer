@@ -1,17 +1,18 @@
 import createStore, { Store } from 'unistore';
 import { IController } from './common';
+import { pending, IPending } from './mixins/pending';
 
-export interface IListState<TItem> {
+export interface IListState<TItem> extends IPending {
     list: TItem[];
     error?: string;
-    loading: boolean;
+    loading: boolean; // ToDo: remove
     pageSize: number;
     page: number;
 }
 
-export interface IListActions {
-    changePageSize: (pageSize: number) => Promise<void>;
-    fetch: (page?: number) => Promise<void>;
+export interface IListActions<TItem> {
+    changePageSize: (state: IListState<TItem>, pageSize: number) => Promise<void>;
+    fetch: (state: IListState<TItem>, page?: number) => Promise<void>;
 }
 
 export type TFetchPage<TItem> = (page: number, pageSize: number) => Promise<TItem[] | string>;
@@ -22,13 +23,14 @@ export interface IPagedListBoundActions {
 
 export type IPagedListCtl<TItem> = IController<
     IListState<TItem>,
-    PagedListActions<TItem, IListState<TItem>>,
+    IListActions<TItem>,
     IPagedListBoundActions
 >;
 
 export const initState = <TItem>(pageSize = 10, page = 1): IListState<TItem> => {
     const list: TItem[] = [];
     return {
+        pendingSet: new Map<number, boolean>(),
         list,
         loading: false,
         pageSize,
@@ -39,43 +41,26 @@ export const initState = <TItem>(pageSize = 10, page = 1): IListState<TItem> => 
 export const initStore = <TItem>(pageSize = 10, page = 1): Store<IListState<TItem>> =>
     createStore(initState(pageSize, page));
 
-export class PagedListActions<TItem, TState extends  IListState<TItem>> {
-    constructor(
-        fetchMethod: TFetchPage<TItem>,
-        store: Store<TState>
-    ) {
-        this.fetchMethod = fetchMethod;
-        this.store = store;
-    }
-
-    protected fetchMethod: TFetchPage<TItem>;
-    protected store: Store<TState>;
-
-    public changePageSize = async (_: any, pageSize: number): Promise<void> => {
-        this.store.setState({ pageSize });
-        this.fetch(this.store.getState());
-    }
-
-    public fetch = async (state: IListState<TItem>, page?: number) => {
+const fetchPage = <TItem>(fetchMethod: TFetchPage<TItem>, store: Store<IListState<TItem>>) => {
+    const fn = async (state: IListState<TItem>, page?: number) => {
         const p = page === undefined ? 1 : page;
-        this.store.setState({ loading: true, page: p });
-        const result = await this.fetchMethod(p, state.pageSize);
-        console.log('PagedList / fetch');
-        console.log(result);
+        const result = await fetchMethod(p, state.pageSize);
         const upd: Pick<IListState<TItem>, any> = typeof(result) === 'string'
             ? { error: undefined }
             : { list: result };
-        const update: Pick<IListState<TItem>, 'loading'> = {
-            loading: false,
-            ...upd,
-        };
-        this.store.setState(update);
-    }
-}
+        store.setState(upd);
+    };
+    return pending(store, fn);
+};
 
 export const initActions = <TItem>(fetchMethod: TFetchPage<TItem>) =>
-    (store: Store<IListState<TItem>>) =>
-    new PagedListActions(fetchMethod, store);
+    (store: Store<IListState<TItem>>) => ({
+        changePageSize: async (_: any, pageSize: number): Promise<void> => {
+            store.setState({ pageSize });
+            fetchPage(fetchMethod, store)(store.getState());
+        },
+        fetch: fetchPage(fetchMethod, store),
+    });
 
 export const init = <TItem>(
     fetchMethod: TFetchPage<TItem>,

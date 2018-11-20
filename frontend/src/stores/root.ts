@@ -3,7 +3,7 @@
  */
 
 import * as Api from 'src/api';
-import * as PagedList from './paged-list';
+import * as PagedList from './paged-list2';
 import * as Transactions from './transactions-store';
 
 export default {
