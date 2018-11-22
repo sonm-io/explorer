@@ -13,7 +13,7 @@ const list = (queryFactory: (pageParams: IPageParams) => string) =>
         const url = `${EndpointAddr}/${query}`;
         console.log(url);
         await new Promise((resolve) => {
-            setTimeout(resolve, 2000);
+            setTimeout(resolve, 500);
         }); // ToDo: for testing purposes
         return await fetch(url)
             .then((res) => {

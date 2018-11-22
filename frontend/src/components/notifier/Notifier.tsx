@@ -22,22 +22,24 @@ export class Notifier extends React.Component<INotifierProps, INotificationState
         }));
     }
 
-    public render() {
+    public componentDidUpdate() {
         const { notifications, enqueueSnackbar, removeSnackbar } = this.props;
         const { displayed } = this.state;
-
-        notifications.forEach((notification: INotification) => {
-            setTimeout(() => {
-                // If notification already displayed, abort
-                if (displayed.indexOf(notification.key) > -1) { return; }
-                // Display notification using notistack
-                enqueueSnackbar(notification.message, notification.options);
-                // Add notification's key to the local state
-                this.storeDisplayed(notification.key);
-                // Dispatch action to remove the notification from the redux store
-                removeSnackbar(notification.key);
-            }, 1);
+        console.log('notifications:');
+        console.log(notifications);
+        (notifications || [] /* ToDo: remove it after rewrite transactions to new pagelist2 store */).forEach((notification: INotification) => {
+            // If notification already displayed, abort
+            if (displayed.indexOf(notification.key) > -1) { return; }
+            // Display notification using notistack
+            enqueueSnackbar(notification.message, notification.options);
+            // Add notification's key to the local state
+            this.storeDisplayed(notification.key);
+            // Dispatch action to remove the notification from store
+            removeSnackbar(notification.key);
         });
+    }
+
+    public render() {
         return null;
     }
 }

@@ -49,15 +49,21 @@ export const initState = <TItem>(pageSize = 10, page = 1): IListState<TItem> => 
 export const initStore = <TItem>(pageSize = 10, page = 1): Store<IListState<TItem>> =>
     createStore(initState(pageSize, page));
 
+let msgIdx = 0;
+const getNewMsg = () => ({
+    key: `msg_${++msgIdx}`,
+    message: `Message #${msgIdx}`,
+});
+
 const fetchPage = <TItem>(fetchMethod: TFetchPage<TItem>, store: Store<IListState<TItem>>) => {
     const fn = async (state: IListState<TItem>, page?: number) => {
         console.log(`page: ${page}`);
         const p = page === undefined ? 1 : page;
         const result = await fetchMethod(p, state.pageSize);
-        const notif = [...state.notifications];
         const upd: Pick<IListState<TItem>, any> = typeof(result) === 'string'
             ? { error: result }
-            : { list: result, page: p, notifications: notif };
+            : { list: result, page: p };
+        Notifications.actions(store).addSnackbar(state, getNewMsg().message);
         store.setState(upd);
     };
     return pending(store, fn);
