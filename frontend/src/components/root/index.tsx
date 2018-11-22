@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { Store } from 'unistore';
 import { Provider } from 'unistore/react';
+import { SnackbarProvider } from 'notistack';
+import notifier from 'src/components/notifier/';
+import notifyStore from 'src/stores/features/notifications';
+import NotifierCmp, {  } from 'src/components/notifier/Notifier';
+
+const Notifier = notifier.connect(notifyStore.actions, NotifierCmp);
 
 const createRoot = (store: Store<{}>, Children: any, onDidMount?: () => void) => (
     class Root extends React.Component {
@@ -11,9 +17,14 @@ const createRoot = (store: Store<{}>, Children: any, onDidMount?: () => void) =>
 
         public render() {
             return (
-                <Provider store={store}>
-                    <Children />
-                </Provider>
+                <SnackbarProvider maxSnack={3}>
+                    <Provider store={store}>
+                        <React.Fragment>
+                            <Notifier />
+                            <Children />
+                        </React.Fragment>
+                    </Provider>
+                </SnackbarProvider>
             );
         }
     }

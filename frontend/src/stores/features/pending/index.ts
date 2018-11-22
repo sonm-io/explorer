@@ -1,12 +1,12 @@
 import { Store } from "unistore";
 
-export interface IPending {
+export interface IPendingState {
     pendingSet: Map<number, boolean>;
 }
 
 let pendingIdx: number = 0;
 
-const startPending = (store: Store<IPending>): number => {
+const startPending = (store: Store<IPendingState>): number => {
     const pendingId = pendingIdx++;
     const state = store.getState();
     const pendingSet = new Map(state.pendingSet);
@@ -15,7 +15,7 @@ const startPending = (store: Store<IPending>): number => {
     return pendingId;
 };
 
-const stopPending = (store: Store<IPending>, pendingId: number): void => {
+const stopPending = (store: Store<IPendingState>, pendingId: number): void => {
     const state = store.getState();
     const pendingSet = new Map(state.pendingSet);
     pendingSet.delete(pendingId);
@@ -23,7 +23,7 @@ const stopPending = (store: Store<IPending>, pendingId: number): void => {
     store.setState({ pendingSet });
 };
 
-export const pending = <T extends IPending>(
+export const pending = <T extends IPendingState>(
     store: Store<T>,
     asyncFn: (...args: any[]) => Promise<any>
 ) => {
@@ -35,4 +35,8 @@ export const pending = <T extends IPending>(
             stopPending(store, pendingId);
         }
     };
+};
+
+export default {
+    initState: (): IPendingState => ({ pendingSet: new Map<number, boolean>() }),
 };

@@ -1,4 +1,4 @@
-import { Store, BoundAction } from "unistore";
+import createStore, { Store, BoundAction } from "unistore";
 
 type TBoundActions<TActions> = {
     [K in keyof TActions]: BoundAction;
@@ -8,6 +8,17 @@ export interface IController<TState, TActions, TBoundAct=TBoundActions<TActions>
     store: Store<TState>;
     actions: (store: Store<TState>) => TActions;
     boundedActions: TBoundAct;
+}
+
+// ToDo: Для фичи вместо getFeatureConfig удобнее иметь интерфейс с отдельными методами: initStore, initActions, getBoundedActions. Т.к. фичу может реализовывать другой store и его initStore должен вызвать initStore фичи.
+export interface IFeatureConfig<
+    TState,
+    TActions,
+    TBoundActions
+> {
+    initialState: TState;
+    actions: (store: Store<TState>) => TActions;
+    getBoundActions: (store: Store<TState>, actions: (store: Store<TState>) => TActions) => TBoundActions;
 }
 
 export const getBoundActions = <TState, TActions>(
@@ -20,4 +31,20 @@ export const getBoundActions = <TState, TActions>(
         acc[k] = act;
         return acc;
     }, {} as TBoundActions<TActions>);
+};
+
+export const mergeActions = (...factories: Array<(store:Store<any>)=>any>) => {
+    return (store: Store<any>) => Object.assign({}, ...factories.map((a) => a(store)));
+};
+
+export const initCtl = (...features: Array<IFeatureConfig<any, any, any>>) => {
+    const states = features.map((i) => i.initialState);
+    const store = createStore(Object.assign({}, ...states));
+    const actions = mergeActions(...features.map((i) => i.actions));
+    const boundedActions = Object.assign({}, features.map((f) => f.getBoundActions(store, actions)));
+    return {
+        store,
+        actions,
+        boundedActions,
+    };
 };
