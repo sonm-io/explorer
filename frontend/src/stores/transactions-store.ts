@@ -46,9 +46,9 @@ const initActions = (
 };
 
 const getBoundedActions = (
-        store: Store<ITransactionsState>,
-        actions: (store: Store<ITransactionsState>) => ITransactionsActions
-    ): ITransactionsBoundActs => ({
+    store: Store<ITransactionsState>,
+    actions: (store: Store<ITransactionsState>) => ITransactionsActions
+): ITransactionsBoundActs => ({
     changeAddress: store.action(actions(store).changeAddress),
     fetch: store.action(actions(store).fetch),
 });

@@ -5,7 +5,7 @@ interface IPageParams {
     limit: number;
 }
 
-const getlist = async (query: string) => {
+const fetchData = async (query: string) => {
     const url = `${EndpointAddr}/${query}`;
     console.log(url);
     await new Promise((resolve) => {
@@ -28,11 +28,13 @@ const list = (queryFactory: (pageParams: IPageParams) => string) =>
         const offset = pageSize * page;
         const limit = pageSize;
         const query = queryFactory({ offset, limit });
-        return getlist(query);
+        return fetchData(query);
     };
 
 export const blocks = list(({offset, limit}) =>
     `blocks?order=number.desc&limit=${limit}&offset=${offset}`);
+
+export const block = (num: string) => fetchData(`/blocks?number=eq.${num}`);
 
 export const transactions = (page: number, pageSize: number, address?: string) => {
     const offset = pageSize * page;
@@ -40,5 +42,7 @@ export const transactions = (page: number, pageSize: number, address?: string) =
     const query = address !== undefined
         ? `/transactions?select=*&limit=${limit}&offset=${offset}&or=(from.eq.${address},to.eq.${address})&order=nonce.desc`
         : `/transactions?order=blockNumber.desc&limit=${limit}&offset=${offset}`;
-    return getlist(query);
+    return fetchData(query);
 };
+
+export const transaction = (hash: string) => fetchData(`/transactions?order=nonce&hash.eq${hash}`);

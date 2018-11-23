@@ -10,9 +10,9 @@ export interface IList<TItem> extends IListState<TItem> {
 }
 
 export const connect = <TItem, P extends IList<TItem>>(
-        actions: (store: Store<IListState<TItem>>) => IListActions<TItem>,
-        Cmp: TCmpCtor<P>
-    ) => unistore.connect((s: IListState<TItem>, a: any) => ({...s, ...a}), actions)(Cmp);
+    actions: (store: Store<IListState<TItem>>) => IListActions<TItem>,
+    Cmp: TCmpCtor<P>
+) => unistore.connect((s: IListState<TItem>, a: any) => ({...s, ...a}), actions)(Cmp);
 
 export const createListPage = <TItem, P extends IList<TItem>>(
     Cmp: TCmpCtor<P>,

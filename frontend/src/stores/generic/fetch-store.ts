@@ -31,21 +31,21 @@ export const initState = () => ({
 });
 
 export const fetchData = <S extends IFetchState, A extends any[], R>(config: IFetchConfig<S,A,R>) =>
-(store: Store<S>) => {
-    const fn = async (state: S) => {
-        const fetchArgs = config.getArgs(state);
-        const result = await config.fetchMethod(...fetchArgs);
-        config.updateStore(store, result);
-        //ToDo: add here error handling
+    (store: Store<S>) => {
+        const fn = async (state: S) => {
+            const fetchArgs = config.getArgs(state);
+            const result = await config.fetchMethod(...fetchArgs);
+            config.updateStore(store, result);
+            //ToDo: add here error handling
+        };
+        return pending(store, fn);
     };
-    return pending(store, fn);
-};
 
 export const initActions = <S extends IFetchState, A extends any[], R>(config: IFetchConfig<S,A,R>) =>
-(store: Store<S>): IFetchActions<S> => ({
-    ...Notifications.actions(store),
-    fetch: fetchData(config)(store),
-});
+    (store: Store<S>): IFetchActions<S> => ({
+        ...Notifications.actions(store),
+        fetch: fetchData(config)(store),
+    });
 
 export const getBoundActs = <TState extends IFetchState>(
     store: Store<TState>,
