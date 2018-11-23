@@ -1,9 +1,8 @@
-import PagedList, { IListState, IListFetchConfig, IListBoundActs } from "./paged-list3";
+import PagedList, { IListState, IListFetchConfig, IListBoundActs, IListActions } from "./generic/paged-list";
 import { Transaction } from "src/types/Transaction";
 import { Store } from "unistore";
 import { IController } from './common';
 import createStore from 'unistore';
-import { IListActions } from "./paged-list2";
 
 // Interfaces
 

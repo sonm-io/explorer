@@ -1,6 +1,6 @@
 import * as unistore from 'unistore/react';
 import { Store } from 'unistore';
-import { IListCtl, IListState, IListActions } from 'src/stores/paged-list3';
+import { IListCtl, IListState, IListActions } from 'src/stores/generic/paged-list';
 import createRoot from 'src/components/root';
 import { TCmpCtor } from 'src/types';
 

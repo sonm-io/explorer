@@ -3,7 +3,7 @@
  */
 
 import * as Api from 'src/api';
-import PagedList from './paged-list3';
+import PagedList from './generic/paged-list';
 import Transactions from './transactions-store';
 import { Block } from 'src/types/Block';
 

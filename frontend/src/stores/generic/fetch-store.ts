@@ -1,7 +1,7 @@
 import { Store } from 'unistore';
-import { IPendingState } from './features/pending';
-import Pending, { pending } from './features/pending';
-import Notifications, { INotificationsState, INotificationsActions } from './features/notifications';
+import { IPendingState } from '../features/pending';
+import Pending, { pending } from '../features/pending';
+import Notifications, { INotificationsState, INotificationsActions } from '../features/notifications';
 
 export interface IFetchState extends IPendingState, INotificationsState {}
 

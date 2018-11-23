@@ -1,7 +1,7 @@
 import createStore, { Store } from 'unistore';
-import { IController } from './common';
+import { IController } from '../common';
 import Fetch, { IFetchState, IFetchConfig } from './fetch-store';
-import Notifications, { INotificationsActions } from './features/notifications';
+import Notifications, { INotificationsActions } from '../features/notifications';
 
 // Interfaces
 
