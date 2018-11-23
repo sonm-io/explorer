@@ -3,10 +3,11 @@
  */
 
 import * as Api from 'src/api';
-import * as PagedList from './paged-list2';
-import * as Transactions from './transactions-store';
+import PagedList from './paged-list3';
+import Transactions from './transactions-store';
+import { Block } from 'src/types/Block';
 
 export default {
-    transactions: Transactions.init(Api.transactions, Api.transactionsByAddress),
-    blocks: PagedList.init(Api.blocks),
+    transactions: Transactions.init(Api.transactions),
+    blocks: PagedList.initSimple<Block>(Api.blocks),
 };

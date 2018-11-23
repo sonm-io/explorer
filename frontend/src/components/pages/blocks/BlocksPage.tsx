@@ -11,7 +11,6 @@ import {tablePaginationActionsWrapped} from "./parts/TablePaginationActions";
 
 import {Link} from "react-router-dom";
 
-import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
 
 import { Block } from 'src/types/Block';
@@ -80,9 +79,7 @@ export class BlocksPage extends React.Component<IList<Block>> {
         const p = this.props;
         console.log('render BlocksPage');
         console.log(p.pendingSet.size);
-        return p.error !== undefined
-            ? <ErrorForm error={p.error}/>
-            : p.pendingSet.size > 0
+        return p.pendingSet.size > 0
             ? <Loader/>
             : this.renderMain();
     }

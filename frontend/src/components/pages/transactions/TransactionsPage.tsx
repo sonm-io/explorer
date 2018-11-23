@@ -9,7 +9,6 @@ import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import { Link } from "react-router-dom";
 import { Transaction } from "src/types/Transaction";
-import ErrorForm from "../../errors/Error";
 import Loader from "../../loader/Loader";
 import { tablePaginationActionsWrapped } from "../blocks/parts/TablePaginationActions"; // ToDo: why we use this generic component from blocks? possibly it must be extracted from blocks.
 import { IList } from 'src/components/list';
@@ -103,9 +102,7 @@ export class TransactionsPage extends React.Component<ITransactionsPageProps, ne
 
     public render() {
         const p = this.props;
-        return p.error !== undefined
-            ? <ErrorForm error={p.error}/>
-            : p.loading
+        return p.pendingSet.size > 0
             ? <Loader/>
             : this.renderMain();
     }

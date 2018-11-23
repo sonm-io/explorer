@@ -5,10 +5,10 @@ import Notifications, { INotificationsState, INotificationsActions } from './fea
 
 export interface IListState<TItem> extends IPendingState, INotificationsState {
     list: TItem[];
-    error?: string; // ToDo: remove
-    loading: boolean; // ToDo: remove
+    error?: string;
     pageSize: number;
     page: number;
+    loading: boolean; // ToDo: remove
 }
 
 export interface IListActions<TItem> extends INotificationsActions {
@@ -20,7 +20,7 @@ interface IBoundedActions {
     fetch: (page?: number) => void;
 }
 
-export type TFetchPage<TItem> = (page: number, pageSize: number) => Promise<TItem[] | string>;
+export type TFetchMethod<TItem> = (page: number, pageSize: number) => Promise<TItem[] | string>;
 
 export interface IPagedListBoundActions {
     fetch: (page?: number) => void;
@@ -32,7 +32,7 @@ export type IPagedListCtl<TItem> = IController<
     IPagedListBoundActions
 >;
 
-export const initState = <TItem>(pageSize = 10, page = 1): IListState<TItem> => {
+const initState = <TItem>(pageSize = 10, page = 1): IListState<TItem> => {
     const pendingState = Pending.initState();
     const notificationsState = Notifications.initState();
     const list: TItem[] = [];
@@ -46,7 +46,7 @@ export const initState = <TItem>(pageSize = 10, page = 1): IListState<TItem> => 
     };
 };
 
-export const initStore = <TItem>(pageSize = 10, page = 1): Store<IListState<TItem>> =>
+const initStore = <TItem>(pageSize = 10, page = 1): Store<IListState<TItem>> =>
     createStore(initState(pageSize, page));
 
 let msgIdx = 0;
@@ -55,7 +55,7 @@ const getNewMsg = () => ({
     message: `Message #${msgIdx}`,
 });
 
-const fetchPage = <TItem>(fetchMethod: TFetchPage<TItem>, store: Store<IListState<TItem>>) => {
+const fetchPage = <TItem>(fetchMethod: TFetchMethod<TItem>, store: Store<IListState<TItem>>) => {
     const fn = async (state: IListState<TItem>, page?: number) => {
         console.log(`page: ${page}`);
         const p = page === undefined ? 1 : page;
@@ -69,7 +69,7 @@ const fetchPage = <TItem>(fetchMethod: TFetchPage<TItem>, store: Store<IListStat
     return pending(store, fn);
 };
 
-export const initActions = <TItem>(fetchMethod: TFetchPage<TItem>) =>
+const initActions = <TItem>(fetchMethod: TFetchMethod<TItem>) =>
     (store: Store<IListState<TItem>>): IListActions<TItem> => ({
         ...Notifications.actions(store),
         changePageSize: async (_: any, pageSize: number): Promise<void> => {
@@ -79,7 +79,7 @@ export const initActions = <TItem>(fetchMethod: TFetchPage<TItem>) =>
         fetch: fetchPage(fetchMethod, store),
     });
 
-export const getBoundActions = <TItem>(
+const getBoundActions = <TItem>(
     store: Store<IListState<TItem>>,
     actions: (store: Store<IListState<TItem>>) => IListActions<TItem>
 ): IBoundedActions => {
@@ -99,7 +99,7 @@ export const getBoundActions = <TItem>(
 // });
 
 export const init = <TItem>(
-    fetchMethod: TFetchPage<TItem>,
+    fetchMethod: TFetchMethod<TItem>,
     pageSize?: number
 ): IPagedListCtl<TItem> => {
     const store = initStore<TItem>(pageSize);
@@ -109,4 +109,11 @@ export const init = <TItem>(
         actions,
         boundedActions: getBoundActions(store, actions),
     };
+};
+
+export default {
+    initState,
+    initStore,
+    initActions,
+    getBoundActions,
 };

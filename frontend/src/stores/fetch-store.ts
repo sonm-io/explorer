@@ -1,51 +1,62 @@
 import { Store } from 'unistore';
+import { IPendingState } from './features/pending';
+import Pending, { pending } from './features/pending';
+import Notifications, { INotificationsState, INotificationsActions } from './features/notifications';
 
-export interface IFetchState {
-    isPending: boolean;
-}
+export interface IFetchState extends IPendingState, INotificationsState {}
 
-// tslint:disable-next-line:max-classes-per-file
-export class FetchActions<
+export interface IFetchConfig<
     TState extends IFetchState,
-    TFetchArgs extends [],
+    TFetchArgs extends any[],
     TFetchResult
 > {
-    constructor(
-        store: Store<TState>,
-        fetchMethod: (...args: TFetchArgs) => Promise<TFetchResult>,
-        getArgs: (state: TState) => TFetchArgs,
-        updateStore: (store: Store<TState>, result: TFetchResult) => void
-    ) {
-        this.store = store;
-        this.fetchMethod = fetchMethod;
-        this.getArgs = getArgs;
-        this.updateStore = updateStore;
-    }
-
-    protected store: Store<TState>;
-    protected fetchMethod: (...args: TFetchArgs) => Promise<TFetchResult>;
-    protected getArgs: (state: TState) => TFetchArgs;
-    protected updateStore: (store: Store<TState>, result: TFetchResult) => void;
-
-    public fetch = async (state: TState) => {
-        this.store.setState({ isPending: true });
-        const fetchArgs = this.getArgs(state);
-        const result = await this.fetchMethod(...fetchArgs);
-        this.store.setState({ isPending: false });
-        this.updateStore(this.store, result);
-    }
+    fetchMethod: (...args: TFetchArgs) => Promise<TFetchResult>;
+    getArgs: (state: TState) => TFetchArgs;
+    updateStore: (store: Store<TState>, result: TFetchResult) => void;
 }
 
-export const initActions = async <
-        TState extends IFetchState,
-        TFetchArgs extends [],
-        TFetchResult
-    >(
-        fetchMethod: (...args: TFetchArgs) => Promise<TFetchResult>,
-        getArgs: (state: TState) => TFetchArgs,
-        updateStore: (store: Store<TState>, result: TFetchResult) => void
-    ) => (store: Store<TState>) => new FetchActions(store, fetchMethod, getArgs, updateStore);
+export interface IFetchActions<TState extends IFetchState> extends INotificationsActions {
+    fetch: (state: TState) => Promise<void>;
+}
 
 export interface IFetchBoundActs {
     fetch: () => void;
 }
+
+// Implementaion
+
+export const initState = () => ({
+    ...Pending.initState(),
+    ...Notifications.initState(),
+});
+
+export const fetchData = <S extends IFetchState, A extends any[], R>(config: IFetchConfig<S,A,R>) =>
+(store: Store<S>) => {
+    const fn = async (state: S) => {
+        const fetchArgs = config.getArgs(state);
+        const result = await config.fetchMethod(...fetchArgs);
+        config.updateStore(store, result);
+        //ToDo: add here error handling
+    };
+    return pending(store, fn);
+};
+
+export const initActions = <S extends IFetchState, A extends any[], R>(config: IFetchConfig<S,A,R>) =>
+(store: Store<S>): IFetchActions<S> => ({
+    ...Notifications.actions(store),
+    fetch: fetchData(config)(store),
+});
+
+export const getBoundActs = <TState extends IFetchState>(
+    store: Store<TState>,
+    actions: IFetchActions<TState>
+) => ({
+    fetch: store.action(actions.fetch),
+});
+
+export default {
+    initState,
+    initActions,
+    fetchData,
+    getBoundActs,
+};

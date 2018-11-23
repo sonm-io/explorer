@@ -1,6 +1,6 @@
 import * as unistore from 'unistore/react';
 import { Store } from 'unistore';
-import { IPagedListCtl, IListState, IListActions } from 'src/stores/paged-list2';
+import { IListCtl, IListState, IListActions } from 'src/stores/paged-list3';
 import createRoot from 'src/components/root';
 import { TCmpCtor } from 'src/types';
 
@@ -16,7 +16,7 @@ export const connect = <TItem, P extends IList<TItem>>(
 
 export const createListPage = <TItem, P extends IList<TItem>>(
     Cmp: TCmpCtor<P>,
-    controller: IPagedListCtl<TItem>
+    controller: IListCtl<TItem>
 ) => {
     const ConnectedCmp = connect<TItem, IList<TItem>>(controller.actions, Cmp);
     const fetch1stPage = () => controller.boundedActions.fetch && controller.boundedActions.fetch(1);

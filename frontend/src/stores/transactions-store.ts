@@ -1,73 +1,77 @@
-import * as PagedList from "./paged-list";
-import { PagedListActions, IListState, TFetchPage } from "./paged-list";
+import PagedList, { IListState, IListFetchConfig, IListBoundActs } from "./paged-list3";
 import { Transaction } from "src/types/Transaction";
 import { Store } from "unistore";
 import { IController } from './common';
+import createStore from 'unistore';
+import { IListActions } from "./paged-list2";
+
+// Interfaces
 
 export interface ITransactionsState extends IListState<Transaction> {
     address?: string;
 }
 
-interface ITransactionsBoundActs {
+export interface ITransactionsActions extends IListActions<Transaction> {
+    changeAddress: (state: ITransactionsState, address?: string) => Promise<void>;
+}
+
+export type TTransactionsFetch = (page: number, pageSize: number, address?: string) => Promise<Transaction[] | string>;
+
+interface ITransactionsFetchConfig extends IListFetchConfig<
+    Transaction,
+    [number, number, string | undefined],
+    Transaction[] | string
+> {}
+
+export interface ITransactionsBoundActs extends IListBoundActs {
     changeAddress: (address?: string) => void;
-    fetch: (page?: number) => void;
 }
 
-export class TransactionsActions extends PagedListActions<Transaction, ITransactionsState> {
-    constructor(
-        allTransactions: TFetchPage<Transaction>,
-        transactionsByAddress: (address: string) => TFetchPage<Transaction>,
-        store: Store<ITransactionsState>
-    ) {
-        super(allTransactions, store);
-        this.allTransactions = allTransactions;
-        this.transactionsByAddress = transactionsByAddress;
-    }
+export type ITransactionsCtl = IController<ITransactionsState, ITransactionsActions, ITransactionsBoundActs>;
 
-    private allTransactions: TFetchPage<Transaction>;
-    private transactionsByAddress: (address: string) => TFetchPage<Transaction>;
+// Implementation
 
-    public changeAddress = async (state: ITransactionsState, address?: string) => {
-        if (address === undefined) {
-            this.fetchMethod = this.allTransactions;
-        } else {
-            this.fetchMethod = this.transactionsByAddress(address);
-        }
-        this.store.setState({ address });
-        return this.fetch(state, 1);
-    }
-}
-
-const initStore: (pageSize?: number) => Store<ITransactionsState> = PagedList.initStore;
+const initState: (pageSize?: number, page?: number) => ITransactionsState = PagedList.initState;
 
 const initActions = (
-    all: TFetchPage<Transaction>,
-    byAddress: (address: string) => TFetchPage<Transaction>
-) =>
-    (store: Store<ITransactionsState>) =>
-        new TransactionsActions(all, byAddress, store);
+    config: ITransactionsFetchConfig
+) => {
+    const pagedListActionsFactory = PagedList.initActions(config);
+    return (store: Store<ITransactionsState>) => ({
+        ...pagedListActionsFactory(store),
+        changeAddress: async (state: ITransactionsState, address?: string) => {
+            store.setState({ address });
+            pagedListActionsFactory(store).fetch(state);
+        },
+    });
+};
 
 const getBoundedActions = (
         store: Store<ITransactionsState>,
-        actions: (store: Store<ITransactionsState>) => TransactionsActions
+        actions: (store: Store<ITransactionsState>) => ITransactionsActions
     ): ITransactionsBoundActs => ({
     changeAddress: store.action(actions(store).changeAddress),
     fetch: store.action(actions(store).fetch),
 });
 
-export type ITransactionsCtl = IController<ITransactionsState, TransactionsActions, ITransactionsBoundActs>;
-
 export const init = (
-    allTransactions: TFetchPage<Transaction>,
-    transactionsByAddress: (address: string) => TFetchPage<Transaction>,
-    pageSize?: number
+    fetchMethod: TTransactionsFetch
 ): ITransactionsCtl => {
-    const store = initStore(pageSize);
-    const actions = initActions(allTransactions, transactionsByAddress);
+    const store = createStore(initState());
+    const transFetchCfg: ITransactionsFetchConfig = {
+        fetchMethod,
+        getArgs: (state: ITransactionsState) => ([state.page, state.pageSize, state.address]),
+        updateStore: PagedList.updateListStore,
+    };
+    const actions = initActions(transFetchCfg);
 
     return {
         store,
         actions,
         boundedActions: getBoundedActions(store, actions),
     };
+};
+
+export default {
+    init,
 };
