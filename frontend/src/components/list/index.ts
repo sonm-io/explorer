@@ -20,6 +20,6 @@ export const createListPage = <TItem, P extends IList<TItem>>(
     controller: IFetchCtl<IListState<TItem>>
 ) => {
     const ConnectedCmp = connect<TItem, IList<TItem>>(controller.actions, Cmp);
-    const fetch1stPage = () => controller.boundedActions.update && controller.boundedActions.update({ page: 1 });
-    return createRoot(controller.store, ConnectedCmp, fetch1stPage);
+    // const fetch1stPage = () => controller.boundedActions.update && controller.boundedActions.update({ page: 1 });
+    return createRoot(controller.store, ConnectedCmp);
 };

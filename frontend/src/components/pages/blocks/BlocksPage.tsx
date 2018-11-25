@@ -77,8 +77,8 @@ export class BlocksPage extends React.Component<IList<Block>> {
 
     public render() {
         const p = this.props;
-        console.log('render BlocksPage');
-        console.log(p.pendingSet.size);
+        //console.log('render BlocksPage');
+        //console.log(p);
         return p.pendingSet.size > 0
             ? <Loader/>
             : this.renderMain();

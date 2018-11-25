@@ -51,9 +51,12 @@ export const initActions = <S extends IFetchState, A extends any[], R>(config: I
     (store: Store<S>): IFetchActions<S> => ({
         ...Notifications.actions(store),
         fetch: fetchData(config)(store),
-        update: async (state: S, upd: Pick<S, keyof S>) => {
+        update: async (_: S, upd: Pick<S, keyof S>) => {
+            //debugger;
+            console.log('update:');
+            console.log(upd);
             store.setState(upd);
-            fetchData(config)(store)(state);
+            fetchData(config)(store)(store.getState());
         },
     });
 

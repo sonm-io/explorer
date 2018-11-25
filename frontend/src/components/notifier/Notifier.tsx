@@ -25,8 +25,8 @@ export class Notifier extends React.Component<INotifierProps, INotificationState
     public componentDidUpdate() {
         const { notifications, enqueueSnackbar, removeSnackbar } = this.props;
         const { displayed } = this.state;
-        console.log('notifications:');
-        console.log(notifications);
+        //console.log('notifications:');
+        //console.log(notifications);
         (notifications || [] /* ToDo: remove it after rewrite transactions to new pagelist2 store */).forEach((notification: INotification) => {
             // If notification already displayed, abort
             if (displayed.indexOf(notification.key) > -1) { return; }

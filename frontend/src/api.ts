@@ -7,7 +7,7 @@ interface IPageParams {
 
 const fetchData = async (query: string) => {
     const url = `${EndpointAddr}/${query}`;
-    console.log(url);
+    //console.log(url);
     await new Promise((resolve) => {
         setTimeout(resolve, 500);
     }); // ToDo: for testing purposes

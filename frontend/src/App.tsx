@@ -32,7 +32,10 @@ class App extends React.Component {
                         <Header/>
                         <Switch>
                             <Route exact path="/" component={HomePage}/>
-                            <Route path="/blocks" component={BlocksLayout} />
+                            <Route path="/blocks" render={(p) => {
+                                RootStore.blocks.boundedActions.update({ page: 1 });
+                                return <BlocksLayout/>;
+                            }} />
                             <Route exact path="/block/:blockHash" render={(p) => {
                                 const id = p.match.params.blockHash;
                                 RootStore.block.boundedActions.update({ id });

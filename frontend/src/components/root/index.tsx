@@ -12,7 +12,6 @@ const Notifier = notifier.connect(notifyStore.actions, NotifierCmp);
 const createRoot = (store: Store<{}>, Children: any, onDidMount?: () => void) => (
     class Root extends React.Component {
         public componentDidMount() {
-            console.log('root: componentDidMount');
             onDidMount && onDidMount();
         }
 
