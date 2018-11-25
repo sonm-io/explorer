@@ -20,11 +20,11 @@ export interface ITransactionsPageProps extends IList<Transaction> {
 export class TransactionsPage extends React.Component<ITransactionsPageProps, never> {
 
     private handleChangePage = (event: any, page: number) => {
-        this.props.fetch(page);
+        this.props.update({page});
     }
 
     private handleChangePageSize = (event: any) => {
-        this.props.changePageSize(event.target.value);
+        this.props.update({ pageSize: event.target.value });
     }
 
     private renderTable = () => {

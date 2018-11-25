@@ -19,11 +19,11 @@ import { IList } from 'src/components/list';
 export class BlocksPage extends React.Component<IList<Block>> {
 
     private handleChangePage = (event: any, page: number) => {
-        this.props.fetch(page);
+        this.props.update({page});
     }
 
     private handleChangePageSize = (event: any) => {
-        this.props.changePageSize(event.target.value);
+        this.props.update({ pageSize: event.target.value });
     }
 
     private renderMain() {

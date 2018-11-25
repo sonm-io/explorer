@@ -15,13 +15,12 @@ import { WithParams } from "./components/pages/test/WithParam";
 import { createListPage } from 'src/components/list';
 // import RouterDebugger from 'src/components/RouterDebugger';
 import RootStore from 'src/stores/root';
-import * as Transactions from 'src/components/pages/transactions';
 import { createItemPage } from "./components/item";
 
 const BlockLayout = createItemPage(BlockPage, RootStore.block);
 const TransactionLayout = createItemPage(TransactionPage, RootStore.transaction);
 const BlocksLayout = createListPage(BlocksPage, RootStore.blocks);
-const TransactionsLayout = Transactions.createPage(TransactionsPage, RootStore.transactions);
+const TransactionsLayout = createListPage(TransactionsPage, RootStore.transactions);
 
 class App extends React.Component {
     public render() {
@@ -36,23 +35,23 @@ class App extends React.Component {
                             <Route path="/blocks" component={BlocksLayout} />
                             <Route exact path="/block/:blockHash" render={(p) => {
                                 const id = p.match.params.blockHash;
-                                RootStore.block.boundedActions.fetch(id);
+                                RootStore.block.boundedActions.update({ id });
                                 return <BlockLayout />;
                             }}/>
                             <Route path="/transactions" render={(p) => {
-                                RootStore.transactions.boundedActions.changeAddress();
+                                RootStore.transactions.boundedActions.update({ address: undefined });
                                 return <TransactionsLayout />;
                             }}/>
                             <Route path="/transaction/:txHash" render={(p) => {
                                 const id = p.match.params.txHash;
-                                RootStore.transaction.boundedActions.fetch(id);
+                                RootStore.transaction.boundedActions.update({ id });
                                 return <TransactionLayout />;
                             }}/>
                             <Route
                                 path="/address/:address"
                                 render={(p) => {
                                     const address: string = p.match.params.address;
-                                    RootStore.transactions.boundedActions.changeAddress(address);
+                                    RootStore.transactions.boundedActions.update({ address });
                                     return <TransactionsLayout />;
                                 }}
                             />
