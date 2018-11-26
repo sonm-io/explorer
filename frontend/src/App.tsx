@@ -11,7 +11,6 @@ import HomePage from "./components/pages/home/HomePage";
 import { TransactionPage } from "./components/pages/transaction/TransactionPage";
 import { TransactionsPage } from "./components/pages/transactions/TransactionsPage";
 import {theme} from "./theme";
-import { WithParams } from "./components/pages/test/WithParam";
 import { createListPage } from 'src/components/factories/list';
 // import RouterDebugger from 'src/components/RouterDebugger';
 import RootStore from 'src/stores/root';
@@ -59,15 +58,6 @@ class App extends React.Component {
                                 }}
                             />
                             <Route path="/contracts" component={ContractsPage}/>
-                            <Route
-                                path="/test-with-params/:name,:age"
-                                render={(p) =>
-                                    <WithParams
-                                        name={p.match.params.name}
-                                        age={p.match.params.age}
-                                    />
-                                }
-                            />
                             <Route path="*" component={NotFound}/>
                         </Switch>
                     </div>

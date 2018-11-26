@@ -1,4 +1,7 @@
+const reactDoc = require('library-utils/react-doc');
+
 module.exports = {
-    propsParser: require('react-docgen-typescript').parse,
-    webpackConfig: require('react-scripts-ts/config/webpack.config.dev')
+    propsParser: reactDoc, //require('react-docgen-typescript').parse,
+    webpackConfig: require('react-scripts-ts/config/webpack.config.dev'),
+    //components: 'src/components/**/[A-Z]*.js'
 }

@@ -18,7 +18,6 @@ export interface ITransactionsPageProps extends IList<Transaction> {
 }
 
 export class TransactionsPage extends PagedList<Transaction, ITransactionsPageProps> {
-
     private renderTable = () => {
         const p = this.props;
         return (
