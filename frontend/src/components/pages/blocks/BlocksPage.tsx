@@ -8,18 +8,14 @@ import TableHead from "@material-ui/core/TableHead/TableHead";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import {tablePaginationActionsWrapped} from "./parts/TablePaginationActions";
-
 import {Link} from "react-router-dom";
-
-import Loader from "src/components/elements/loader/Loader";
-
 import { Block } from 'src/types/Block';
 import { IList } from 'src/components/factories/list';
 import { PagedList } from "src/components/common/PagedList";
 
 export class BlocksPage extends PagedList<Block, IList<Block>> {
 
-    private renderMain() {
+    public render() {
         const p = this.props;
 
         return (
@@ -66,14 +62,5 @@ export class BlocksPage extends PagedList<Block, IList<Block>> {
                 </TableFooter>
             </Table>
         );
-    }
-
-    public render() {
-        const p = this.props;
-        //console.log('render BlocksPage');
-        //console.log(p);
-        return p.pendingSet.size > 0
-            ? <Loader/>
-            : this.renderMain();
     }
 }

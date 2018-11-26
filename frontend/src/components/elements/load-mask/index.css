@@ -1,0 +1,59 @@
+:root {
+    --load-mask-debounce-delay: 0.225s;
+}
+
+.load-mask {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 1;
+    z-index: var(--z-everest);
+    transition: opacity 0.5s var(--load-mask-debounce-delay);
+}
+
+.load-mask--region {
+  position: absolute;
+}
+
+.load-mask--top {
+  z-index: calc(var(--z-everest) + 1);
+}
+
+.load-mask--hidden {
+  z-index: -1;
+  opacity: 0;
+}
+
+.load-mask__pale {
+  opacity: 0.8;
+  background-color: var(--color-brand-bg);
+  cursor: progress;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.load-mask__pale--white {
+  opacity: 0.6;
+  background-color: var(--color-white);
+}
+
+.load-mask__spinner {
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+.load-mask__spinner--screen-center {
+  position: fixed;
+}
+
+.load-mask__spinner--region-center {
+  position: absolute;
+}
+

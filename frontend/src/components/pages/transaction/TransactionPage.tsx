@@ -4,7 +4,6 @@ import Grid from "@material-ui/core/Grid/Grid";
 import Paper from "@material-ui/core/Paper/Paper";
 import {Link} from "react-router-dom";
 import {Transaction} from "src/types/Transaction";
-import Loader from "src/components/elements/loader/Loader";
 import { IItemProps } from "src/components/factories/item";
 
 interface ITransactionPageProps extends IItemProps<Transaction> {}
@@ -59,10 +58,8 @@ export class TransactionPage extends React.Component<ITransactionPageProps, neve
 
     public render() {
         const p = this.props;
-        return p.pendingSet.size > 0
-            ? <Loader/>
-            : this.props.data !== undefined
-            ? this.renderMain(this.props.data)
+        return p.data !== undefined
+            ? this.renderMain(p.data)
             : null;
     }
 }

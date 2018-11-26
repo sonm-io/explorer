@@ -6,6 +6,7 @@ import notifier from 'src/components/elements/notifier/';
 import notifyStore from 'src/stores/features/notifications';
 import NotifierCmp, {  } from 'src/components/elements/notifier/Notifier';
 import Button from '@material-ui/core/Button';
+import { LoadMask } from 'src/components/elements/load-mask';
 
 const Notifier = notifier.connect(notifyStore.actions, NotifierCmp);
 
@@ -29,7 +30,9 @@ const createRoot = (store: Store<{}>, Children: any, onDidMount?: () => void) =>
                     <Provider store={store}>
                         <React.Fragment>
                             <Notifier />
-                            <Children />
+                            <LoadMask>
+                                <Children />
+                            </LoadMask>
                         </React.Fragment>
                     </Provider>
                 </SnackbarProvider>

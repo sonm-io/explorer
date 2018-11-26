@@ -1,0 +1,39 @@
+.spinner {
+  --spiner-size: 150px;
+  --spiner-size-half: calc(var(--spiner-size) / 2);
+  overflow: hidden;
+}
+
+.spinner__svg {
+  display: block;
+  background-size: contain;
+  height: var(--spiner-size);
+  width: var(--spiner-size);
+  margin: -1px;
+}
+
+.spinner__circle {
+  height: var(--spiner-size);
+  width: var(--spiner-size);
+  transform-origin: var(--spiner-size-half) var(--spiner-size-half);
+  opacity: 0.2;
+  animation: spinner-rotate 1s linear infinite;
+}
+
+.spinner__circle-path {
+  fill: var(--color-blue);
+}
+
+.spinner__circle:first-child {
+  opacity: 0.1;
+}
+
+.spinner__circle:last-child {
+  opacity: 0.3;
+}
+
+@keyframes spinner-rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
