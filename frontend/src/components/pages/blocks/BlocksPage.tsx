@@ -15,16 +15,9 @@ import Loader from "src/components/elements/loader/Loader";
 
 import { Block } from 'src/types/Block';
 import { IList } from 'src/components/factories/list';
+import { PagedList } from "src/components/common/PagedList";
 
-export class BlocksPage extends React.Component<IList<Block>> {
-
-    private handleChangePage = (event: any, page: number) => {
-        this.props.update({page});
-    }
-
-    private handleChangePageSize = (event: any) => {
-        this.props.update({ pageSize: event.target.value });
-    }
+export class BlocksPage extends PagedList<Block, IList<Block>> {
 
     private renderMain() {
         const p = this.props;
