@@ -2,8 +2,8 @@ import * as React from "react";
 import {BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
-import NotFound from "./components/errors/NotFound";
-import Header from "./components/header/Header";
+import NotFound from "./components/elements/errors/NotFound";
+import Header from "./components/elements/header/Header";
 import { BlockPage } from "./components/pages/block/BlockPage";
 import { BlocksPage } from "./components/pages/blocks/BlocksPage";
 import ContractsPage from "./components/pages/contracts/ContractsPage";
@@ -12,10 +12,10 @@ import { TransactionPage } from "./components/pages/transaction/TransactionPage"
 import { TransactionsPage } from "./components/pages/transactions/TransactionsPage";
 import {theme} from "./theme";
 import { WithParams } from "./components/pages/test/WithParam";
-import { createListPage } from 'src/components/list';
+import { createListPage } from 'src/components/factories/list';
 // import RouterDebugger from 'src/components/RouterDebugger';
 import RootStore from 'src/stores/root';
-import { createItemPage } from "./components/item";
+import { createItemPage } from "src/components/factories/item";
 
 const BlockLayout = createItemPage(BlockPage, RootStore.block);
 const TransactionLayout = createItemPage(TransactionPage, RootStore.transaction);

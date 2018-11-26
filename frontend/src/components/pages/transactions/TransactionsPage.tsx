@@ -9,9 +9,9 @@ import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import { Link } from "react-router-dom";
 import { Transaction } from "src/types/Transaction";
-import Loader from "../../loader/Loader";
+import Loader from "src/components/elements/loader/Loader";
 import { tablePaginationActionsWrapped } from "../blocks/parts/TablePaginationActions"; // ToDo: why we use this generic component from blocks? possibly it must be extracted from blocks.
-import { IList } from 'src/components/list';
+import { IList } from 'src/components/factories/list';
 
 export interface ITransactionsPageProps extends IList<Transaction> {
     address?: string;

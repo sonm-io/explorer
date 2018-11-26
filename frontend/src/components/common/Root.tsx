@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Store } from 'unistore';
 import { Provider } from 'unistore/react';
 import { SnackbarProvider } from 'notistack';
-import notifier from 'src/components/notifier/';
+import notifier from 'src/components/elements/notifier/';
 import notifyStore from 'src/stores/features/notifications';
-import NotifierCmp, {  } from 'src/components/notifier/Notifier';
+import NotifierCmp, {  } from 'src/components/elements/notifier/Notifier';
 import Button from '@material-ui/core/Button';
 
 const Notifier = notifier.connect(notifyStore.actions, NotifierCmp);

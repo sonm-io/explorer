@@ -4,8 +4,8 @@ import Grid from "@material-ui/core/Grid/Grid";
 import Paper from "@material-ui/core/Paper/Paper";
 import {Link} from "react-router-dom";
 import { Block } from "src/types/Block";
-import Loader from "../../loader/Loader";
-import { IItemProps } from "src/components/item";
+import Loader from "src/components/elements/loader/Loader";
+import { IItemProps } from "src/components/factories/item";
 
 interface IBlockPageProps extends IItemProps<Block> {}
 

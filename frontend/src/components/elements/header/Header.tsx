@@ -1,8 +1,8 @@
 import * as React from "react";
 
 import {NavLink} from "react-router-dom";
-import AppBar from "../../../node_modules/@material-ui/core/AppBar/AppBar";
-import Toolbar from "../../../node_modules/@material-ui/core/Toolbar/Toolbar";
+import AppBar from "@material-ui/core/AppBar/AppBar";
+import Toolbar from "@material-ui/core/Toolbar/Toolbar";
 import NavButton from "./parts/NavButton";
 import SearchBar from "./parts/SearchBar";
 

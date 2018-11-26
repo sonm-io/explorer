@@ -11,10 +11,10 @@ import {tablePaginationActionsWrapped} from "./parts/TablePaginationActions";
 
 import {Link} from "react-router-dom";
 
-import Loader from "../../loader/Loader";
+import Loader from "src/components/elements/loader/Loader";
 
 import { Block } from 'src/types/Block';
-import { IList } from 'src/components/list';
+import { IList } from 'src/components/factories/list';
 
 export class BlocksPage extends React.Component<IList<Block>> {
 
