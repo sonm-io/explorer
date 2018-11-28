@@ -10,7 +10,7 @@ import ContractsPage from "./components/pages/contracts/ContractsPage";
 import HomePage from "./components/pages/home/HomePage";
 import { TransactionPage } from "./components/pages/transaction/TransactionPage";
 import { TransactionsPage } from "./components/pages/transactions/TransactionsPage";
-import {theme} from "./theme";
+import { theme } from "./theme";
 import { createListPage } from 'src/components/factories/list';
 // import RouterDebugger from 'src/components/RouterDebugger';
 import RootStore from 'src/stores/root';
@@ -41,7 +41,7 @@ class App extends React.Component {
                                 return <BlockLayout />;
                             }}/>
                             <Route path="/transactions" render={(p) => {
-                                RootStore.transactions.boundedActions.update({ address: undefined });
+                                RootStore.transactions.boundedActions.update({ address: undefined, page: 1 });
                                 return <TransactionsLayout />;
                             }}/>
                             <Route path="/transaction/:txHash" render={(p) => {
@@ -53,7 +53,7 @@ class App extends React.Component {
                                 path="/address/:address"
                                 render={(p) => {
                                     const address: string = p.match.params.address;
-                                    RootStore.transactions.boundedActions.update({ address });
+                                    RootStore.transactions.boundedActions.update({ address, page: 1 });
                                     return <TransactionsLayout />;
                                 }}
                             />
