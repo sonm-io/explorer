@@ -8,9 +8,9 @@ interface IPageParams {
 const fetchData = async (query: string) => {
     const url = `${EndpointAddr}/${query}`;
     //console.log(url);
-    await new Promise((resolve) => {
-        setTimeout(resolve, 500);
-    }); // ToDo: for testing purposes
+    // await new Promise((resolve) => {
+    //     setTimeout(resolve, 500);
+    // }); // for testing purposes
     return await fetch(url)
         .then((res) => {
             if (!res.ok) {
@@ -23,6 +23,8 @@ const fetchData = async (query: string) => {
         });
 };
 
+const fetchItem = async (query: string) => fetchData(query).then((r) => r[0]);
+
 const list = (queryFactory: (pageParams: IPageParams) => string) =>
     async (page: number, pageSize: number) => {
         const offset = pageSize * page;
@@ -34,7 +36,7 @@ const list = (queryFactory: (pageParams: IPageParams) => string) =>
 export const blocks = list(({offset, limit}) =>
     `blocks?order=number.desc&limit=${limit}&offset=${offset}`);
 
-export const block = (num: string) => fetchData(`/blocks?number=eq.${num}`);
+export const block = (num: string) => fetchItem(`/blocks?number=eq.${num}`);
 
 export const transactions = (page: number, pageSize: number, address?: string) => {
     const offset = pageSize * page;
@@ -45,4 +47,4 @@ export const transactions = (page: number, pageSize: number, address?: string) =
     return fetchData(query);
 };
 
-export const transaction = (hash: string) => fetchData(`/transactions?order=nonce&hash.eq${hash}`);
+export const transaction = (hash: string) => fetchItem(`/transactions?order=nonce&hash.eq${hash}`);
