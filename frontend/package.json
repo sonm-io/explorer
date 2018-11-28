@@ -18,7 +18,9 @@
     "build": "./node_modules/.bin/react-scripts-ts build",
     "test": "./node_modules/.bin/react-scripts-ts test --env=jsdom --forceExit",
     "eject": "./node_modules/.bin/react-scripts-ts eject",
-    "lint": "./node_modules/.bin/tslint -p tsconfig.json"
+    "lint": "./node_modules/.bin/tslint -p tsconfig.json",
+    "sg": "./node_modules/.bin/styleguidist server",
+    "sg:build": "./node_modules/.bin/styleguidist build"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
