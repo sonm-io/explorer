@@ -1,3 +1,4 @@
+const path = require('path');
 const reactDoc = require('library-utils/react-doc');
 
 const components = {
@@ -28,4 +29,8 @@ module.exports = {
     webpackConfig: require('react-scripts-ts/config/webpack.config.dev'),
     //components: 'src/components/**/[A-Za-z]*.tsx'
     //components: flatten(components, '', []).map(i => `${i}/[A-Za-z]*.tsx`) // Comment this, if you want all components to be exposed to styleguidist
+    styleguideComponents: {
+        Wrapper: path.join(__dirname, 'src/styleguide/Wrapper'),
+        LogoRenderer: path.join(__dirname, 'src/styleguide/Logo')
+    }
 }
