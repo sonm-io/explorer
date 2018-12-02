@@ -3,10 +3,28 @@ import * as React from "react";
 import AppBar from "@material-ui/core/AppBar/AppBar";
 import Toolbar from "@material-ui/core/Toolbar/Toolbar";
 import NavButton from "./parts/NavButton";
-import SearchBar from "./parts/SearchBar";
-import { IHasNavigate } from "src/types";
+import SearchCmp, { TSearchCss } from "../search/Search";
+import { withStyles } from "@material-ui/core";
 
-class Header extends React.Component<IHasNavigate> {
+export interface IHeaderProps {
+    onNavigate: (path: string) => void;
+    onSearch: (value: string) => void;
+}
+
+const Search = withStyles<TSearchCss>((theme) => ({
+    root: {},
+    input: {
+        color: '#ffffff',
+        opacity: 0.5,
+        backgroundColor: '#102834',
+    },
+    magnifier: {
+        color: '#ffffff',
+        opacity: 0.5,
+    },
+}))(SearchCmp);
+
+export class Header extends React.Component<IHeaderProps> {
 
     private handleNavigate = (e: React.MouseEvent<HTMLButtonElement>) => {
         this.props.onNavigate(e.currentTarget.value);
@@ -14,7 +32,7 @@ class Header extends React.Component<IHasNavigate> {
 
     public render() {
         return (
-            <header className="App-header">
+            <header>
                 <AppBar position="static">
                     <Toolbar>
                         <NavButton onClick={this.handleNavigate} value="/">
@@ -29,17 +47,10 @@ class Header extends React.Component<IHasNavigate> {
                         <NavButton onClick={this.handleNavigate} value="/contracts">
                             Contracts
                         </NavButton>
-                        <SearchBar classes={{
-                            search: "search",
-                            searchIcon: "searchIcon",
-                            inputRoot: "inputRoot",
-                            inputInput: "inputInput",
-                        }}/>
+                        <Search onSubmit={this.props.onSearch}/>
                     </Toolbar>
                 </AppBar>
             </header>
         );
     }
 }
-
-export default Header;

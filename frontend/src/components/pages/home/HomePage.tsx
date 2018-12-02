@@ -1,8 +1,25 @@
 import Grid from "@material-ui/core/Grid/Grid";
 import * as React from "react";
-import SearchBar from "./parts/SearchBar";
+import SearchCmp, { TSearchCss } from "src/components/elements/search/Search";
+import { withStyles } from "@material-ui/core";
 
-class HomePage extends React.Component {
+interface IHomePageProps {
+    onSearch: (value: string) => void;
+}
+
+const Search = withStyles<TSearchCss>((theme) => ({
+    root: {
+        width: 640,
+    },
+    input: {
+        backgroundColor: '#ffffff',
+    },
+    magnifier: {
+        color: theme.palette.primary.main,
+    },
+}))(SearchCmp);
+
+export class HomePage extends React.Component<IHomePageProps> {
     public render() {
         return (
             <Grid
@@ -17,16 +34,9 @@ class HomePage extends React.Component {
                     <h1 style={{textAlign: "center"}}>
                         SONM Blockchain Explorer
                     </h1>
-                    <SearchBar classes={{
-                        search: "search",
-                        searchIcon: "searchIcon",
-                        inputInput: "inputInput",
-                        inputRoot: "inputRoot",
-                    }}/>
+                    <Search onSubmit={this.props.onSearch}/>
                 </Grid>
             </Grid>
         );
     }
 }
-
-export default HomePage;

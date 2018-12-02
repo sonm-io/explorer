@@ -1,17 +1,17 @@
 import * as React from "react";
 import { Route, Switch, RouteComponentProps, withRouter } from "react-router-dom";
 import NotFound from "./components/elements/errors/NotFound";
-import Header from "./components/elements/header/Header";
 import { BlockPage } from "./components/pages/block/BlockPage";
 import { BlocksPage } from "./components/pages/blocks/BlocksPage";
 import ContractsPage from "./components/pages/contracts/ContractsPage";
-import HomePage from "./components/pages/home/HomePage";
+import HomePage from "./components/pages/home";
 import { TransactionPage } from "./components/pages/transaction/TransactionPage";
 import { TransactionsPage } from "./components/pages/transactions/TransactionsPage";
 import { createListPage } from 'src/components/factories/list';
-// import RouterDebugger from 'src/components/RouterDebugger';
+import RouterDebugger from 'src/components/common/RouterDebugger';
 import RootStore from 'src/stores/root';
 import { createItemPage } from "src/components/factories/item";
+import Header from "./components/elements/header";
 
 const BlockLayout = createItemPage(BlockPage, RootStore.block);
 const TransactionLayout = createItemPage(TransactionPage, RootStore.transaction);
@@ -20,15 +20,11 @@ const TransactionsLayout = createListPage(TransactionsPage, RootStore.transactio
 
 class App extends React.Component<RouteComponentProps> {
 
-    private handleNavigate = (path: string) => {
-        this.props.history.push(path);
-    }
-
     public render() {
         return (
             <div className="App">
-                {/* <RouterDebugger/> */}
-                <Header onNavigate={this.handleNavigate}/>
+                <RouterDebugger/>
+                <Header />
                 <Switch>
                     <Route exact path="/" component={HomePage}/>
                     <Route path="/blocks" render={(p) => {
