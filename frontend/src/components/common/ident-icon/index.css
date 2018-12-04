@@ -1,0 +1,25 @@
+.sonm-ident-icon {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+
+.sonm-ident-icon__wrapper {
+    display: block;
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.sonm-ident-icon__canvas {
+}
+
+.sonm-ident-icon__icon-ether {
+    background: url('./icon-ether.svg') center no-repeat;
+    background-size: cover;
+}
+
+.sonm-ident-icon__icon-sonm {
+    background: url('./icon-sonm.svg') center no-repeat;
+    background-size: cover;
+}
