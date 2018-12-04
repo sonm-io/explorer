@@ -169,6 +169,22 @@ module.exports = {
               },
             ],
           },
+          {
+            issuer: /\.tsx/,
+            test: /\.svg$/,
+            use: [
+                'babel-loader',
+                {
+                    loader: 'react-svg-loader',
+                    options: {
+                        svgo: {
+                            plugins: [{ removeTitle: false }],
+                            floatPrecision: 2,
+                        },
+                    },
+                },
+            ],
+          },
           // The notation here is somewhat confusing.
           // "postcss" loader applies autoprefixer to our CSS.
           // "css" loader resolves paths in CSS and adds assets as dependencies.
