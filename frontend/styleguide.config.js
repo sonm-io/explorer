@@ -26,7 +26,7 @@ const flatten = (src, prefix, result) => {
 
 module.exports = {
     propsParser: reactDoc, //require('react-docgen-typescript').parse,
-    webpackConfig: require('react-scripts-ts/config/webpack.config.dev'),
+    webpackConfig: require('./config/webpack.config.dev'),
     //components: 'src/components/**/[A-Za-z]*.tsx'
     //components: flatten(components, '', []).map(i => `${i}/[A-Za-z]*.tsx`) // Comment this, if you want all components to be exposed to styleguidist
     styleguideComponents: {
