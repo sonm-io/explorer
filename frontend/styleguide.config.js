@@ -32,5 +32,6 @@ module.exports = {
     styleguideComponents: {
         Wrapper: path.join(__dirname, 'src/styleguide/Wrapper'),
         LogoRenderer: path.join(__dirname, 'src/styleguide/Logo')
-    }
+    },
+    serverPort: 6061
 }
