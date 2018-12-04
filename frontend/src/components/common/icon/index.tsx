@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import './index.less';
 
 // To get more icons go to: https://material.io/icons/
 export const icons: any = {
