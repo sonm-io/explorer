@@ -47,7 +47,7 @@
         "no-duplicate-variable": true,
         "no-empty": false,
         "no-eval": true,
-        "no-require-imports": true,
+        "no-require-imports": false,
         "no-string-literal": false,
         "no-switch-case-fall-through": false,
         "trailing-comma": [
