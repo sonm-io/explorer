@@ -63,6 +63,8 @@
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
     "@types/react-router-dom": "^4.3.0",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
     "library-utils": "^2.0.0",
     "react-docgen-typescript": "^1.12.2",
     "react-styleguidist": "^7.3.11",
