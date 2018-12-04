@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Store } from 'unistore';
 import { Provider } from 'unistore/react';
 import { SnackbarProvider } from 'notistack';
-import notifier from 'src/components/elements/notifier/';
+import notifier from 'src/components/common/notifier/';
 import notifyStore from 'src/stores/features/notifications';
-import NotifierCmp, {  } from 'src/components/elements/notifier/Notifier';
+import NotifierCmp, {  } from 'src/components/common/notifier/Notifier';
 import Button from '@material-ui/core/Button';
-import { LoadMask } from 'src/components/elements/load-mask';
+import { LoadMask } from 'src/components/common/load-mask';
 
 const Notifier = notifier.connect(notifyStore.actions, NotifierCmp);
 

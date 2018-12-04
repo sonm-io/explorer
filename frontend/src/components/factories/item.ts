@@ -1,6 +1,6 @@
 import * as unistore from 'unistore/react';
 import { Store } from 'unistore';
-import createRoot from 'src/components/common/Root';
+import createRoot from 'src/components/generic/Root';
 import { TCmpCtor } from 'src/types';
 import { IItemState } from 'src/stores/generic/item-store';
 import { IFetchActions, IFetchCtl } from 'src/stores/generic/fetch-store';

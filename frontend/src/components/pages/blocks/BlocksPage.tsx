@@ -11,7 +11,7 @@ import {tablePaginationActionsWrapped} from "./parts/TablePaginationActions";
 import {Link} from "react-router-dom";
 import { Block } from 'src/types/Block';
 import { IList } from 'src/components/factories/list';
-import { PagedList } from "src/components/common/PagedList";
+import { PagedList } from "src/components/generic/PagedList";
 
 export class BlocksPage extends PagedList<Block, IList<Block>> {
 

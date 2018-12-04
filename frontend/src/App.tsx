@@ -8,7 +8,7 @@ import HomePage from "./components/pages/home";
 import { TransactionPage } from "./components/pages/transaction/TransactionPage";
 import { TransactionsPage } from "./components/pages/transactions/TransactionsPage";
 import { createListPage } from 'src/components/factories/list';
-import RouterDebugger from 'src/components/common/RouterDebugger';
+import RouterDebugger from 'src/components/generic/RouterDebugger';
 import RootStore from 'src/stores/root';
 import { createItemPage } from "src/components/factories/item";
 import Header from "./components/elements/header";

@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { Transaction } from "src/types/Transaction";
 import { tablePaginationActionsWrapped } from "../blocks/parts/TablePaginationActions"; // ToDo: why we use this generic component from blocks? possibly it must be extracted from blocks.
 import { IList } from 'src/components/factories/list';
-import { PagedList } from "src/components/common/PagedList";
+import { PagedList } from "src/components/generic/PagedList";
 
 export interface ITransactionsPageProps extends IList<Transaction> {
     address?: string;
