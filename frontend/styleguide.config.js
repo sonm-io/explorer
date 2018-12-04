@@ -33,5 +33,8 @@ module.exports = {
         Wrapper: path.join(__dirname, 'src/styleguide/Wrapper'),
         LogoRenderer: path.join(__dirname, 'src/styleguide/Logo')
     },
+    require: [
+        path.join(__dirname, 'src/index.css')
+    ],
     serverPort: 6061
 }
