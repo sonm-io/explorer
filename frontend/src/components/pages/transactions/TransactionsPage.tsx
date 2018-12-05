@@ -7,100 +7,19 @@ import TableFooter from "@material-ui/core/TableFooter/TableFooter";
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import TableRow from "@material-ui/core/TableRow/TableRow";
-import {Link} from "react-router-dom";
-import {EndpointAddr} from "src/config";
-import {Transaction as Tx} from "../../../types/Transaction";
-import ErrorForm from "../../errors/Error";
-import Loader from "../../loader/Loader";
-import {tablePaginationActionsWrapped} from "../blocks/parts/TablePaginationActions";
+import { Link } from "react-router-dom";
+import { Transaction } from "src/types/Transaction";
+import { tablePaginationActionsWrapped } from "../blocks/parts/TablePaginationActions"; // ToDo: why we use this generic component from blocks? possibly it must be extracted from blocks.
+import { IList } from 'src/components/factories/list';
+import { PagedList } from "src/components/generic/PagedList";
 
-interface TransactionState {
-    transactions: Tx[];
-    loading: boolean;
-    error?: string;
-
-    page: number;
-    rowsPerPage: number;
+export interface ITransactionsPageProps extends IList<Transaction> {
+    address?: string;
 }
 
-const START_PAGE = 0;
-const DEFAULT_ROWS_PER_PAGE = 10;
-
-class TransactionsPage extends React.Component<any, TransactionState> {
-    constructor(props: any) {
-        super(props);
-
-        this.loadTransactions = this.loadTransactions.bind(this);
-        this.handleChangePage = this.handleChangePage.bind(this);
-        this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
-    }
-
-    public state = {
-        transactions: [],
-        loading: false,
-        page: START_PAGE,
-        rowsPerPage: DEFAULT_ROWS_PER_PAGE,
-    } as TransactionState;
-
-    public componentDidMount() {
-        this.loadTransactions();
-    }
-
-    public loadTransactions() {
-        const limit = this.state.rowsPerPage;
-        const offset = this.state.page * this.state.rowsPerPage;
-        const url = EndpointAddr + "/transactions?order=blockNumber.desc&limit=" + limit + "&offset=" + offset;
-        fetch(url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(response.statusText);
-                }
-                return response.json();
-            })
-            .then((result) => {
-                this.setState({
-                    transactions: result,
-                    loading: true,
-                } as TransactionState);
-            })
-            .catch((error) => {
-                this.setState({
-                    loading: true,
-                    error: error.toString(),
-                });
-            });
-    }
-
-    public handleChangePage(event: any, page: number) {
-        this.setState({
-            page,
-            loading: false,
-        } as TransactionState, this.loadTransactions);
-    }
-
-    public handleChangeRowsPerPage(event: any) {
-        this.setState({
-            rowsPerPage: event.target.value,
-            loading: false,
-        } as TransactionState, this.loadTransactions);
-    }
-
-    public render() {
-        const {page, rowsPerPage} = this.state;
-
-        if (this.state.error != null) {
-            const err = this.state.error.toString();
-            return (
-                <ErrorForm error={err}/>
-            );
-        }
-
-        if (!this.state.loading) {
-            return (
-                <Loader/>
-            );
-        }
-
+export class TransactionsPage extends PagedList<Transaction, ITransactionsPageProps> {
+    private renderTable = () => {
+        const p = this.props;
         return (
             <Table>
                 <TableHead>
@@ -113,7 +32,7 @@ class TransactionsPage extends React.Component<any, TransactionState> {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.state.transactions.map((row) => {
+                    {p.list.map((row) => {
                         return (
                             <TableRow key={row.hash}>
                                 <TableCell>
@@ -143,10 +62,10 @@ class TransactionsPage extends React.Component<any, TransactionState> {
                             // TODO: load state before & in time:
                             // колличество транзакций будет постоянно меняться
                             // при использовании offset на страницу будут догружаться
-                            rowsPerPage={rowsPerPage}
-                            page={page}
+                            rowsPerPage={p.pageSize}
+                            page={p.page}
                             onChangePage={this.handleChangePage}
-                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                            onChangeRowsPerPage={this.handleChangePageSize}
                             ActionsComponent={tablePaginationActionsWrapped}
                         />
                     </TableRow>
@@ -154,6 +73,21 @@ class TransactionsPage extends React.Component<any, TransactionState> {
             </Table>
         );
     }
-}
 
-export default TransactionsPage;
+    private renderHeader = () => {
+        const p = this.props;
+        return (
+            <h1 style={{padding: 16}}>Address - {p.address}</h1>
+        );
+    }
+
+    public render = () => {
+        const p = this.props;
+        return (
+            <div>
+                {p.address !== undefined ? this.renderHeader() : null}
+                {this.renderTable()}
+            </div>
+        );
+    }
+}

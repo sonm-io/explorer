@@ -1,4 +1,4 @@
-export class Transaction {
+export class Transaction { // ToDo convert to interface
     public hash: string;
     public nonce: number;
     public blockHash: string;
