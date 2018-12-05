@@ -1,7 +1,7 @@
 
 .PHONY: build node_modules
 
-all: node_modules lint build test
+all: node_modules lint test
 
 node_modules:
 	@echo "+ $@"
