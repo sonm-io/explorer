@@ -13,11 +13,13 @@ export class AddressInfo extends React.Component<IAddressInfoProps, never> {
         return (
             <div className="address-info">
                 <Address hash={p.address} />
-                <div className="address-info__transactions-count">
+                <div className="address-info__block">
                     <div className="address-info__label">
-
+                        Transactions
                     </div>
-                    {p.transactionsCount}
+                    <div className="address-info__value">
+                        {p.transactionsCount}
+                    </div>
                 </div>
             </div>
         );
