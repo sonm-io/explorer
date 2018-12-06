@@ -7,15 +7,16 @@ import TableFooter from "@material-ui/core/TableFooter/TableFooter";
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import TableRow from "@material-ui/core/TableRow/TableRow";
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { Link } from "react-router-dom";
 import { Transaction } from "src/types/Transaction";
 import { tablePaginationActionsWrapped } from "../blocks/parts/TablePaginationActions"; // ToDo: why we use this generic component from blocks? possibly it must be extracted from blocks.
-import { IList } from 'src/components/factories/list';
+import { IListProps } from 'src/components/factories/list';
 import { PagedList } from "src/components/generic/PagedList";
+import { ITransactions, TTransactionsShow } from "src/stores/transactions-store";
 
-export interface ITransactionsPageProps extends IList<Transaction> {
-    address?: string;
-}
+export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {}
 
 export class TransactionsPage extends PagedList<Transaction, ITransactionsPageProps> {
     private renderTable = () => {
@@ -81,11 +82,28 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
         );
     }
 
+    private handleChangeShow = (event: any, value: TTransactionsShow) => {
+        this.props.updateRoute({ show: value });
+    }
+
     public render = () => {
         const p = this.props;
         return (
             <div>
                 {p.address !== undefined ? this.renderHeader() : null}
+                <ToggleButtonGroup
+                    exclusive={true}
+                    value={p.show}
+                    onChange={this.handleChangeShow}
+                >
+                    <ToggleButton value="transactions">
+                        Transactions
+                    </ToggleButton>
+                    <ToggleButton value="token-trns">
+                        SONM token txns
+                    </ToggleButton>
+                </ToggleButtonGroup>
+
                 {this.renderTable()}
             </div>
         );
