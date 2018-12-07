@@ -247,7 +247,6 @@ github.com/sirupsen/logrus v1.0.6/go.mod h1:pMByvHTf9Beacp5x1UXfOR9xyW/9antXMhjM
 github.com/sirupsen/logrus v1.1.0/go.mod h1:zrgwTnHtNr00buQ1vSptGe8m1f/BbgsPukg8qsT7A+A=
 github.com/sonm-io/core v0.4.14-0.20181019185123-79e83556c3e9 h1:DVW5HQHoazgvMMf3A65jXFwAIxTr8LKcLCNwRFw3dkA=
 github.com/sonm-io/core v0.4.14-0.20181019185123-79e83556c3e9/go.mod h1:RZK6O0F5vsTQwo5KM0KXBimzQHOBOjEVDPd2MlBDZBA=
-github.com/sonm-io/explorer v0.0.0-20181106111612-0f1dc3496868 h1:o0f+VPhY1zGReHdtiCFQXfwOFothujzZ2RFspjSKL7s=
 github.com/spf13/afero v1.1.0/go.mod h1:j4pytiNVoe2o6bmDsKpLACNPDBIoEAkihy7loJ1B0CQ=
 github.com/spf13/cast v1.2.0/go.mod h1:r2rcYCSwa1IExKTDiTfzaxqT2FNHs8hODu4LnUfgKEg=
 github.com/spf13/cobra v0.0.0-20170731170427-b26b538f6930/go.mod h1:1l0Ry5zgKvJasoi3XT1TypsSe7PqH0Sj9dhYf7v3XqQ=
