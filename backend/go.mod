@@ -4,7 +4,6 @@ require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/Microsoft/go-winio v0.4.11 // indirect
 	github.com/aristanetworks/goarista v0.0.0-20181002214814-33151c4543a7 // indirect
-	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 // indirect
 	github.com/btcsuite/btcd v0.0.0-20181013004428-67e573d211ac // indirect
 	github.com/cespare/cp v0.1.0 // indirect
 	github.com/cnf/structhash v0.0.0-20180104161610-62a607eb0224 // indirect
@@ -13,9 +12,6 @@ require (
 	github.com/ethereum/go-ethereum v1.8.17
 	github.com/go-sql-driver/mysql v1.4.0 // indirect
 	github.com/gobuffalo/packr v1.19.0 // indirect
-	github.com/gogo/protobuf v1.1.1 // indirect
-	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
-	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/hashicorp/go-multierror v1.0.0 // indirect
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/huin/goupnp v1.0.0 // indirect
@@ -29,18 +25,11 @@ require (
 	github.com/onsi/ginkgo v1.6.0 // indirect
 	github.com/onsi/gomega v1.4.1 // indirect
 	github.com/opencontainers/runtime-spec v1.0.1 // indirect
-	github.com/opentracing/basictracer-go v1.0.0 // indirect
-	github.com/opentracing/opentracing-go v1.0.2 // indirect
 	github.com/pborman/uuid v1.2.0 // indirect
-	github.com/prometheus/client_golang v0.9.0 // indirect
 	github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910 // indirect
-	github.com/prometheus/common v0.0.0-20181020173914-7e9e6cabbd39 // indirect
-	github.com/prometheus/procfs v0.0.0-20181005140218-185b4288413d // indirect
-	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
 	github.com/rs/cors v1.6.0 // indirect
 	github.com/rubenv/sql-migrate v0.0.0-20181106121204-ba2c6a7295c5
-	github.com/sirupsen/logrus v1.0.6 // indirect
-	github.com/sonm-io/core v0.4.14-0.20181019185123-79e83556c3e9
+	github.com/sonm-io/core v0.4.18
 	github.com/stretchr/testify v1.2.2
 	github.com/syndtr/goleveldb v0.0.0-20181012014443-6b91fda63f2e // indirect
 	github.com/ziutek/mymysql v1.5.4 // indirect
@@ -52,10 +41,8 @@ require (
 	google.golang.org/appengine v1.2.0 // indirect
 	google.golang.org/genproto v0.0.0-20181016170114-94acd270e44e // indirect
 	google.golang.org/grpc v1.15.0 // indirect
-	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
-	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
 	gopkg.in/gorp.v1 v1.7.1 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 )

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/sonm-io/core/cmd"
 	"github.com/sonm-io/explorer/backend/filler"
+	"golang.org/x/sync/errgroup"
 )
 
 func main() {
@@ -24,8 +25,16 @@ func run(app cmd.AppContext) error {
 
 	ctx := context.Background()
 
-	if err := f.Start(ctx); err != nil {
-		return fmt.Errorf("filler stoped occuring error: %s", err)
+	wg, ctx := errgroup.WithContext(ctx)
+	wg.Go(func() error {
+		return cmd.WaitInterrupted(ctx)
+	})
+	wg.Go(func() error {
+		return f.Start(ctx)
+	})
+
+	if err := wg.Wait(); err != nil {
+		return fmt.Errorf("termination: %s", err)
 	}
 
 	return nil
