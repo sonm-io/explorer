@@ -53,6 +53,8 @@ func (f *Filler) Start(ctx context.Context) error {
 
 	for {
 		select {
+		case <-ctx.Done():
+			return ctx.Err()
 		case <-doneFill:
 			go func() {
 				err := f.loadBestBlock()
@@ -60,13 +62,14 @@ func (f *Filler) Start(ctx context.Context) error {
 					return
 				}
 
-				ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+				reqCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
 				defer cancel()
 
-				err = f.loadLastBlock(ctx)
+				err = f.loadLastBlock(reqCtx)
 				if err != nil {
 					return
 				}
+
 				log.Printf("last block: %d", f.state.lastBlock)
 				log.Printf("best known block: %d", f.state.bestBlock)
 
