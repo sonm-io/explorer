@@ -1,2 +1,0 @@
-
-    <DateTimePicker label="Date" />
