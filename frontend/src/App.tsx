@@ -46,10 +46,15 @@ class App extends React.Component<RouteComponentProps> {
                         return <TransactionLayout />;
                     }}/>
                     <Route
-                        path="/address/:address"
+                        path="/address/:address/:show?"
                         render={(p) => {
                             const address: string = p.match.params.address;
-                            RootStore.transactions.boundedActions.update({ address, page: 1 });
+                            const show = p.match.params.show;
+                            RootStore.transactions.boundedActions.update({
+                                address,
+                                page: 1,
+                                show: show || 'transactions',
+                            });
                             return <TransactionsLayout />;
                         }}
                     />

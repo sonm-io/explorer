@@ -10,10 +10,10 @@ import TableRow from "@material-ui/core/TableRow/TableRow";
 import {tablePaginationActionsWrapped} from "./parts/TablePaginationActions";
 import {Link} from "react-router-dom";
 import { Block } from 'src/types/Block';
-import { IList } from 'src/components/factories/list';
+import { IListProps } from 'src/components/factories/list';
 import { PagedList } from "src/components/generic/PagedList";
 
-export class BlocksPage extends PagedList<Block, IList<Block>> {
+export class BlocksPage extends PagedList<Block, IListProps<Block>> {
 
     public render() {
         const p = this.props;

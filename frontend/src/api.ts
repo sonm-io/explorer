@@ -38,7 +38,12 @@ export const blocks = list(({offset, limit}) =>
 
 export const block = (num: string) => fetchItem(`/blocks?number=eq.${num}`);
 
-export const transactions = (page: number, pageSize: number, address?: string) => {
+export const transactions = (
+    page: number,
+    pageSize: number,
+    show: string,
+    address?: string
+) => {
     const offset = pageSize * page;
     const limit = pageSize;
     const query = address !== undefined

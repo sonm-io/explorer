@@ -13,7 +13,7 @@ import createBrowserHistory from "history/createBrowserHistory";
 const history = createBrowserHistory();
 
 export default {
-    transactions: Transactions.init(Api.transactions),
+    transactions: Transactions.init(Api.transactions, history),
     transaction: ItemStore.init(Api.transaction),
     blocks: PagedList.initSimple<Block>(Api.blocks),
     block: ItemStore.init(Api.block),

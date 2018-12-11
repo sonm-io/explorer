@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { IList } from 'src/components/factories/list';
+import { IListProps } from 'src/components/factories/list';
 
-export class PagedList<TItem, TProps extends IList<TItem>> extends React.Component<TProps> {
+export class PagedList<TItem, TProps extends IListProps<TItem>> extends React.Component<TProps> {
     protected handleChangePage = (event: any, page: number) => {
         this.props.update({ page });
     }

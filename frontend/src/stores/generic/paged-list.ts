@@ -10,6 +10,7 @@ export interface IListState<TItem> extends IFetchState {
     page: number;
 }
 
+// ToDo: May be this interface is redunfant and should be removed.
 export interface IListFetchConfig<
     TItem,
     TFetchArgs extends any[],
