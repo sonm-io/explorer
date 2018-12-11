@@ -5,7 +5,7 @@ all: node_modules lint test
 
 node_modules:
 	@echo "+ $@"
-	@npm install
+	@npm ci
 
 lint:
 	@echo "+ $@"
