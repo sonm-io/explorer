@@ -116,10 +116,6 @@ func (conn *Storage) ProcessBlock(block *types.Block) error {
 	return nil
 }
 
-func (conn *Storage) processBlock() {
-
-}
-
 func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
 	bloom := common.Bytes2Hex(block.Block.Bloom().Bytes())
 
