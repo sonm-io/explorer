@@ -26,9 +26,10 @@ class ToggleButtonGroup extends React.Component<IToggleButtonGroupProps, never> 
         label: ''
     };
 
-    private renderItem = (value: string, caption: string) => {
+    private renderItem = (key: number, value: string, caption: string) => {
         return (
             <ToggleButton
+                key={key}
                 classes={ToggleButtonGroup.itemClasses}
                 value={value}
                 disableFocusRipple
@@ -47,14 +48,14 @@ class ToggleButtonGroup extends React.Component<IToggleButtonGroupProps, never> 
     }
 
     public render() {
-        const { items, className, onChange, ...p } = this.props;
+        const { items, onChange, valueRequired, ...p } = this.props;
         return (
             <Tbg
                 classes={ToggleButtonGroup.rootClasses}
                 {...p}
                 onChange={this.handleChange}
             >
-                {items.map(([value, caption]) => this.renderItem(value, caption))}
+                {items.map(([value, caption], i) => this.renderItem(i, value, caption))}
             </Tbg>
         );
     }
