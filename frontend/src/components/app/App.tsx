@@ -1,17 +1,18 @@
 import * as React from "react";
 import { Route, Switch, RouteComponentProps, withRouter } from "react-router-dom";
-import NotFound from "./components/elements/errors/NotFound";
-import { BlockPage } from "./components/pages/block/BlockPage";
-import { BlocksPage } from "./components/pages/blocks/BlocksPage";
-import ContractsPage from "./components/pages/contracts/ContractsPage";
-import HomePage from "./components/pages/home";
-import { TransactionPage } from "./components/pages/transaction/TransactionPage";
-import { TransactionsPage } from "./components/pages/transactions/TransactionsPage";
+import NotFound from "src/components/elements/errors/NotFound";
+import { BlockPage } from "src/components/pages/block/BlockPage";
+import { BlocksPage } from "src/components/pages/blocks/BlocksPage";
+import ContractsPage from "src/components/pages/contracts/ContractsPage";
+import HomePage from "src/components/pages/home";
+import { TransactionPage } from "src/components/pages/transaction/TransactionPage";
+import { TransactionsPage } from "src/components/pages/transactions/TransactionsPage";
 import { createListPage } from 'src/components/factories/list';
 import RouterDebugger from 'src/components/generic/RouterDebugger';
 import RootStore from 'src/stores/root';
 import { createItemPage } from "src/components/factories/item";
-import Header from "./components/elements/header";
+import Header from "src/components/elements/header";
+import './app.less';
 
 const BlockLayout = createItemPage(BlockPage, RootStore.block);
 const TransactionLayout = createItemPage(TransactionPage, RootStore.transaction);
@@ -22,7 +23,7 @@ class App extends React.Component<RouteComponentProps> {
 
     public render() {
         return (
-            <div className="App">
+            <div className="app">
                 <RouterDebugger/>
                 <Header />
                 <Switch>
