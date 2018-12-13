@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import JssProvider from 'react-jss/lib/JssProvider';
 import { create } from 'jss';
 import { createGenerateClassName, jssPreset } from '@material-ui/core/styles';
-import App from "./App";
+import App from "src/components/app/App";
 import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
 import { theme } from "./theme";
