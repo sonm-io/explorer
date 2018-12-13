@@ -14,7 +14,6 @@ class Component extends React.Component {
     }
     
     handleChange(value) {
-        console.log(value);
         this.setState({ value });
     }
 

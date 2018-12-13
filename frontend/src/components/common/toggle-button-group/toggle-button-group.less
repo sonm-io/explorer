@@ -2,24 +2,25 @@
 
 .toggle-button-group {
     display: inline-block;
-    border: 1px solid #675fda;
+    border: 1px solid @color-violet;
     border-radius: 0;
-
+    
     &__item {
-        color: rgba(0, 0, 0, 1);
+        color: @color-violet;
         text-transform: none;
         border-radius: 0;
+        font-weight: 400;
         
         &:after{
             opacity: 0;
         }
 
         &--selected {
-            color: rgba(255, 255, 255, 1);
-            background-color: #675fda;
+            color: white;
+            background-color: @color-violet;
 
             &:hover {
-                background-color: #675fda;
+                background-color: @color-violet;
             }
         }
     }
