@@ -36,7 +36,7 @@ const list = (queryFactory: (pageParams: IPageParams) => string) =>
 export const blocks = list(({offset, limit}) =>
     `blocks?order=number.desc&limit=${limit}&offset=${offset}`);
 
-export const block = (num: string) => fetchItem(`/blocks?number=eq.${num}`);
+export const block = (num: string) => fetchItem(`/blocks?number=eq.${num}&limit=1`);
 
 export const transactions = (
     page: number,
@@ -52,4 +52,4 @@ export const transactions = (
     return fetchData(query);
 };
 
-export const transaction = (hash: string) => fetchItem(`/transactions?order=nonce&hash.eq${hash}`);
+export const transaction = (hash: string) => fetchItem(`/transactions?hash=eq.${hash}&limit=1`);
