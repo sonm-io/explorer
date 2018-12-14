@@ -1,12 +1,11 @@
 import * as React from 'react';
 import './header.less';
+import { prefix } from 'src/utils/common';
 
 interface IHeaderProps {
     title: string;
     subtitle?: string;
 }
-
-const prefix = (prefix: string) => (value: string) => prefix + value;
 
 const css = prefix('header__');
 
