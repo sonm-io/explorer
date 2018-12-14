@@ -7,12 +7,12 @@ import notifyStore from 'src/stores/features/notifications';
 import NotifierCmp, {  } from 'src/components/common/notifier/Notifier';
 import Button from '@material-ui/core/Button';
 import { LoadMask } from 'src/components/common/load-mask';
-import './content-root.less';
+import RootContentContainer from '../root-content-container';
 
 const Notifier = notifier.connect(notifyStore.actions, NotifierCmp);
 
 const createRoot = (store: Store<{}>, Children: any, onDidMount?: () => void) => (
-    class ContentRoot extends React.Component {
+    class Root extends React.Component {
         public componentDidMount() {
             onDidMount && onDidMount();
         }
@@ -32,9 +32,9 @@ const createRoot = (store: Store<{}>, Children: any, onDidMount?: () => void) =>
                         <React.Fragment>
                             <Notifier />
                             <LoadMask>
-                                <div className="content-root">
+                                <RootContentContainer>
                                     <Children />
-                                </div>
+                                </RootContentContainer>
                             </LoadMask>
                         </React.Fragment>
                     </Provider>
