@@ -3,7 +3,7 @@
 ```js
 const AppBar = require('@material-ui/core/AppBar/AppBar').default;
 const Toolbar = require('@material-ui/core/Toolbar/Toolbar').default;
-const NavButton = require('../header/parts/NavButton').default;
+const NavButton = require('../page-header/parts/NavButton').default;
 <AppBar position="static">
     <Toolbar>
         <NavButton>Button</NavButton>

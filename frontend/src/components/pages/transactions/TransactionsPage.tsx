@@ -20,8 +20,9 @@ import DateTimePicker from 'src/components/common/datetime-picker';
 import { AddressInfo } from './parts/address-info';
 import InSvg from './parts/in.svg';
 import OutSvg from './parts/out.svg';
-import { isAddressExists as isContract } from 'src/types/Address';
+import { isAddressExists as isContract, definedAddresses } from 'src/types/Address';
 import './transactions-page.less';
+import Header from "src/components/common/header";
 
 export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {}
 
@@ -54,9 +55,6 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
 
     private renderTable = () => {
         const p = this.props;
-        console.log(ArrowForwardIcon);
-        console.log(InSvg);
-        console.log(OutSvg);
         return (
             <Table>
                 <TableHead>
@@ -114,11 +112,11 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
         );
     }
 
-    private renderAddressHeader = (header: string) => {
+    private renderAddressHeader = (header: string, description?: string) => {
         const p = this.props;
         return (
             <React.Fragment>
-                <h1>{header}</h1>
+                <Header title={header} subtitle={description} />
                 <AddressInfo address={p.address||''} transactionsCount={1000} />
             </React.Fragment>
         );
@@ -127,12 +125,10 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
     private renderHeader = () => {
         const address = this.props.address;
         return address === undefined
-            ? <h1>Transactions</h1>
-            : this.renderAddressHeader(
-                isContract(address)
-                    ? 'Contract details'
-                    : 'Address details'
-            );
+            ? <Header title="Transactions" />
+            : isContract(address)
+                ? this.renderAddressHeader('Contract details', definedAddresses[address].name)
+                : this.renderAddressHeader('Address details');
     }
 
     private handleChangeShow = (event: any, value: TTransactionsShow) => {
