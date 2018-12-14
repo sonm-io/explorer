@@ -13,11 +13,18 @@ import RootStore from 'src/stores/root';
 import { createItemPage } from "src/components/factories/item";
 import Header from "src/components/elements/header";
 import './app.less';
+import { RootContentContainer } from "src/components/generic/root-content-container";
 
 const BlockLayout = createItemPage(BlockPage, RootStore.block);
 const TransactionLayout = createItemPage(TransactionPage, RootStore.transaction);
 const BlocksLayout = createListPage(BlocksPage, RootStore.blocks);
 const TransactionsLayout = createListPage(TransactionsPage, RootStore.transactions);
+
+const ContractsPageLayout = () => (
+    <RootContentContainer>
+        <ContractsPage />
+    </RootContentContainer>
+);
 
 class App extends React.Component<RouteComponentProps> {
 
@@ -59,7 +66,7 @@ class App extends React.Component<RouteComponentProps> {
                             return <TransactionsLayout />;
                         }}
                     />
-                    <Route path="/contracts" component={ContractsPage}/>
+                    <Route path="/contracts" component={ContractsPageLayout}/>
                     <Route path="*" component={NotFound}/>
                 </Switch>
             </div>

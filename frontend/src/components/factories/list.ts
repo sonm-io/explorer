@@ -1,7 +1,7 @@
 import * as unistore from 'unistore/react';
 import { Store } from 'unistore';
 import { IListState } from 'src/stores/generic/paged-list';
-import createRoot from 'src/components/generic/content-root';
+import createRoot from 'src/components/generic/root';
 import { TCmpCtor } from 'src/types';
 import { IFetchActions, IFetchCtl, IFetchCmpActions } from 'src/stores/generic/fetch-store';
 
