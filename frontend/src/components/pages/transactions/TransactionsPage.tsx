@@ -23,12 +23,9 @@ import OutSvg from './parts/out.svg';
 import { isAddressExists as isContract, definedAddresses } from 'src/types/Address';
 import './transactions-page.less';
 import Header from "src/components/common/header";
+import { prefix } from "src/utils/common";
 
 export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {}
-
-const prefix = (prefix: string) => {
-    return (value: string) => prefix + value;
-};
 
 const css = prefix('transactions-page__');
 
