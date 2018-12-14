@@ -10,6 +10,7 @@ export type TTransactionsShow = 'transactions' | 'token-trns';
 export interface ITransactions {
     address?: string;
     show: TTransactionsShow;
+    date?: Date;
 }
 
 export interface ITransactionsState extends ITransactions, IListState<Transaction> {}
@@ -45,6 +46,7 @@ export const init = (
     const state: ITransactionsState = {
         ...PagedList.initState(),
         show: 'transactions',
+        date: undefined,
     };
     return Fetch.init(state, fetchConfig, history);
 };

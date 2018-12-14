@@ -29,4 +29,6 @@ Object.keys(definedAddresses).forEach((key) => {
     definedAddressesMap.push(value);
 });
 
+export const isAddressExists = (addr: string) => definedAddresses[addr] !== undefined;
+
 export {definedAddresses, definedAddressesMap};
