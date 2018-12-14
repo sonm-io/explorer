@@ -47,7 +47,6 @@ export class BlocksPage extends PagedList<Block, IListProps<Block>> {
                 <TableFooter>
                     <TableRow>
                         <TablePagination
-                            colSpan={3}
                             count={2000000}
                             // TODO: load state before & in time:
                             // колличество блоков будет постоянно меняться
