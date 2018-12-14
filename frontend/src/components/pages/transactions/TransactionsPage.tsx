@@ -2,7 +2,7 @@ import * as React from "react";
 
 import Table from "@material-ui/core/Table/Table";
 import TableBody from "@material-ui/core/TableBody/TableBody";
-import TableCell from "@material-ui/core/TableCell";
+import TableCell from "src/components/common/table-cell";
 import TableFooter from "@material-ui/core/TableFooter/TableFooter";
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
@@ -61,22 +61,22 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell className={css('cell')}>TxHash</TableCell>
-                        <TableCell className={css('cell')}>Block</TableCell>
+                        <TableCell>TxHash</TableCell>
+                        <TableCell>Block</TableCell>
                         <TableCell className={css('cell-from')}>From</TableCell>
                         <TableCell className={css('cell-arrow')}></TableCell>
                         <TableCell className={css('cell-to')}>To</TableCell>
-                        <TableCell className={css('cell')}>Status</TableCell>
+                        <TableCell>Status</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {p.list.map((row) => {
                         return (
                             <TableRow key={row.hash}>
-                                <TableCell className={css('cell')}>
+                                <TableCell>
                                     <Link to={"/transaction/" + row.hash}>{row.hash}</Link>
                                 </TableCell>
-                                <TableCell className={css('cell')}>
+                                <TableCell>
                                     <Link to={"/block/" + row.blockHash}>{row.blockNumber}</Link>
                                 </TableCell>
                                 <TableCell className={css('cell-from')}>
@@ -88,7 +88,7 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                                 <TableCell className={css('cell-to')}>
                                     {this.renderAddress(row.to)}
                                 </TableCell>
-                                <TableCell className={css('cell')}>
+                                <TableCell>
                                     {row.status ? "success" : "fail"}
                                 </TableCell>
                             </TableRow>

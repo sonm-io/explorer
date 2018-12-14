@@ -3,9 +3,9 @@ import * as React from "react";
 import Grid from "@material-ui/core/Grid/Grid";
 import Table from "@material-ui/core/Table/Table";
 import TableBody from "@material-ui/core/TableBody/TableBody";
-import TableCell from "@material-ui/core/TableCell/TableCell";
+import TableCell from "src/components/common/table-cell";
 import TableRow from "@material-ui/core/TableRow/TableRow";
-import {Link} from "react-router-dom";
+import {Link} from "src/components/common/link";
 import {definedAddressesMap} from "../../../types/Address";
 
 class ContractsPage extends React.Component {
