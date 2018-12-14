@@ -2,53 +2,93 @@ import * as React from "react";
 
 import Table from "@material-ui/core/Table/Table";
 import TableBody from "@material-ui/core/TableBody/TableBody";
-import TableCell from "@material-ui/core/TableCell/TableCell";
+import TableCell from "@material-ui/core/TableCell";
 import TableFooter from "@material-ui/core/TableFooter/TableFooter";
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import TableRow from "@material-ui/core/TableRow/TableRow";
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import { Link } from "react-router-dom";
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import { Link } from "src/components/common/link";
 import { Transaction } from "src/types/Transaction";
 import { tablePaginationActionsWrapped } from "../blocks/parts/TablePaginationActions"; // ToDo: why we use this generic component from blocks? possibly it must be extracted from blocks.
 import { IListProps } from 'src/components/factories/list';
 import { PagedList } from "src/components/generic/PagedList";
 import { ITransactions, TTransactionsShow } from "src/stores/transactions-store";
+import { Toolbar } from "@material-ui/core";
+import ToggleButtonGroup from 'src/components/common/toggle-button-group';
+import DateTimePicker from 'src/components/common/datetime-picker';
+import { AddressInfo } from './parts/address-info';
+import InSvg from './parts/in.svg';
+import OutSvg from './parts/out.svg';
+import { isAddressExists as isContract } from 'src/types/Address';
+import './transactions-page.less';
 
 export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {}
 
+const prefix = (prefix: string) => {
+    return (value: string) => prefix + value;
+};
+
+const css = prefix('transactions-page__');
+
 export class TransactionsPage extends PagedList<Transaction, ITransactionsPageProps> {
+
+    private static togglerItems: Array<[string, string]> = [
+        ['transactions', 'Transactions'],
+        ['token-trns', 'SONM token txns'],
+    ];
+
+    private renderAddress = (address: string) => {
+        return this.props.address === address
+            ? <span>{address}</span>
+            : <Link to={"/address/" + address}>{address}</Link>;
+    }
+
+    private renderDirectionIcon = (from: string, to: string) => {
+        return this.props.address === from
+            ? <OutSvg />
+            : this.props.address === to
+            ? <InSvg />
+            : <ArrowForwardIcon className="transactions-page__arrow" />;
+    }
+
     private renderTable = () => {
         const p = this.props;
+        console.log(ArrowForwardIcon);
+        console.log(InSvg);
+        console.log(OutSvg);
         return (
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>TxHash</TableCell>
-                        <TableCell>Block</TableCell>
-                        <TableCell>From</TableCell>
-                        <TableCell>To</TableCell>
-                        <TableCell>Status</TableCell>
+                        <TableCell className={css('cell')}>TxHash</TableCell>
+                        <TableCell className={css('cell')}>Block</TableCell>
+                        <TableCell className={css('cell-from')}>From</TableCell>
+                        <TableCell className={css('cell-arrow')}></TableCell>
+                        <TableCell className={css('cell-to')}>To</TableCell>
+                        <TableCell className={css('cell')}>Status</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {p.list.map((row) => {
                         return (
                             <TableRow key={row.hash}>
-                                <TableCell>
+                                <TableCell className={css('cell')}>
                                     <Link to={"/transaction/" + row.hash}>{row.hash}</Link>
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className={css('cell')}>
                                     <Link to={"/block/" + row.blockHash}>{row.blockNumber}</Link>
                                 </TableCell>
-                                <TableCell>
-                                    <Link to={"/address/" + row.from}>{row.from}</Link>
+                                <TableCell className={css('cell-from')}>
+                                    {this.renderAddress(row.from)}
                                 </TableCell>
-                                <TableCell>
-                                    <Link to={"/address/" + row.to}>{row.to}</Link>
+                                <TableCell className={css('cell-arrow')}>
+                                    {this.renderDirectionIcon(row.from, row.to)}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className={css('cell-to')}>
+                                    {this.renderAddress(row.to)}
+                                </TableCell>
+                                <TableCell className={css('cell')}>
                                     {row.status ? "success" : "fail"}
                                 </TableCell>
                             </TableRow>
@@ -58,7 +98,6 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                 <TableFooter>
                     <TableRow>
                         <TablePagination
-                            colSpan={3}
                             count={2000000}
                             // TODO: load state before & in time:
                             // колличество транзакций будет постоянно меняться
@@ -75,35 +114,51 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
         );
     }
 
-    private renderHeader = () => {
+    private renderAddressHeader = (header: string) => {
         const p = this.props;
         return (
-            <h1 style={{padding: 16}}>Address - {p.address}</h1>
+            <React.Fragment>
+                <h1>{header}</h1>
+                <AddressInfo address={p.address||''} transactionsCount={1000} />
+            </React.Fragment>
         );
+    }
+
+    private renderHeader = () => {
+        const address = this.props.address;
+        return address === undefined
+            ? <h1>Transactions</h1>
+            : this.renderAddressHeader(
+                isContract(address)
+                    ? 'Contract details'
+                    : 'Address details'
+            );
     }
 
     private handleChangeShow = (event: any, value: TTransactionsShow) => {
         this.props.updateRoute({ show: value });
     }
 
+    private handleChangeDate = (value?: Date) => {
+        this.props.update({ date: value });
+    }
+
     public render = () => {
         const p = this.props;
         return (
             <div>
-                {p.address !== undefined ? this.renderHeader() : null}
+                {this.renderHeader()}
                 <ToggleButtonGroup
-                    exclusive={true}
+                    items={TransactionsPage.togglerItems}
                     value={p.show}
                     onChange={this.handleChangeShow}
-                >
-                    <ToggleButton value="transactions">
-                        Transactions
-                    </ToggleButton>
-                    <ToggleButton value="token-trns">
-                        SONM token txns
-                    </ToggleButton>
-                </ToggleButtonGroup>
-
+                />
+                <Toolbar disableGutters>
+                    <DateTimePicker
+                        value={p.date}
+                        onChange={this.handleChangeDate}
+                    />
+                </Toolbar>
                 {this.renderTable()}
             </div>
         );
