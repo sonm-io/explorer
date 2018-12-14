@@ -7,6 +7,7 @@ import TableCell from "src/components/common/table-cell";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import {Link} from "src/components/common/link";
 import {definedAddressesMap} from "../../../types/Address";
+import { TableHead } from "@material-ui/core";
 
 class ContractsPage extends React.Component {
     public render() {
@@ -16,9 +17,20 @@ class ContractsPage extends React.Component {
 
                 <Grid>
                     <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Address</TableCell>
+                                <TableCell>Contract name</TableCell>
+                            </TableRow>
+                        </TableHead>
                         <TableBody>
                             <TableRow>
                                 <TableCell key={"0x0000000000000000000000000000000000000000"}>
+                                    <Link to={"/address/" + "0x0000000000000000000000000000000000000000"}>
+                                        0x0000000000000000000000000000000000000000
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
                                     <Link to={"/address/" + "0x0000000000000000000000000000000000000000"}>
                                         0x0000000000000000000000000000000000000000
                                     </Link>
@@ -29,6 +41,9 @@ class ContractsPage extends React.Component {
                                 console.log(row);
                                 return (
                                     <TableRow key={row.name}>
+                                        <TableCell>
+                                            <Link to={"/address/" + row.address}>{row.address}</Link>
+                                        </TableCell>
                                         <TableCell>
                                             <Link to={"/address/" + row.address}>{row.name}</Link>
                                         </TableCell>
