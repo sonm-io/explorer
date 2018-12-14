@@ -1,57 +1,73 @@
 import * as React from "react";
 
 import Grid from "@material-ui/core/Grid/Grid";
-import Paper from "@material-ui/core/Paper/Paper";
-import {Link} from "react-router-dom";
+import {Link} from "src/components/common/link";
 import {Transaction} from "src/types/Transaction";
 import { IItemProps } from "src/components/factories/item";
+import Header from "src/components/common/header";
+import './transaction.less';
+import { prefix } from "src/utils/common";
+
+const css = prefix('transaction__');
+
+const SectionName = (props: any) => (
+    <Grid className={css('section')} item xs={12}>{props.children}</Grid>
+);
+
+const Label = (props: any) => (
+    <Grid className={css('label')} item xs={2}>{props.children}</Grid>
+);
+
+const Value = (props: any) => (
+    <Grid item xs={10}>{props.children}</Grid>
+);
 
 interface ITransactionPageProps extends IItemProps<Transaction> {}
 
 export class TransactionPage extends React.Component<ITransactionPageProps, never> {
     private renderMain(item: Transaction) {
         return (
-            <div>
-                <h1 style={{padding: 16}}>Transaction details</h1>
+            <div className="transaction">
+                <Header title="Transaction details" />
+                <Grid container spacing={16}>
+                    <SectionName>Transaction info</SectionName>
 
-                <Paper style={{padding: 16}}>
-                    <Grid container spacing={16}>
+                    <Label>Hash</Label>
+                    <Value>{item.hash}</Value>
 
-                        <Grid item xs={2}>Hash</Grid>
-                        <Grid item xs={10}>{item.hash}</Grid>
+                    <Label>Block</Label>
+                    <Value>
+                        <Link to={"/block/" + item.blockNumber}>
+                            {item.blockNumber}
+                        </Link>
+                    </Value>
 
-                        <Grid item xs={2}>Block</Grid>
-                        <Grid item xs={10}>
-                            <Link to={"/block/" + item.blockNumber}>
-                                {item.blockNumber}
-                            </Link>
-                        </Grid>
+                    <Label>From</Label>
+                    <Value>
+                        <Link to={"/address/" + item.from}>
+                            {item.from}
+                        </Link>
+                    </Value>
 
-                        <Grid item xs={2}>From</Grid>
-                        <Grid item xs={10}>
-                            <Link to={"/address/" + item.from}>
-                                {item.from}
-                            </Link>
-                        </Grid>
+                    <Label>To</Label>
+                    <Value>
+                        <Link to={"/address/" + item.to}>
+                            {item.to}
+                        </Link>
+                    </Value>
 
-                        <Grid item xs={2}>To</Grid>
-                        <Grid item xs={10}>
-                            <Link to={"/address/" + item.to}>
-                                {item.to}
-                            </Link>
-                        </Grid>
+                    <Label>Nonce | {'{'} Position {'}'}</Label>
+                    <Value>{`${item.nonce} { ${item.transactionIndex} }`}</Value>
 
-                        <Grid item xs={2}>Value</Grid>
-                        <Grid item xs={10}>{item.value}</Grid>
+                    <Label>Value</Label>
+                    <Value>{item.value}</Value>
 
-                        <Grid item xs={2}>Gas</Grid>
-                        <Grid item xs={10}>{item.gas}</Grid>
-
-                        <Grid item xs={2}>Gas Price</Grid>
-                        <Grid item xs={10}>{item.gasPrice}</Grid>
-
-                    </Grid>
-                </Paper>
+                    <SectionName>Transaction fee</SectionName>
+                    <Label>Gas</Label>
+                    <Value>{item.gas}</Value>
+                    <Label>Gas Price</Label>
+                    <Value>{item.gasPrice}</Value>
+                </Grid>
             </div>
         );
     }
