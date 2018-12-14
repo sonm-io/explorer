@@ -11,7 +11,7 @@ import { createListPage } from 'src/components/factories/list';
 import RouterDebugger from 'src/components/generic/RouterDebugger';
 import RootStore from 'src/stores/root';
 import { createItemPage } from "src/components/factories/item";
-import Header from "src/components/elements/header";
+import PageHeader from "src/components/elements/page-header";
 import './app.less';
 import { RootContentContainer } from "src/components/generic/root-content-container";
 
@@ -32,7 +32,7 @@ class App extends React.Component<RouteComponentProps> {
         return (
             <div className="app">
                 <RouterDebugger/>
-                <Header />
+                <PageHeader />
                 <Switch>
                     <Route exact path="/" component={HomePage}/>
                     <Route path="/blocks" render={(p) => {

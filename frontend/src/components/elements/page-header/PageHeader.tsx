@@ -6,7 +6,7 @@ import NavButton from "./parts/NavButton";
 import SearchCmp, { TSearchCss } from "../search/Search";
 import { withStyles } from "@material-ui/core";
 
-export interface IHeaderProps {
+export interface IPageHeaderProps {
     onNavigate: (path: string) => void;
     onSearch: (value: string) => void;
 }
@@ -24,7 +24,7 @@ const Search = withStyles<TSearchCss>((theme) => ({
     },
 }))(SearchCmp);
 
-export class Header extends React.Component<IHeaderProps> {
+export class PageHeader extends React.Component<IPageHeaderProps> {
 
     private handleNavigate = (e: React.MouseEvent<HTMLButtonElement>) => {
         this.props.onNavigate(e.currentTarget.value);
