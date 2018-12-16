@@ -3,13 +3,14 @@ package filler
 import (
 	"context"
 	"fmt"
-	"github.com/sonm-io/core/blockchain"
-	"github.com/sonm-io/explorer/backend/storage"
-	"github.com/sonm-io/explorer/backend/types"
 	"log"
 	"math/big"
 	"sync"
 	"time"
+
+	"github.com/sonm-io/core/blockchain"
+	"github.com/sonm-io/explorer/backend/storage"
+	"github.com/sonm-io/explorer/backend/types"
 )
 
 type Filler struct {

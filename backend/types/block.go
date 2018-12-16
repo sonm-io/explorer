@@ -3,10 +3,11 @@ package types
 import (
 	"context"
 	"fmt"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/sonm-io/core/blockchain"
-	"math/big"
 )
 
 type Transaction struct {
@@ -41,7 +42,7 @@ func (b *Transaction) parseArgs(tx *types.Transaction) error {
 	data = data[8:]
 	var args []string
 	for i := 0; i <= len(data)/64; i = +64 {
-		args = append(args, data[i:(i+64)])
+		args = append(args, data[i:(i + 64)])
 	}
 	b.DecodedData.Method = method
 	b.DecodedData.Args = args
