@@ -3,11 +3,12 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	eth "github.com/ethereum/go-ethereum/core/types"
 	_ "github.com/lib/pq"
 	"github.com/sonm-io/explorer/backend/types"
-	"math/big"
 )
 
 type Storage struct {

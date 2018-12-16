@@ -2,6 +2,7 @@ package migrator
 
 import (
 	"database/sql"
+
 	"github.com/jinzhu/configor"
 	_ "github.com/lib/pq"
 	"github.com/rubenv/sql-migrate"
