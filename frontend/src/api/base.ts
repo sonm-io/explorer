@@ -1,6 +1,6 @@
 import { EndpointAddr } from 'src/config';
 
-interface IPageParams {
+export interface IPageParams {
     offset: number;
     limit: number;
 }
