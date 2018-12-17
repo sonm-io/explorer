@@ -5,22 +5,9 @@ import {Link} from "src/components/common/link";
 import {Transaction} from "src/types/Transaction";
 import { IItemProps } from "src/components/factories/item";
 import Header from "src/components/common/header";
-import './transaction.less';
-import { prefix } from "src/utils/common";
-
-const css = prefix('transaction__');
-
-const SectionName = (props: any) => (
-    <Grid className={css('section')} item xs={12}>{props.children}</Grid>
-);
-
-const Label = (props: any) => (
-    <Grid className={css('label')} item xs={2}>{props.children}</Grid>
-);
-
-const Value = (props: any) => (
-    <Grid item xs={10}>{props.children}</Grid>
-);
+import SectionName from 'src/components/common/grid-section-name';
+import Label from 'src/components/common/grid-label';
+import Value from 'src/components/common/grid-value';
 
 interface ITransactionPageProps extends IItemProps<Transaction> {}
 
