@@ -8,7 +8,7 @@ export const transactions = (
     block?: number,
 ) => {
     const params: IQueryParam[] = [];
-    params.push({ name: 'offset', value: pageSize * page });
+    params.push({ name: 'offset', value: pageSize * (page-1) });
     params.push({ name: 'limit', value: pageSize });
 
     if (address !== undefined) {
@@ -20,8 +20,8 @@ export const transactions = (
 
     params.push({ name: 'order', value: 'nonce.desc' });
 
-    const query = getQuery('/transactions?order=blockNumber.desc', params);
+    const query = getQuery('transactions?', params);
     return fetchData(query);
 };
 
-export const transaction = (hash: string) => fetchItem(`/transactions?hash=eq.${hash}&limit=1`);
+export const transaction = (hash: string) => fetchItem(`transactions?hash=eq.${hash}&limit=1`);
