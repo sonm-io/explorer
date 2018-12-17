@@ -32,3 +32,14 @@ export const list = (queryFactory: (pageParams: IPageParams) => string) =>
         const query = queryFactory({ offset, limit });
         return fetchData(query);
     };
+
+export interface IQueryParam {
+    name: string;
+    value: number | string;
+}
+
+export const getQuery = (tpl: string, params: IQueryParam[]) => {
+    return params.length === 0
+        ? tpl
+        : tpl + '&' + params.map((p) => `${p.name}=${p.value}`).join('&');
+};

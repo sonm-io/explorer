@@ -1,17 +1,26 @@
-import { fetchData, fetchItem } from './base';
+import { fetchData, fetchItem, IQueryParam, getQuery } from './base';
 
 export const transactions = (
     page: number,
     pageSize: number,
-    show: string,
+    show: string, // transactions | transactions tokens
     address?: string,
     block?: number,
 ) => {
-    const offset = pageSize * page;
-    const limit = pageSize;
-    const query = address !== undefined
-        ? `/transactions?select=*&limit=${limit}&offset=${offset}&or=(from.eq.${address},to.eq.${address})&order=nonce.desc`
-        : `/transactions?order=blockNumber.desc&limit=${limit}&offset=${offset}`;
+    const params: IQueryParam[] = [];
+    params.push({ name: 'offset', value: pageSize * page });
+    params.push({ name: 'limit', value: pageSize });
+
+    if (address !== undefined) {
+        params.push({ name: 'or', value: `(from.eq.${address},to.eq.${address})` });
+    }
+    if (block !== undefined) {
+        params.push({ name: 'blockNumber', value: `eq.${block}` });
+    }
+
+    params.push({ name: 'order', value: 'nonce.desc' });
+
+    const query = getQuery('/transactions?order=blockNumber.desc', params);
     return fetchData(query);
 };
 
