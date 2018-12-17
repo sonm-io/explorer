@@ -14,6 +14,7 @@ import { createItemPage } from "src/components/factories/item";
 import PageHeader from "src/components/elements/page-header";
 import './app.less';
 import { RootContentContainer } from "src/components/generic/root-content-container";
+import { TNavigationMenus } from "src/stores/navigation-store";
 
 const BlockLayout = createItemPage(BlockPage, RootStore.block);
 const TransactionLayout = createItemPage(TransactionPage, RootStore.transaction);
@@ -26,9 +27,22 @@ const ContractsPageLayout = () => (
     </RootContentContainer>
 );
 
+const paths: {[p: string]: TNavigationMenus} = {
+    '/'             : 'home',
+    '/transactions' : 'transactions',
+    '/blocks'       : 'blocks',
+    '/contracts'    : 'contracts'
+};
+
 class App extends React.Component<RouteComponentProps> {
 
+    private setActiveMenu() {
+        const loc = this.props.location.pathname;
+        RootStore.navigation.store.setState({activeMenu: paths[loc]});
+    }
+
     public render() {
+        this.setActiveMenu(); // ToDo: is it correct place to this?
         return (
             <div className="app">
                 <RouterDebugger/>
