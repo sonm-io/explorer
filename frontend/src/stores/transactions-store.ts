@@ -11,6 +11,7 @@ export interface ITransactions {
     address?: string;
     show: TTransactionsShow;
     date?: Date;
+    block?: number;
 }
 
 export interface ITransactionsState extends ITransactions, IListState<Transaction> {}
@@ -19,7 +20,7 @@ export type TTransactionsFetch = (page: number, pageSize: number, address?: stri
 
 interface ITransactionsFetchConfig extends IFetchConfig<
     ITransactionsState,
-    [number, number, string, string | undefined],
+    [number, number, string, string?, number?],
     Transaction[] | string
 > {}
 
@@ -39,7 +40,7 @@ export const init = (
 ): IFetchCtl<ITransactionsState> => {
     const fetchConfig: ITransactionsFetchConfig = {
         fetchMethod,
-        getArgs: (state: ITransactionsState) => ([state.page, state.pageSize, state.show, state.address]),
+        getArgs: (state: ITransactionsState) => ([state.page, state.pageSize, state.show, state.address, state.block]),
         updateStore: PagedList.updateListStore,
         getRoute,
     };

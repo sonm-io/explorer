@@ -1,10 +1,13 @@
 import * as React from "react";
 
 import Grid from "@material-ui/core/Grid/Grid";
-import {Link} from "react-router-dom";
+import {Link} from "src/components/common/link";
 import { Block } from "src/types/Block";
 import { IItemProps } from "src/components/factories/item";
 import Header from "src/components/common/header";
+import Label from 'src/components/common/grid-label';
+import Value from 'src/components/common/grid-value';
+import './block-page.less';
 
 interface IBlockPageProps extends IItemProps<Block> {}
 
@@ -14,30 +17,34 @@ export class BlockPage extends React.Component<IBlockPageProps> {
             <div>
                 <Header title="Block details" />
                 <Grid container spacing={16}>
-                    <Grid item xs={2}>Height</Grid>
-                    <Grid item xs={10}>{item.number}</Grid>
-                    <Grid item xs={2}>Hash</Grid>
-                    <Grid item xs={10}>{item.hash}</Grid>
-                    <Grid item xs={2}>Timestamp</Grid>
-                    <Grid item xs={10}>{item.timestamp}</Grid>
-                    <Grid item xs={2}>Transactions</Grid>
-                    <Grid item xs={10}>{item.txCount}</Grid>
-                    <Grid item xs={2}>Parent Hash</Grid>
-                    <Grid item xs={10}>
+                    <Label>Height</Label>
+                    <Value>{item.number}</Value>
+                    <Label>Hash</Label>
+                    <Value>{item.hash}</Value>
+                    <Label>Timestamp</Label>
+                    <Value>{item.utcDate}</Value>
+                    <Label>Transactions</Label>
+                    <Value>
+                        <Link to={'/transactions/block-' + item.number}>{item.txCount}</Link>
+                    </Value>
+                    <Label className="block-page__section-begin">Parent Hash</Label>
+                    <Value className="block-page__section-begin">
                         <Link to={"/block/" + String(item.number - 1)}>
                             {item.parentHash}
                         </Link>
-                    </Grid>
-                    <Grid item xs={2}>Gas Used</Grid>
-                    <Grid item xs={10}>{item.gasUsed}</Grid>
-                    <Grid item xs={2}>Gas Limit</Grid>
-                    <Grid item xs={10}>{item.gasLimit}</Grid>
-                    <Grid item xs={2}>Mined by</Grid>
-                    <Grid item xs={10}>{item.miner}</Grid>
-                    <Grid item xs={2}>Nonce</Grid>
-                    <Grid item xs={10}>{item.nonce}</Grid>
-                    <Grid item xs={2}>Size</Grid>
-                    <Grid item xs={10}>{item.size}</Grid>
+                    </Value>
+                    <Label>Gas Used</Label>
+                    <Value>{item.gasUsed} ({item.gasUsedPerc.toFixed(2)}%)</Value>
+                    <Label>Gas Limit</Label>
+                    <Value>{item.gasLimit}</Value>
+                    <Label>Mined by</Label>
+                    <Value>
+                        <Link to={'/address/' + item.miner}>{item.miner}</Link>
+                    </Value>
+                    <Label>Nonce</Label>
+                    <Value>{item.nonce}</Value>
+                    <Label>Size</Label>
+                    <Value>{item.size} bytes</Value>
                 </Grid>
             </div>
         );

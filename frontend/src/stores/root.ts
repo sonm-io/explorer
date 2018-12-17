@@ -2,7 +2,8 @@
  * Here Stores are connecting to API.
  */
 
-import * as Api from 'src/api';
+import Api from 'src/api';
+
 import ItemStore from './generic/item-store';
 import PagedList from './generic/paged-list';
 import Transactions from './transactions-store';
