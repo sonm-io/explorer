@@ -44,8 +44,13 @@ class App extends React.Component<RouteComponentProps> {
                         RootStore.block.boundedActions.update({ id });
                         return <BlockLayout />;
                     }}/>
+                    <Route path="/transactions/block-:block" render={(p) => {
+                        const block = p.match.params.block;
+                        RootStore.transactions.boundedActions.update({ address: undefined, block, page: 1 });
+                        return <TransactionsLayout />;
+                    }}/>
                     <Route path="/transactions" render={(p) => {
-                        RootStore.transactions.boundedActions.update({ address: undefined, page: 1 });
+                        RootStore.transactions.boundedActions.update({ address: undefined, block: undefined, page: 1 });
                         return <TransactionsLayout />;
                     }}/>
                     <Route path="/transaction/:txHash" render={(p) => {
