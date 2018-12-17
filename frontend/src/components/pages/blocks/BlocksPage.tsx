@@ -2,20 +2,21 @@ import * as React from "react";
 
 import Table from "@material-ui/core/Table/Table";
 import TableBody from "@material-ui/core/TableBody/TableBody";
-import TableCell from "@material-ui/core/TableCell/TableCell";
+import TableCell from "src/components/common/table-cell";
 import TableFooter from "@material-ui/core/TableFooter/TableFooter";
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import {tablePaginationActionsWrapped} from "./parts/TablePaginationActions";
-import {Link} from "react-router-dom";
+import {Link} from "src/components/common/link";
 import { Block } from 'src/types/Block';
 import { IListProps } from 'src/components/factories/list';
 import { PagedList } from "src/components/generic/PagedList";
+import Header from "src/components/common/header";
 
 export class BlocksPage extends PagedList<Block, IListProps<Block>> {
 
-    public render() {
+    public renderTable() {
         const p = this.props;
 
         return (
@@ -36,8 +37,10 @@ export class BlocksPage extends PagedList<Block, IListProps<Block>> {
                                 <TableCell>
                                     <Link to={"/block/" + row.hash}>{row.number}</Link>
                                 </TableCell>
-                                <TableCell>{row.timestamp}</TableCell>
-                                <TableCell>{row.txCount}</TableCell>
+                                <TableCell>{row.utcDate}</TableCell>
+                                <TableCell>
+                                    <Link to={'/transactions/block-' + row.number}>{row.txCount}</Link>
+                                </TableCell>
                                 <TableCell>{row.gasUsed}</TableCell>
                                 <TableCell>{row.gasLimit}</TableCell>
                             </TableRow>
@@ -60,6 +63,15 @@ export class BlocksPage extends PagedList<Block, IListProps<Block>> {
                     </TableRow>
                 </TableFooter>
             </Table>
+        );
+    }
+
+    public render() {
+        return (
+            <div>
+                <Header title="Blocks" />
+                {this.renderTable()}
+            </div>
         );
     }
 }
