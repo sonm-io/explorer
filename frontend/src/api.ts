@@ -1,4 +1,5 @@
 import { EndpointAddr } from 'src/config';
+import { Block } from './types/Block';
 
 interface IPageParams {
     offset: number;
@@ -36,7 +37,10 @@ const list = (queryFactory: (pageParams: IPageParams) => string) =>
 export const blocks = list(({offset, limit}) =>
     `blocks?order=number.desc&limit=${limit}&offset=${offset}`);
 
-export const block = (num: string) => fetchItem(`/blocks?number=eq.${num}&limit=1`);
+export const block = async (num: string) => {
+    const data = await fetchItem(`/blocks?number=eq.${num}&limit=1`);
+    return new Block(data);
+};
 
 export const transactions = (
     page: number,

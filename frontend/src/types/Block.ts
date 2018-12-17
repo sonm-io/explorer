@@ -1,4 +1,8 @@
-export class Block { // ToDo convert to interface
+export class Block {
+    constructor(data: any) {
+        Object.assign(this, data);
+    }
+
     public number: number;
     public hash: string;
     public parentHash: string;
@@ -18,4 +22,8 @@ export class Block { // ToDo convert to interface
     public timestamp: number;
     public mixhash: string;
     public txCount: number;
+
+    public get gasUsedPerc() {
+        return this.gasUsed / this.gasLimit * 100;
+    }
 }
