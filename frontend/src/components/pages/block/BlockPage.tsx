@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import Grid from "@material-ui/core/Grid/Grid";
-import {Link} from "react-router-dom";
+import {Link} from "src/components/common/link";
 import { Block } from "src/types/Block";
 import { IItemProps } from "src/components/factories/item";
 import Header from "src/components/common/header";
