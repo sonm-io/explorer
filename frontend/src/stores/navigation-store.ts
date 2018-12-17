@@ -1,7 +1,23 @@
 import { History } from 'history';
 import createStore from 'unistore';
 
-class Navigator {
+export type TNavigationMenus = 'home' | 'transactions' | 'blocks' | 'contracts';
+
+export interface INavigationState {
+    activeMenu?: TNavigationMenus;
+}
+
+export interface INavigationActions {
+    onNavigate: (state: INavigationState, path: string) => void;
+    onSearch: (state: INavigationState, value: string) => void;
+}
+
+export interface INavigationCmpActions {
+    onNavigate: (path: string) => void;
+    onSearch: (value: string) => void;
+}
+
+class Navigator implements INavigationActions {
     private history: History;
     constructor(history: History) {
         this.history = history;
@@ -9,11 +25,11 @@ class Navigator {
 
     private navigateTo = (path: string) => this.history.push(path);
 
-    public onNavigate = (state: {}, path: string) => {
+    public onNavigate = (state: INavigationState, path: string) => {
         this.navigateTo(path);
     }
 
-    public onSearch = (state: {}, value: string) => {
+    public onSearch = (state: INavigationState, value: string) => {
         const v = value.trim();
 
         if (v === '') {
@@ -39,11 +55,16 @@ class Navigator {
 
 const initActions = (history: History) => new Navigator(history);
 
-const init = (history: History) => ({
-    history,
-    store: createStore({}),
-    actions: initActions(history),
-});
+const init = (history: History) => {
+    const state: INavigationState = {
+        activeMenu: 'home'
+    };
+    return {
+        history,
+        store: createStore(state),
+        actions: initActions(history),
+    };
+};
 
 export default {
     init,
