@@ -34,7 +34,7 @@ export class BlocksPage extends PagedList<Block, IListProps<Block>> {
                         return (
                             <TableRow key={row.number}>
                                 <TableCell>
-                                    <Link to={"/block/" + row.number}>{row.number}</Link>
+                                    <Link to={"/block/" + row.hash}>{row.number}</Link>
                                 </TableCell>
                                 <TableCell>{row.timestamp}</TableCell>
                                 <TableCell>{row.txCount}</TableCell>
