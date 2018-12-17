@@ -26,4 +26,8 @@ export class Block {
     public get gasUsedPerc() {
         return this.gasUsed / this.gasLimit * 100;
     }
+
+    public get utcDate() {
+        return new Date(this.timestamp).toUTCString();
+    }
 }

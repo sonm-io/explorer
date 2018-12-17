@@ -7,6 +7,7 @@ import { IItemProps } from "src/components/factories/item";
 import Header from "src/components/common/header";
 import Label from 'src/components/common/grid-label';
 import Value from 'src/components/common/grid-value';
+import './block-page.less';
 
 interface IBlockPageProps extends IItemProps<Block> {}
 
@@ -21,25 +22,27 @@ export class BlockPage extends React.Component<IBlockPageProps> {
                     <Label>Hash</Label>
                     <Value>{item.hash}</Value>
                     <Label>Timestamp</Label>
-                    <Value>{item.timestamp}</Value>
+                    <Value>{item.utcDate}</Value>
                     <Label>Transactions</Label>
                     <Value>{item.txCount}</Value>
-                    <Label>Parent Hash</Label>
-                    <Value>
+                    <Label className="block-page__section-begin">Parent Hash</Label>
+                    <Value className="block-page__section-begin">
                         <Link to={"/block/" + String(item.number - 1)}>
                             {item.parentHash}
                         </Link>
                     </Value>
                     <Label>Gas Used</Label>
-                    <Value>{item.gasUsed}</Value>
+                    <Value>{item.gasUsed} ({item.gasUsedPerc.toFixed(2)}%)</Value>
                     <Label>Gas Limit</Label>
                     <Value>{item.gasLimit}</Value>
                     <Label>Mined by</Label>
-                    <Value>{item.miner}</Value>
+                    <Value>
+                        <Link to={'/address/' + item.miner}>{item.miner}</Link>
+                    </Value>
                     <Label>Nonce</Label>
                     <Value>{item.nonce}</Value>
                     <Label>Size</Label>
-                    <Value>{item.size}</Value>
+                    <Value>{item.size} bytes</Value>
                 </Grid>
             </div>
         );
