@@ -65,21 +65,21 @@ export const initActions = <S extends IFetchState, A extends any[], R>(
     (store: Store<S>): IFetchActions<S> => ({
         ...Notifications.actions(store),
         fetch: fetchData(config)(store),
-        update: async (_: S, upd: Pick<S, keyof S>) => {
+        update: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false) => {
             //debugger;
             console.log('update:');
             console.log(upd);
-            store.setState(upd);
+            store.setState(upd, overwrite);
             fetchData(config)(store)(store.getState());
         },
-        updateRoute: async (_: S, upd: Pick<S, keyof S>) => {
+        updateRoute: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false) => {
             if (config.getRoute === undefined) {
                 throw new Error("getRoute must be specified when updateRoute is used");
             }
             if (history === undefined) {
                 throw new Error("history must be passed when updateRoute is used");
             }
-            store.setState(upd);
+            store.setState(upd, overwrite);
             history.push(config.getRoute(store.getState()));
         },
     });
