@@ -24,6 +24,8 @@ import { isAddressExists as isContract, definedAddresses } from 'src/types/Addre
 import './transactions-page.less';
 import Header from "src/components/common/header";
 import { prefix } from "src/utils/common";
+import DoneImage from '@material-ui/icons/Done';
+import HighlightOffImage from '@material-ui/icons/Clear';
 
 export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {}
 
@@ -84,7 +86,10 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                                     {this.renderAddress(row.to)}
                                 </TableCell>
                                 <TableCell>
-                                    {row.status ? "success" : "fail"}
+                                    {row.status
+                                        ? <DoneImage className={css('success')} titleAccess="success" />
+                                        : <HighlightOffImage className={css('fail')} titleAccess="failed" />
+                                    }
                                 </TableCell>
                             </TableRow>
                         );
