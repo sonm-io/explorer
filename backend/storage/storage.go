@@ -201,11 +201,11 @@ func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
 	}
 
 	if len(data) > 127 {
-		firstArg = data[64:128]
+		secondArg = data[64:128]
 	}
 
 	if len(data) > 191 {
-		firstArg = data[128:]
+		thirdArg = data[128:]
 	}
 
 	_, err := t.Exec(insertLogQuery,

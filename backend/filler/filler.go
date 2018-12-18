@@ -98,8 +98,7 @@ func (f *Filler) Start(ctx context.Context) error {
 		case number := <-f.loadChan:
 			sem <- struct{}{}
 			go func() {
-				block := &types.Block{}
-				err := block.FillBlock(ctx, f.client, big.NewInt(0).SetUint64(number))
+				block, err := types.FillNewBlock(ctx, f.client, big.NewInt(0).SetUint64(number))
 				if err != nil {
 					log.Println(err)
 					return
