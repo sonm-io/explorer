@@ -15,8 +15,15 @@ export class BlockPage extends React.Component<IBlockPageProps> {
     private renderMain(item: Block) {
         return (
             <div>
-                <Header title="Block details" />
-                <Grid container spacing={16}>
+                <Header
+                    className="head-container"
+                    title="Block details"
+                />
+                <Grid
+                    className="content-container"
+                    container
+                    spacing={16}
+                >
                     <Label>Height</Label>
                     <Value>{item.number}</Value>
                     <Label>Hash</Label>
