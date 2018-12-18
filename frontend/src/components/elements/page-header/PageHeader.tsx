@@ -6,6 +6,8 @@ import NavButton from "./parts/nav-button";
 import SearchCmp, { TSearchCss } from "../search/Search";
 import { withStyles } from "@material-ui/core";
 import { INavigationState, INavigationCmpActions } from "src/stores/navigation-store";
+import './page-header.less';
+import { Logo } from "../logo";
 
 export interface IPageHeaderProps extends INavigationState, INavigationCmpActions {}
 
@@ -31,7 +33,8 @@ export class PageHeader extends React.Component<IPageHeaderProps> {
                 <AppBar position="static" elevation={0}>
                     <Toolbar>
                         <NavButton onClick={this.props.onNavigate} value="/" active={p.activeMenu==='home'}>
-                            Home
+                            <Logo />
+                            <div className="page-header__beta">Beta</div>
                         </NavButton>
                         <NavButton onClick={this.props.onNavigate} value="/transactions" active={p.activeMenu==='transactions'}>
                             Transactions
@@ -42,7 +45,7 @@ export class PageHeader extends React.Component<IPageHeaderProps> {
                         <NavButton onClick={this.props.onNavigate} value="/contracts" active={p.activeMenu==='contracts'}>
                             Contracts
                         </NavButton>
-                        <Search onSubmit={this.props.onSearch}/>
+                        <Search className="page-header__search" onSubmit={this.props.onSearch}/>
                     </Toolbar>
                 </AppBar>
             </header>
