@@ -28,7 +28,7 @@ export class PageHeader extends React.Component<IPageHeaderProps> {
         const p = this.props;
         return (
             <header>
-                <AppBar position="static">
+                <AppBar position="static" elevation={0}>
                     <Toolbar>
                         <NavButton onClick={this.props.onNavigate} value="/" active={p.activeMenu==='home'}>
                             Home
