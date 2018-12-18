@@ -47,10 +47,10 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
 
     private renderDirectionIcon = (from: string, to: string) => {
         return this.props.address === from
-            ? <OutSvg />
+            ? <OutSvg className={cn(css('direction-icon'))} />
             : this.props.address === to
-            ? <InSvg />
-            : <ArrowForwardIcon className="transactions-page__arrow" />;
+            ? <InSvg className={cn(css('direction-icon'))}  />
+            : <ArrowForwardIcon className={cn(css('direction-icon'), css('arrow'))} />;
     }
 
     private renderTable = () => {
