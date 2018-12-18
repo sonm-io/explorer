@@ -72,7 +72,7 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                                     <Link to={"/transaction/" + row.hash}>{row.hash}</Link>
                                 </TableCell>
                                 <TableCell>
-                                    <Link to={"/block/" + row.blockHash}>{row.blockNumber}</Link>
+                                    <Link to={"/block/" + row.blockNumber}>{row.blockNumber}</Link>
                                 </TableCell>
                                 <TableCell className={css('cell-from')}>
                                     {this.renderAddress(row.from)}

@@ -9,7 +9,7 @@ export const blocks = async (page: number, pageSize: number) => {
     return data.map((row: any) => new Block(row));
 };
 
-export const block = async (hash: string) => {
-    const data = await fetchItem(`blocks?hash=eq.${hash}&limit=1`);
+export const block = async (num: string) => {
+    const data = await fetchItem(`blocks?number=eq.${num}&limit=1`);
     return new Block(data);
 };
