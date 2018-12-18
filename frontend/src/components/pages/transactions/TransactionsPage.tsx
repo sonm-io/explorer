@@ -143,6 +143,7 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                 <div className="head-container">
                     {this.renderHeader()}
                     <ToggleButtonGroup
+                        className="transactions-page__toggle-group"
                         items={TransactionsPage.togglerItems}
                         value={p.show}
                         onChange={this.handleChangeShow}
