@@ -140,19 +140,23 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
         const p = this.props;
         return (
             <div>
-                {this.renderHeader()}
-                <ToggleButtonGroup
-                    items={TransactionsPage.togglerItems}
-                    value={p.show}
-                    onChange={this.handleChangeShow}
-                />
-                <Toolbar disableGutters>
-                    <DateTimePicker
-                        value={p.date}
-                        onChange={this.handleChangeDate}
+                <div className="head-container">
+                    {this.renderHeader()}
+                    <ToggleButtonGroup
+                        items={TransactionsPage.togglerItems}
+                        value={p.show}
+                        onChange={this.handleChangeShow}
                     />
-                </Toolbar>
-                {this.renderTable()}
+                </div>
+                <div className="content-container">
+                    <Toolbar disableGutters>
+                        <DateTimePicker
+                            value={p.date}
+                            onChange={this.handleChangeDate}
+                        />
+                    </Toolbar>
+                    {this.renderTable()}
+                </div>
             </div>
         );
     }

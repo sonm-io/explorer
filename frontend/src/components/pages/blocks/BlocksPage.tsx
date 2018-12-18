@@ -69,8 +69,10 @@ export class BlocksPage extends PagedList<Block, IListProps<Block>> {
     public render() {
         return (
             <div>
-                <Header title="Blocks" />
-                {this.renderTable()}
+                <Header className="head-container" title="Blocks" />
+                <div className="content-container">
+                    {this.renderTable()}
+                </div>
             </div>
         );
     }

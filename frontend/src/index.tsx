@@ -11,6 +11,7 @@ import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import { Router } from "react-router";
 //import {BrowserRouter as Router } from "react-router-dom";
 import RootStore from 'src/stores/root';
+import './index.less';
 
 const generateClassName = createGenerateClassName();
 const jss = create({

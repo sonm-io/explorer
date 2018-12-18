@@ -15,8 +15,8 @@ export class TransactionPage extends React.Component<ITransactionPageProps, neve
     private renderMain(item: Transaction) {
         return (
             <div className="transaction">
-                <Header title="Transaction details" />
-                <Grid container spacing={16}>
+                <Header className="head-container" title="Transaction details" />
+                <Grid className="content-container" container spacing={16}>
                     <SectionName>Transaction info</SectionName>
 
                     <Label>Hash</Label>

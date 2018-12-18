@@ -8,14 +8,14 @@ import TableRow from "@material-ui/core/TableRow/TableRow";
 import {Link} from "src/components/common/link";
 import {definedAddressesMap} from "../../../types/Address";
 import { TableHead } from "@material-ui/core";
+import Header from "src/components/common/header";
 
 class ContractsPage extends React.Component {
     public render() {
         return (
             <div>
-                <h1>Contracts page</h1>
-
-                <Grid>
+                <Header className="head-container" title="Contracts page" />
+                <Grid className="content-container">
                     <Table>
                         <TableHead>
                             <TableRow>
