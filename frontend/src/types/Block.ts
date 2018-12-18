@@ -28,6 +28,6 @@ export class Block {
     }
 
     public get utcDate() {
-        return new Date(this.timestamp).toUTCString();
+        return new Date(this.timestamp * 1000).toUTCString();
     }
 }

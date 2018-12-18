@@ -15,6 +15,7 @@ const styles = createStyles((theme: Theme) => ({
 type TDateTimePickerCss = 'container' | 'textField';
 
 export interface IDateTimePickerProps extends WithStyles<TDateTimePickerCss> {
+    type?: 'date' | 'datetime-local';
     label?: string;
     value?: Date;
     onChange: (value?: Date) => void;
@@ -33,6 +34,10 @@ function isValidDate(d: any) {
 }
 
 class DateTimePicker extends React.Component<IDateTimePickerProps, never> {
+
+    public static defaultProps: Partial<IDateTimePickerProps> = {
+        type: 'date'
+    };
 
     constructor(props: IDateTimePickerProps) {
         super(props);
@@ -67,7 +72,6 @@ class DateTimePicker extends React.Component<IDateTimePickerProps, never> {
                 <TextField
                     inputRef={this.saveInputRef}
                     label={label}
-                    type="datetime-local"
                     className={classes.textField}
                     InputLabelProps={inputLabelProps}
                     inputProps={inputProps}

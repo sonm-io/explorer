@@ -24,6 +24,9 @@ import { isAddressExists as isContract, definedAddresses } from 'src/types/Addre
 import './transactions-page.less';
 import Header from "src/components/common/header";
 import { prefix } from "src/utils/common";
+import DoneImage from '@material-ui/icons/Done';
+import HighlightOffImage from '@material-ui/icons/Clear';
+import * as cn from 'classnames';
 
 export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {}
 
@@ -44,10 +47,10 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
 
     private renderDirectionIcon = (from: string, to: string) => {
         return this.props.address === from
-            ? <OutSvg />
+            ? <OutSvg className={cn(css('direction-icon'))} />
             : this.props.address === to
-            ? <InSvg />
-            : <ArrowForwardIcon className="transactions-page__arrow" />;
+            ? <InSvg className={cn(css('direction-icon'))}  />
+            : <ArrowForwardIcon className={cn(css('direction-icon'), css('arrow'))} />;
     }
 
     private renderTable = () => {
@@ -84,7 +87,10 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                                     {this.renderAddress(row.to)}
                                 </TableCell>
                                 <TableCell>
-                                    {row.status ? "success" : "fail"}
+                                    {row.status
+                                        ? <DoneImage className={cn(css('success'), css('status-icon'))} titleAccess="success" />
+                                        : <HighlightOffImage className={cn(css('fail'), css('status-icon'))} titleAccess="failed" />
+                                    }
                                 </TableCell>
                             </TableRow>
                         );

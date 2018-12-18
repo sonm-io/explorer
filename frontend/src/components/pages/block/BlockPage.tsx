@@ -15,10 +15,9 @@ export class BlockPage extends React.Component<IBlockPageProps> {
     private renderMain(item: Block) {
         return (
             <div>
-                <Header
-                    className="head-container"
-                    title="Block details"
-                />
+                <div className="head-container">
+                    <Header title="Block details" />
+                </div>
                 <Grid
                     className="content-container"
                     container
