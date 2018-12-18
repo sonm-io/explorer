@@ -26,6 +26,7 @@ import Header from "src/components/common/header";
 import { prefix } from "src/utils/common";
 import DoneImage from '@material-ui/icons/Done';
 import HighlightOffImage from '@material-ui/icons/Clear';
+import * as cn from 'classnames';
 
 export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {}
 
@@ -87,8 +88,8 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                                 </TableCell>
                                 <TableCell>
                                     {row.status
-                                        ? <DoneImage className={css('success')} titleAccess="success" />
-                                        : <HighlightOffImage className={css('fail')} titleAccess="failed" />
+                                        ? <DoneImage className={cn(css('success'), css('status-icon'))} titleAccess="success" />
+                                        : <HighlightOffImage className={cn(css('fail'), css('status-icon'))} titleAccess="failed" />
                                     }
                                 </TableCell>
                             </TableRow>
