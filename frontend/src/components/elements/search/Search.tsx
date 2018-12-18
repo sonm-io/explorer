@@ -4,7 +4,7 @@ import { InputAdornment, Theme, WithStyles, createStyles, withStyles } from "@ma
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 //import { SvgIconClassKey } from "@material-ui/core/SvgIcon";
-//import * as classNames from 'classnames';
+import * as cn from 'classnames';
 
 export type TSearchCss =
     | 'root'
@@ -25,6 +25,7 @@ export const searchStyles = (theme: Theme) => createStyles<TSearchCss>({
 export interface ISearchProps extends WithStyles<TSearchCss> {
     onSubmit: (value: string) => void;
     clearAfterSubmit?: boolean;
+    className?: string;
 }
 
 interface ISearchState {
@@ -74,11 +75,11 @@ class Search extends React.Component<ISearchProps, ISearchState> {
     }
 
     public render() {
-        const { classes } = this.props;
+        const { classes, ...p } = this.props;
         return (
             <TextField
                 id="outlined-adornment-weight"
-                className={classes.root}
+                className={cn(classes.root, p.className)}
                 variant="outlined"
                 placeholder="Search by Address / TxHash / BlockNumber"
                 value={this.state.value}

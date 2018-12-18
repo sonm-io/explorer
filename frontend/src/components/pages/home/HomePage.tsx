@@ -2,6 +2,8 @@ import Grid from "@material-ui/core/Grid/Grid";
 import * as React from "react";
 import SearchCmp, { TSearchCss } from "src/components/elements/search/Search";
 import { withStyles } from "@material-ui/core";
+import { Logo } from "src/components/elements/logo";
+import './home.less';
 
 interface IHomePageProps {
     onSearch: (value: string) => void;
@@ -31,9 +33,7 @@ export class HomePage extends React.Component<IHomePageProps> {
                 style={{minHeight: '80vh'}}
             >
                 <Grid item xs={8}>
-                    <h1 style={{textAlign: "center"}}>
-                        SONM Blockchain Explorer
-                    </h1>
+                    <Logo className="home__logo" />
                     <Search onSubmit={this.props.onSearch}/>
                 </Grid>
             </Grid>
