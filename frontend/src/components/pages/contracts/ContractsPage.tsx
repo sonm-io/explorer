@@ -14,7 +14,9 @@ class ContractsPage extends React.Component {
     public render() {
         return (
             <div>
-                <Header className="head-container" title="Contracts page" />
+                <div className="head-container">
+                    <Header title="Contracts page" />
+                </div>
                 <Grid className="content-container">
                     <Table>
                         <TableHead>
