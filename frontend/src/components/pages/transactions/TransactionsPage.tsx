@@ -139,7 +139,7 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
     }
 
     private handleChangeDate = (value?: Date) => {
-        this.props.update({ date: value });
+        this.props.update({ date: value, page: 1 });
     }
 
     public render = () => {

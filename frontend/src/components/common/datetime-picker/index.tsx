@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { withStyles, createStyles, TextField, Theme, WithStyles } from '@material-ui/core';
 import './index.less';
+import { isValidDate } from 'src/utils/common';
 
 const styles = createStyles((theme: Theme) => ({
     container: {
@@ -28,10 +29,6 @@ const inputLabelProps = {
 const inputProps = {
     className: 'date-time-picker__input'
 };
-
-function isValidDate(d: any) {
-    return d instanceof Date && !isNaN(d as any);
-}
 
 class DateTimePicker extends React.Component<IDateTimePickerProps, never> {
 
