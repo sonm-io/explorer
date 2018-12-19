@@ -16,6 +16,7 @@ export interface ITransactions {
 
 export interface ITransactionsState extends ITransactions, IListState<Transaction> {}
 
+// ToDo: this signature doesn't correspond API method and there is no error message.
 export type TTransactionsFetch = (page: number, pageSize: number, address?: string) => Promise<Transaction[] | string>;
 
 interface ITransactionsFetchConfig extends IFetchConfig<

@@ -13,8 +13,19 @@ import { Block } from 'src/types/Block';
 import { IListProps } from 'src/components/factories/list';
 import { PagedList } from "src/components/generic/PagedList";
 import Header from "src/components/common/header";
+import { Toolbar } from "@material-ui/core";
+import DateTimePicker from 'src/components/common/datetime-picker';
+import { IBlocks } from "src/stores/blocks-store";
+import { isValidDate } from "src/utils/common";
 
-export class BlocksPage extends PagedList<Block, IListProps<Block>> {
+export interface IBlocksPageProps extends IBlocks, IListProps<Block, IBlocks> {}
+
+export class BlocksPage extends PagedList<Block, IBlocksPageProps> {
+
+    private handleChangeDate = (value?: Date) => {
+        const v = isValidDate(value) ? value : undefined;
+        this.props.update({ date: v, page: 1 });
+    }
 
     public renderTable() {
         const p = this.props;
@@ -67,12 +78,19 @@ export class BlocksPage extends PagedList<Block, IListProps<Block>> {
     }
 
     public render() {
+        const p = this.props;
         return (
             <div>
                 <div className="head-container">
                     <Header title="Blocks" />
                 </div>
                 <div className="content-container">
+                    <Toolbar disableGutters>
+                        <DateTimePicker
+                            value={p.date}
+                            onChange={this.handleChangeDate}
+                        />
+                    </Toolbar>
                     {this.renderTable()}
                 </div>
             </div>
