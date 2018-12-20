@@ -6,6 +6,9 @@ import createBrowserHistory from "history/createBrowserHistory";
 const history = createBrowserHistory();
 
 export default class Wrapper extends React.Component {
+
+    //public render = () => <div>{this.props.children}</div>;
+
     public render() {
         return (
             <MuiThemeProvider theme={theme}>

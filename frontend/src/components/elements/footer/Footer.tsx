@@ -1,47 +1,27 @@
 import * as React from "react";
+import './footer.less';
+import { IFooterState } from "src/stores/footer-store";
 
-import Grid from "@material-ui/core/Grid/Grid";
-import Typography from "@material-ui/core/Typography/Typography";
+export class Footer extends React.Component<IFooterState, never> {
 
-const footers = [
-    {
-        title: 'Company',
-        description: ['Team', 'History', 'Contact us', 'Loctions'],
-    },
-    {
-        title: 'Features',
-        description: ['Cool stuff', 'Random feature', 'Team feature', 'Developer stuff', 'Another one'],
-    },
-    {
-        title: 'Resources',
-        description: ['Resource', 'Resource name', 'Another resource', 'Final resource'],
-    },
-    {
-        title: 'Legal',
-        description: ['Privacy policy', 'Terms of use'],
-    },
-];
+    private createMarkup = (html?: string) => {
+        return { __html: html || '' };
+    }
 
-class Footer extends React.Component {
-    public render() {
+    private renderFooter() {
         return (
-            <footer>
-                <Grid container spacing={32} justify="space-evenly">
-                    {footers.map((footer) => (
-                        <Grid item xs key={footer.title}>
-                            <Typography variant="title" color="textPrimary" gutterBottom>
-                                footer
-                            </Typography>
-                            {footer.description.map((item) => (
-                                <Typography key={item} variant="subheading" color="textSecondary">
-                                    {item}
-                                </Typography>
-                            ))}
-                        </Grid>
-                    ))}
-                </Grid>
+            <footer className="footer">
+                <div className="footer__description">
+                    SONM Blockchain Explorer is a Transactions Explorer and Analytics Platform for SONM Blockchain, a decentralized fog computing platform.
+                </div>
+                <div className="footer__navigation" dangerouslySetInnerHTML={this.createMarkup(this.props.navigation)} />
+                <div className="footer__socials" dangerouslySetInnerHTML={this.createMarkup(this.props.socials)} />
             </footer>
         );
+    }
+
+    public render() {
+        return this.props.isReady ? this.renderFooter() : null;
     }
 }
 

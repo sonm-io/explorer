@@ -1,0 +1,69 @@
+
+<nav class="row footer-nav">
+      <div class="col-xs-6 col-md-3">
+          <div class="footer-nav__block">
+              <h3 class="footer-nav__title">Platform</h3>
+              <ul class="footer-nav__list">
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/getting-started/">Getting started</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/sonm-os/">Sonm OS</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/calculator/">Calculator</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/technology-stack/">Technology stack</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://docs.sonm.com" rel="noopener" target="_blank">Documentation</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+      <div class="col-xs-6 col-md-3">
+          <div class="footer-nav__block">
+              <h3 class="footer-nav__title">Solutions</h3>
+              <ul class="footer-nav__list">
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/solutions/infrastructure-for-blockchain-applications/">Infrastructure for blockchain apps</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/solutions/machine-learning/">Machine learning</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/solutions/rendering/">Render</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/solutions/cdn/">CDN</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+      <div class="col-xs-6 col-md-3">
+          <div class="footer-nav__block">
+              <h3 class="footer-nav__title">Company</h3>
+              <ul class="footer-nav__list">
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/blog/introducing-new-roadmap/">Roadmap</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/blog/">Blog</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/about/">About us</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/jobs/">Jobs</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" href="https://sonm.com/support/">Support</a>
+                  </li>
+                  <li class="footer-nav__item">
+                      <a class="footer-nav__link" target="_blank" rel="noopener" href="https://sonm.threadless.com">Merch store</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+  </nav>
