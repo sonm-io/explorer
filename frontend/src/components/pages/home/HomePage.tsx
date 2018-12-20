@@ -30,7 +30,7 @@ export class HomePage extends React.Component<IHomePageProps> {
                 direction="column"
                 alignItems="center"
                 justify="center"
-                style={{minHeight: '80vh'}}
+                className="home"
             >
                 <Grid item xs={8}>
                     <Logo className="home__logo" />
