@@ -29,34 +29,6 @@
     You need to enable JavaScript to run this app.
 </noscript>
 <div id="root"></div>
-<div id="footer">
-  <div id="footer-description">
-      SONM Blockchain Explorer is a Transactions Explorer and Analytics Platform for SONM Blockchain, a decentralized fog computing platform.
-  </div>
-  <div id="navigation"></div>
-  <div id="socials"></div>
-</div>
-<script>
-  (function () {
-    var fetchAndPlace = function(url, id) {
-      fetch(url, { 
-        method: 'POST' 
-      }).then(function (response) {
-        return response.text();
-      }).then(function (text) {
-        let footer = document.getElementById(id);
-        footer.insertAdjacentHTML('beforeend', text);
-      });
-    };
-
-    [
-      { url: 'https://sonm.com/get-some-footer/?type=navigation', id: 'navigation' },
-      { url: 'https://sonm.com/get-some-footer/?type=socials', id: 'socials' }
-    ].forEach(function (i) {
-      fetchAndPlace(i.url, i.id);
-    });
-  })();
-</script>
 <!--
   This HTML file is a template.
   If you open it directly in the browser, you will see an empty page.

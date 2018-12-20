@@ -14,6 +14,7 @@ import { createItemPage } from "src/components/factories/item";
 import PageHeader from "src/components/elements/page-header";
 import './app.less';
 import { TNavigationMenus } from "src/stores/navigation-store";
+import Footer from "../elements/footer";
 
 const BlockLayout = createItemPage(BlockPage, RootStore.block);
 const TransactionLayout = createItemPage(TransactionPage, RootStore.transaction);
@@ -81,6 +82,7 @@ class App extends React.Component<RouteComponentProps> {
                     <Route path="/contracts" component={ContractsPage}/>
                     <Route path="*" component={NotFound}/>
                 </Switch>
+                <Footer />
             </div>
         );
     }
