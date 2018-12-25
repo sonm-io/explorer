@@ -3,6 +3,7 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -230,15 +231,22 @@ func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
 	return nil
 }
 
-func (conn *Storage) saveArgs(t *sql.Tx, tx *types.Transaction) error {
+func (conn *Storage) shiftArgs(decodedArgs []string) [16]string {
 	var args [16]string
-	for i := 0; i > 16; i++ {
-		if len(tx.DecodedData.Args) >= i+1 {
-			args[i] = tx.DecodedData.Args[i]
+	for i := 0; i < 16; i++ {
+		if len(decodedArgs) >= i+1 {
+			args[i] = decodedArgs[i]
 		} else {
 			args[i] = "NULL"
 		}
 	}
+	log.Println(args)
+	return args
+}
+
+func (conn *Storage) saveArgs(t *sql.Tx, tx *types.Transaction) error {
+	args := conn.shiftArgs(tx.DecodedData.Args)
+
 	_, err := t.Exec(insertArgQuery,
 		tx.Receipt.TxHash.String(),
 		tx.DecodedData.Method,

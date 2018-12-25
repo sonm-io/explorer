@@ -24,7 +24,8 @@ func run(app cmd.AppContext) error {
 		return fmt.Errorf("failed to create filler instance: %s", err)
 	}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	wg, ctx := errgroup.WithContext(ctx)
 	wg.Go(func() error {
