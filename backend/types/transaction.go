@@ -75,7 +75,7 @@ func (t *Transaction) parseArgs(data []byte) error {
 		hexData = hexData[8:]
 		var args []string
 		for i := 0; i <= len(hexData)/64; i = +64 {
-			args = append(args, hexData[i:(i+64)])
+			args = append(args, hexData[i:(i + 64)])
 		}
 		t.DecodedData.Args = args
 	}

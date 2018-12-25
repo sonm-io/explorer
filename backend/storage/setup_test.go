@@ -79,6 +79,7 @@ func TestAll(t *testing.T) {
 	tests := []func(*testing.T){
 		testGetBestBlock,
 		testGetUnfilledIntervals,
+		testShiftArgs,
 	}
 	for _, test := range tests {
 		t.Run(GetFunctionName(test), wrapper(test))

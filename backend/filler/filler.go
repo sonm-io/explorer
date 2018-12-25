@@ -46,7 +46,6 @@ func NewFiller(cfg *Config) (*Filler, error) {
 }
 
 func (f *Filler) Start(ctx context.Context) error {
-
 	doneFill := make(chan bool)
 	doneIntervals := make(chan bool)
 	sem := make(chan struct{}, 50)
