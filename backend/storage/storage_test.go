@@ -1,8 +1,10 @@
 package storage
 
 import (
+	"log"
 	"testing"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -58,4 +60,17 @@ func testShiftArgs(t *testing.T) {
 	assert.Equal(t, result[0], "arg1")
 	assert.Equal(t, result[1], "arg2")
 	assert.Equal(t, result[15], "arg16")
+}
+
+func testShiftLogArgs(t *testing.T) {
+	testArgs := common.Hex2Bytes("000000000000000000000000000000000000000000000000000000000003a7b6")
+	log.Println("args len", len(testArgs))
+	first, _, _ := testStorage.shiftLogArgs(testArgs)
+	assert.Equal(t, "000000000000000000000000000000000000000000000000000000000003a7b6", first)
+
+	args := common.Hex2Bytes("000000000000000000000000000000000000000000000000000000000003a7b6000000000000000000000000000000000000000000000000000000000003a7b6000000000000000000000000000000000000000000000000000000000003a7b6")
+	f1, f2, f3 := testStorage.shiftLogArgs(args)
+	assert.Equal(t, "000000000000000000000000000000000000000000000000000000000003a7b6", f1)
+	assert.Equal(t, "000000000000000000000000000000000000000000000000000000000003a7b6", f2)
+	assert.Equal(t, "000000000000000000000000000000000000000000000000000000000003a7b6", f3)
 }

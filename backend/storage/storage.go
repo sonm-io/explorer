@@ -178,24 +178,28 @@ func (conn *Storage) saveTransaction(t *sql.Tx, block *types.Block, tx *types.Tr
 	return nil
 }
 
-func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
+func (conn *Storage) shiftLogTopics(topics []common.Hash) (string, string, string, string) {
 	var firstTopic, secondTopic, thirdTopic, fourthTopic string
+	if len(topics) > 0 {
+		firstTopic = topics[0].String()
+	}
+	if len(topics) > 1 {
+		secondTopic = topics[1].String()
+	}
+	if len(topics) > 2 {
+		thirdTopic = topics[2].String()
+	}
+	if len(topics) > 3 {
+		fourthTopic = topics[3].String()
+	}
+	return firstTopic, secondTopic, thirdTopic, fourthTopic
+}
 
-	if len(l.Topics) > 0 {
-		firstTopic = l.Topics[0].String()
-	}
-	if len(l.Topics) > 1 {
-		secondTopic = l.Topics[1].String()
-	}
-	if len(l.Topics) > 2 {
-		thirdTopic = l.Topics[2].String()
-	}
-	if len(l.Topics) > 3 {
-		fourthTopic = l.Topics[3].String()
-	}
-
+func (conn *Storage) shiftLogArgs(hexData []byte) (string, string, string) {
+	log.Println("len data inner", len(hexData))
+	data := common.Bytes2Hex(hexData)
+	log.Println("len data inner", len(data))
 	var firstArg, secondArg, thirdArg string
-	data := string(l.Data)
 
 	if len(data) > 0 && len(data) > 63 {
 		firstArg = data[0:64]
@@ -208,6 +212,14 @@ func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
 	if len(data) > 191 {
 		thirdArg = data[128:]
 	}
+
+	return firstArg, secondArg, thirdArg
+}
+
+func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
+	firstTopic, secondTopic, thirdTopic, fourthTopic := conn.shiftLogTopics(l.Topics)
+
+	firstArg, secondArg, thirdArg := conn.shiftLogArgs(l.Data)
 
 	_, err := t.Exec(insertLogQuery,
 		l.TxHash.String(),
@@ -240,7 +252,6 @@ func (conn *Storage) shiftArgs(decodedArgs []string) [16]string {
 			args[i] = "NULL"
 		}
 	}
-	log.Println(args)
 	return args
 }
 
