@@ -14,10 +14,11 @@ import RootStore from 'src/stores/root';
 import './index.less';
 
 const generateClassName = createGenerateClassName();
+const el = document.getElementById('jss-insertion-point') || undefined;
 const jss = create({
   ...jssPreset(),
   // We define a custom insertion point that JSS will look for injecting the styles in the DOM.
-  insertionPoint: 'jss-insertion-point',
+  insertionPoint: el,
 });
 
 ReactDOM.render(
