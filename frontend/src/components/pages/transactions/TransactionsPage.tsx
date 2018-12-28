@@ -120,7 +120,12 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
         return (
             <React.Fragment>
                 <Header title={header} subtitle={description} />
-                <AddressInfo address={p.address||''} transactionsCount={p.totalCount} />
+                <AddressInfo
+                    address={p.address||''}
+                    transactionsCount={p.totalCount}
+                    balanceSnm={p.addressInfo === undefined ? '' : p.addressInfo.balanceSnm}
+                    balanceUsd={p.addressInfo === undefined ? '' : p.addressInfo.balanceUsd}
+                />
             </React.Fragment>
         );
     }
