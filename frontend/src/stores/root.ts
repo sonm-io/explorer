@@ -14,7 +14,7 @@ import createBrowserHistory from "history/createBrowserHistory";
 const history = createBrowserHistory();
 
 export default {
-    transactions: Transactions.init(Api.transactions, history),
+    transactions: Transactions.init(Api.transactions, Api.transactionsCount, history),
     transaction: ItemStore.init(Api.transaction),
     blocks: Blocks.init(Api.blocks),
     block: ItemStore.init(Api.block),
