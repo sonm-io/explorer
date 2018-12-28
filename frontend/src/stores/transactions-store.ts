@@ -19,10 +19,18 @@ export interface ITransactionsState extends ITransactions, IListState<Transactio
 // ToDo: this signature doesn't correspond API method and there is no error message.
 export type TTransactionsFetch = (page: number, pageSize: number, address?: string) => Promise<Transaction[] | string>;
 
+export type TTransactionsFetchCount = (show: string, address?: string) => Promise<[{count: number}]>;
+
 interface ITransactionsFetchConfig extends IFetchConfig<
     ITransactionsState,
     [number, number, string, string?, number?],
     Transaction[] | string
+> {}
+
+interface ITransactionsFetchCountConfig extends IFetchConfig<
+    ITransactionsState,
+    [string, string?], // show, address
+    [{count: number}]
 > {}
 
 // Implementation
@@ -36,21 +44,27 @@ const getRoute = (state: ITransactionsState) => {
 };
 
 export const init = (
-    fetchMethod: TTransactionsFetch,
+    fetchDataMethod: TTransactionsFetch,
+    fetchCountMethod: TTransactionsFetchCount,
     history: History
 ): IFetchCtl<ITransactionsState> => {
-    const fetchConfig: ITransactionsFetchConfig = {
-        fetchMethod,
+    const fetchDataCfg: ITransactionsFetchConfig = {
+        fetchMethod: fetchDataMethod,
         getArgs: (state: ITransactionsState) => ([state.page, state.pageSize, state.show, state.address, state.block]),
         updateStore: PagedList.updateListStore,
         getRoute,
+    };
+    const fetchCountCfg: ITransactionsFetchCountConfig = {
+        fetchMethod: fetchCountMethod,
+        getArgs: (state: ITransactionsState) => (['', state.address]),
+        updateStore: PagedList.updateCount,
     };
     const state: ITransactionsState = {
         ...PagedList.initState(),
         show: 'transactions',
         date: undefined,
     };
-    return Fetch.init(state, fetchConfig, history);
+    return Fetch.init(state, fetchDataCfg, fetchCountCfg, history);
 };
 
 export default {

@@ -1,5 +1,7 @@
 import { fetchData, fetchItem, IQueryParam, getQuery } from './base';
 
+// ToDo: extract 'show' and 'address' to filter object.
+
 export const transactions = (
     page: number,
     pageSize: number,
@@ -20,6 +22,16 @@ export const transactions = (
 
     params.push({ name: 'order', value: 'nonce.desc' });
 
+    const query = getQuery('transactions?', params);
+    return fetchData(query);
+};
+
+export const transactionsCount = (show: string, address?: string) => {
+    const params: IQueryParam[] = [];
+    params.push({ name: 'select', value: 'count' });
+    if (address !== undefined) {
+        params.push({ name: 'or', value: `(from.eq.${address},to.eq.${address})` });
+    }
     const query = getQuery('transactions?', params);
     return fetchData(query);
 };

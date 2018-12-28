@@ -5,6 +5,7 @@ import Notifications from '../features/notifications';
 // Interfaces
 
 export interface IListState<TItem> extends IFetchState {
+    totalCount: number;
     list: TItem[];
     pageSize: number;
     page: number;
@@ -21,6 +22,7 @@ export interface IListFetchConfig<
 
 export const initState = <TItem>(pageSize = 10, page = 1): IListState<TItem> => ({
     ...Fetch.initState(),
+    totalCount: -1,
     list: [] as TItem[],
     pageSize,
     page,
@@ -35,6 +37,14 @@ export const updateListStore = <TItem>(store: Store<IListState<TItem>>, result: 
         Notifications.actions(store).addSnackbar(store.getState(), result);
     } else {
         store.setState({ list: result });
+    }
+};
+
+export const updateCount = <TItem>(store: Store<IListState<TItem>>, result: [{count: number}] | string) => {
+    if(typeof(result) === 'string') {
+        Notifications.actions(store).addSnackbar(store.getState(), result);
+    } else {
+        store.setState({ totalCount: result[0].count });
     }
 };
 
@@ -56,4 +66,5 @@ export default {
     initSimple,
     getListArgs,
     updateListStore,
+    updateCount
 };

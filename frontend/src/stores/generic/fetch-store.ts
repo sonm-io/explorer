@@ -49,7 +49,7 @@ export const initState = (): IFetchState => ({
 
 export const fetchData = <S extends IFetchState, A extends any[], R>(config: IFetchConfig<S,A,R>) =>
     (store: Store<S>) => {
-        const fn = async (state: S) => {
+        const fn = async (state: S, pending: boolean = true) => {
             const fetchArgs = config.getArgs(state);
             const result = await config.fetchMethod(...fetchArgs);
             config.updateStore(store, result);
@@ -58,29 +58,37 @@ export const fetchData = <S extends IFetchState, A extends any[], R>(config: IFe
         return pending(store, fn);
     };
 
-export const initActions = <S extends IFetchState, A extends any[], R>(
-    config: IFetchConfig<S,A,R>,
+export const initActions = <
+    S extends IFetchState,
+    TDataArgs extends any[], TDataRes,
+    TCountArgs extends any[], TCountRes,
+>(
+    fetchDataCfg: IFetchConfig<S,TDataArgs,TDataRes>,
+    fetchCountCfg?: IFetchConfig<S,TCountArgs,TCountRes>,
     history?: History
 ) =>
     (store: Store<S>): IFetchActions<S> => ({
         ...Notifications.actions(store),
-        fetch: fetchData(config)(store),
-        update: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false) => {
+        fetch: fetchData(fetchDataCfg)(store),
+        update: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false, withCount: boolean = true) => {
             //debugger;
             console.log('update:');
             console.log(upd);
             store.setState(upd, overwrite);
-            fetchData(config)(store)(store.getState());
+            fetchData(fetchDataCfg)(store)(store.getState());
+            if (fetchCountCfg !== undefined && withCount) {
+                fetchData(fetchCountCfg)(store)(store.getState(), false);
+            }
         },
         updateRoute: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false) => {
-            if (config.getRoute === undefined) {
+            if (fetchDataCfg.getRoute === undefined) {
                 throw new Error("getRoute must be specified when updateRoute is used");
             }
             if (history === undefined) {
                 throw new Error("history must be passed when updateRoute is used");
             }
             store.setState(upd, overwrite);
-            history.push(config.getRoute(store.getState()));
+            history.push(fetchDataCfg.getRoute(store.getState()));
         },
     });
 
@@ -92,13 +100,18 @@ export const getBoundActs = <TState extends IFetchState>(
     update: store.action(actions.update),
 });
 
-export const init = <TState extends IFetchState, TFetchArgs extends any[], TFetchResult>(
+export const init = <
+    TState extends IFetchState,
+    TDataArgs extends any[], TDataRes,
+    TCountArgs extends any[], TCountRes,
+>(
     initialState: TState,
-    config: IFetchConfig<TState, TFetchArgs, TFetchResult>,
+    fetchDataCfg: IFetchConfig<TState,TDataArgs,TDataRes>,
+    fetchCountCfg?: IFetchConfig<TState,TCountArgs,TCountRes>,
     history?: History
 ): IFetchCtl<TState> => {
     const store = createStore({...initialState as object} as TState);
-    const actions = initActions(config, history);
+    const actions = initActions(fetchDataCfg, fetchCountCfg, history);
     return {
         store,
         actions,
