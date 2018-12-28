@@ -20,7 +20,7 @@ export interface IFetchConfig<
 
 export interface IFetchActions<TState extends IFetchState> extends INotificationsActions {
     fetch: (state: TState) => Promise<void>;
-    update: <U extends keyof TState>(state: TState, upd: Pick<TState, U>) => Promise<void>;
+    update: <U extends keyof TState>(state: TState, upd: Pick<TState, U>, overwrite?: boolean, withCount?: boolean) => Promise<void>;
     updateRoute: <U extends keyof TState>(state: TState, upd: Pick<TState, U>) => void;
 }
 

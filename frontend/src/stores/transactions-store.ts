@@ -2,12 +2,18 @@ import { Transaction } from "src/types/Transaction";
 import PagedList, { IListState } from "./generic/paged-list";
 import Fetch, { IFetchCtl, IFetchConfig } from "./generic/fetch-store";
 import { History } from 'history';
+import { Store } from "unistore";
 
 // Interfaces
 
 export type TTransactionsShow = 'transactions' | 'token-trns';
 
 export interface ITransactions {
+    addressInfo?: {
+        balanceSnm: string;
+        balanceUsd: string;
+    };
+    // filter:
     address?: string;
     show: TTransactionsShow;
     date?: Date;
@@ -46,6 +52,7 @@ const getRoute = (state: ITransactionsState) => {
 export const init = (
     fetchDataMethod: TTransactionsFetch,
     fetchCountMethod: TTransactionsFetchCount,
+    fetchAddressBalance: (address: string) => Promise<[string, string]>,
     history: History
 ): IFetchCtl<ITransactionsState> => {
     const fetchDataCfg: ITransactionsFetchConfig = {
@@ -56,7 +63,7 @@ export const init = (
     };
     const fetchCountCfg: ITransactionsFetchCountConfig = {
         fetchMethod: fetchCountMethod,
-        getArgs: (state: ITransactionsState) => (['', state.address]),
+        getArgs: (state: ITransactionsState) => (['', state.address]), // show, address
         updateStore: PagedList.updateCount,
     };
     const state: ITransactionsState = {
@@ -64,7 +71,27 @@ export const init = (
         show: 'transactions',
         date: undefined,
     };
-    return Fetch.init(state, fetchDataCfg, fetchCountCfg, history);
+
+    const controller = Fetch.init(state, fetchDataCfg, fetchCountCfg, history);
+
+    const actions = (store: Store<ITransactionsState>) => ({
+        ...controller.actions(store),
+        update: async (state: ITransactionsState, upd: Pick<ITransactionsState, keyof ITransactionsState>, overwrite: boolean = false, withCount: boolean = true) => {
+            controller.actions(store).update(state, upd, overwrite, withCount);
+            if (state.address !== undefined) {
+                const balanceResult = await fetchAddressBalance(state.address);
+                store.setState({ addressInfo: { balanceSnm: balanceResult[0], balanceUsd: balanceResult[1] } });
+            } else {
+                store.setState({ addressInfo: undefined });
+            }
+        },
+    });
+
+    return {
+        store: controller.store,
+        actions,
+        boundedActions: Fetch.getBoundActs(controller.store, actions(controller.store)),
+    };
 };
 
 export default {
