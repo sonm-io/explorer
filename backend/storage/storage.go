@@ -3,7 +3,6 @@ package storage
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -196,9 +195,7 @@ func (conn *Storage) shiftLogTopics(topics []common.Hash) (string, string, strin
 }
 
 func (conn *Storage) shiftLogArgs(hexData []byte) (string, string, string) {
-	log.Println("len data inner", len(hexData))
 	data := common.Bytes2Hex(hexData)
-	log.Println("len data inner", len(data))
 	var firstArg, secondArg, thirdArg string
 
 	if len(data) > 0 && len(data) > 63 {
