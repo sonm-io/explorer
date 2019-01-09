@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"math/big"
+	"strconv"
 
 	"github.com/ethereum/go-ethereum/common"
 	eth "github.com/ethereum/go-ethereum/core/types"
@@ -94,25 +95,25 @@ func (conn *Storage) ProcessBlock(block *types.Block) error {
 		err = conn.saveTransaction(t, block, tx)
 		if err != nil {
 			t.Rollback()
-			return fmt.Errorf("error while inserting transaction: %s", err)
+			return fmt.Errorf("failed to save transaction: %s", err)
 		}
 
 		for _, l := range tx.Logs {
 			if err := conn.saveLog(t, l); err != nil {
 				t.Rollback()
-				return fmt.Errorf("failed to save log: %v", err)
+				return fmt.Errorf("failed to save log: %s", err)
 			}
 		}
 
 		if err := conn.saveArgs(t, tx); err != nil {
 			t.Rollback()
-			return fmt.Errorf("faile to save args: %v", err)
+			return fmt.Errorf("faile to save args: %s", err)
 		}
 	}
 
 	err = t.Commit()
 	if err != nil {
-		return fmt.Errorf("failed to complete database transaction: %v", err)
+		return fmt.Errorf("failed to complete database transaction: %s", err)
 	}
 	return nil
 }
@@ -128,7 +129,7 @@ func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
 		block.Block.NumberU64(),
 		block.Block.Hash().String(),
 		block.Block.ParentHash().String(),
-		block.Block.Nonce(),
+		strconv.FormatUint(block.Block.Nonce(), 10),
 		block.Block.UncleHash().String(),
 		bloom,
 		block.Block.TxHash().String(),
@@ -234,7 +235,7 @@ func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
 		l.Removed,
 	)
 	if err != nil {
-		return fmt.Errorf("error while inserting log: %v", err)
+		return fmt.Errorf("error while inserting log: %s", err)
 	}
 
 	return nil
@@ -276,7 +277,7 @@ func (conn *Storage) saveArgs(t *sql.Tx, tx *types.Transaction) error {
 		args[15],
 	)
 	if err != nil {
-		return fmt.Errorf("error while inserting arg: %v", err)
+		return fmt.Errorf("error while inserting arg: %s", err)
 	}
 	return nil
 }
