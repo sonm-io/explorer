@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"math/big"
@@ -40,8 +41,8 @@ func (conn *Storage) Close() error {
 	return conn.db.Close()
 }
 
-func (conn *Storage) GetBestBlock() (uint64, error) {
-	rows, err := conn.db.Query(selectBestBlockQuery)
+func (conn *Storage) GetBestBlock(ctx context.Context) (uint64, error) {
+	rows, err := conn.db.QueryContext(ctx, selectBestBlockQuery)
 	if err != nil {
 		return 0, err
 	}
@@ -56,8 +57,8 @@ func (conn *Storage) GetBestBlock() (uint64, error) {
 	return bestBlock, nil
 }
 
-func (conn *Storage) GetUnfilledIntervals() ([]types.Interval, error) {
-	rows, err := conn.db.Query(selectUnfilledIntervalsQuery)
+func (conn *Storage) GetUnfilledIntervals(ctx context.Context) ([]types.Interval, error) {
+	rows, err := conn.db.QueryContext(ctx, selectUnfilledIntervalsQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -79,33 +80,33 @@ func (conn *Storage) GetUnfilledIntervals() ([]types.Interval, error) {
 	return s, nil
 }
 
-func (conn *Storage) ProcessBlock(block *types.Block) error {
+func (conn *Storage) ProcessBlock(ctx context.Context, block *types.Block) error {
 	t, err := conn.db.Begin()
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %s", err)
 	}
 
-	err = conn.saveBlock(t, block)
+	err = conn.saveBlock(ctx, t, block)
 	if err != nil {
 		t.Rollback()
 		return err
 	}
 
 	for _, tx := range block.Transactions {
-		err = conn.saveTransaction(t, block, tx)
+		err = conn.saveTransaction(ctx, t, block, tx)
 		if err != nil {
 			t.Rollback()
 			return fmt.Errorf("failed to save transaction: %s", err)
 		}
 
 		for _, l := range tx.Logs {
-			if err := conn.saveLog(t, l); err != nil {
+			if err := conn.saveLog(ctx, t, l); err != nil {
 				t.Rollback()
 				return fmt.Errorf("failed to save log: %s", err)
 			}
 		}
 
-		if err := conn.saveArgs(t, tx); err != nil {
+		if err := conn.saveArgs(ctx, t, tx); err != nil {
 			t.Rollback()
 			return fmt.Errorf("faile to save args: %s", err)
 		}
@@ -118,14 +119,14 @@ func (conn *Storage) ProcessBlock(block *types.Block) error {
 	return nil
 }
 
-func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
+func (conn *Storage) saveBlock(ctx context.Context, t *sql.Tx, block *types.Block) error {
 	bloom := common.Bytes2Hex(block.Block.Bloom().Bytes())
 
 	size := big.NewInt(0).SetUint64(uint64(block.Block.Size()))
 
 	extra := common.Bytes2Hex(block.Block.Extra())
 
-	_, err := t.Exec(insertBlockQuery,
+	_, err := t.ExecContext(ctx, insertBlockQuery,
 		block.Block.NumberU64(),
 		block.Block.Hash().String(),
 		block.Block.ParentHash().String(),
@@ -151,12 +152,12 @@ func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
 	return nil
 }
 
-func (conn *Storage) saveTransaction(t *sql.Tx, block *types.Block, tx *types.Transaction) error {
+func (conn *Storage) saveTransaction(ctx context.Context, t *sql.Tx, block *types.Block, tx *types.Transaction) error {
 	source := block.Block.Transaction(tx.Receipt.TxHash)
 	v, r, s := source.RawSignatureValues()
 	data := common.Bytes2Hex(source.Data())
 
-	_, err := t.Exec(insertTransactionQuery,
+	_, err := t.ExecContext(ctx, insertTransactionQuery,
 		source.Hash().String(),
 		source.Nonce(),
 		block.Block.Hash().String(),
@@ -214,12 +215,12 @@ func (conn *Storage) shiftLogArgs(hexData []byte) (string, string, string) {
 	return firstArg, secondArg, thirdArg
 }
 
-func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
+func (conn *Storage) saveLog(ctx context.Context, t *sql.Tx, l *eth.Log) error {
 	firstTopic, secondTopic, thirdTopic, fourthTopic := conn.shiftLogTopics(l.Topics)
 
 	firstArg, secondArg, thirdArg := conn.shiftLogArgs(l.Data)
 
-	_, err := t.Exec(insertLogQuery,
+	_, err := t.ExecContext(ctx, insertLogQuery,
 		l.TxHash.String(),
 		l.Address.String(),
 		firstTopic,
@@ -253,10 +254,10 @@ func (conn *Storage) shiftArgs(decodedArgs []string) [16]string {
 	return args
 }
 
-func (conn *Storage) saveArgs(t *sql.Tx, tx *types.Transaction) error {
+func (conn *Storage) saveArgs(ctx context.Context, t *sql.Tx, tx *types.Transaction) error {
 	args := conn.shiftArgs(tx.DecodedData.Args)
 
-	_, err := t.Exec(insertArgQuery,
+	_, err := t.ExecContext(ctx, insertArgQuery,
 		tx.Receipt.TxHash.String(),
 		tx.DecodedData.Method,
 		args[0],
