@@ -17,7 +17,7 @@ type Block struct {
 func FillNewBlock(ctx context.Context, client blockchain.CustomEthereumClient, number *big.Int) (*Block, error) {
 	block, err := client.BlockByNumber(ctx, number)
 	if err != nil {
-		return nil, fmt.Errorf("failed to getting block: %v", err)
+		return nil, fmt.Errorf("failed to get block: %v", err)
 	}
 
 	var transactions []*Transaction

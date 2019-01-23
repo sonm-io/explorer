@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math/big"
-	"sync"
 	"time"
 
 	"github.com/sonm-io/core/blockchain"
@@ -13,18 +12,12 @@ import (
 	"github.com/sonm-io/explorer/backend/types"
 )
 
+const concurrency = 50
+
 type Filler struct {
-	client blockchain.CustomEthereumClient
-	db     *storage.Storage
-
+	client   blockchain.CustomEthereumClient
+	db       *storage.Storage
 	loadChan chan uint64
-
-	state struct {
-		mu sync.Mutex
-
-		lastBlock uint64
-		bestBlock uint64
-	}
 }
 
 func NewFiller(cfg *Config) (*Filler, error) {
@@ -41,15 +34,22 @@ func NewFiller(cfg *Config) (*Filler, error) {
 	return &Filler{
 		client:   client,
 		db:       s,
-		loadChan: make(chan uint64, 100),
+		loadChan: make(chan uint64, concurrency),
 	}, nil
 }
 
 func (f *Filler) Start(ctx context.Context) error {
 	doneFill := make(chan bool)
 	doneIntervals := make(chan bool)
-	sem := make(chan struct{}, 50)
 	go func() { doneFill <- true }()
+
+	for i := 0; i < concurrency; i++ {
+		go func() {
+			for number := range f.loadChan {
+				f.processBlock(ctx, number)
+			}
+		}()
+	}
 
 	for {
 		select {
@@ -57,33 +57,43 @@ func (f *Filler) Start(ctx context.Context) error {
 			return ctx.Err()
 		case <-doneFill:
 			go func() {
-				err := f.loadBestBlock()
+				defer func() {
+					doneIntervals <- true
+				}()
+
+				lastKnownBlock, err := f.loadBestBlock(ctx)
 				if err != nil {
+					log.Printf("failed to load last known block: %v", err)
 					return
 				}
 
 				reqCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
 				defer cancel()
 
-				err = f.loadLastBlock(reqCtx)
+				lastBlockInChain, err := f.loadLastBlock(reqCtx)
 				if err != nil {
+					log.Printf("failed to load last block in blockchain: %v", err)
 					return
 				}
 
-				log.Printf("last block: %d", f.state.lastBlock)
-				log.Printf("best known block: %d", f.state.bestBlock)
+				log.Printf("last known block = %v; last block in chain = %v", lastKnownBlock, lastBlockInChain)
+				if lastKnownBlock < lastBlockInChain {
+					log.Printf("blocks delta = %v", lastBlockInChain-lastKnownBlock)
 
-				if f.state.bestBlock < f.state.lastBlock {
-					for i := f.state.bestBlock + 1; i < f.state.lastBlock; i++ {
+					for i := lastKnownBlock + 1; i < lastBlockInChain; i++ {
 						f.loadChan <- i
 					}
 				}
-				doneIntervals <- true
 			}()
 		case <-doneIntervals:
 			go func() {
-				intervals, err := f.db.GetUnfilledIntervals()
+				defer func() {
+					doneFill <- true
+				}()
+
+				intervals, err := f.db.GetUnfilledIntervals(ctx)
 				if err != nil {
+					log.Printf("failed to get unfilled intervals: %v", err)
 					return
 				}
 
@@ -92,25 +102,6 @@ func (f *Filler) Start(ctx context.Context) error {
 						f.loadChan <- i
 					}
 				}
-				doneFill <- true
-			}()
-		case number := <-f.loadChan:
-			sem <- struct{}{}
-			go func() {
-				block, err := types.FillNewBlock(ctx, f.client, big.NewInt(0).SetUint64(number))
-				if err != nil {
-					log.Println(err)
-					return
-				}
-				log.Println("block filled: ", number)
-
-				err = f.db.ProcessBlock(block)
-				if err != nil {
-					log.Printf("failed to save block: %d, %v", number, err)
-					return
-				}
-				log.Println("block saved: ", number)
-				<-sem
 			}()
 		}
 	}
@@ -120,28 +111,39 @@ func (f *Filler) Stop() {
 	defer f.db.Close()
 }
 
-func (f *Filler) loadLastBlock(ctx context.Context) error {
+func (f *Filler) loadLastBlock(ctx context.Context) (uint64, error) {
 	lastBlockNumber, err := f.client.GetLastBlock(ctx)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	if !lastBlockNumber.IsUint64() {
-		return fmt.Errorf("lastBlockNumber is not unit64")
+		return 0, fmt.Errorf("lastBlockNumber is not unit64")
 	}
-	f.state.mu.Lock()
-	f.state.lastBlock = lastBlockNumber.Uint64()
-	f.state.mu.Unlock()
-	return nil
+
+	return lastBlockNumber.Uint64(), nil
 }
 
-func (f *Filler) loadBestBlock() error {
-	bestBlockNumber, err := f.db.GetBestBlock()
+func (f *Filler) loadBestBlock(ctx context.Context) (uint64, error) {
+	bestBlockNumber, err := f.db.GetBestBlock(ctx)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	f.state.mu.Lock()
-	f.state.bestBlock = bestBlockNumber
-	f.state.mu.Unlock()
-	return nil
+	return bestBlockNumber, nil
+}
+
+func (f *Filler) processBlock(ctx context.Context, number uint64) {
+	block, err := types.FillNewBlock(ctx, f.client, big.NewInt(0).SetUint64(number))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println("block filled: ", number)
+
+	if err = f.db.ProcessBlock(ctx, block); err != nil {
+		log.Printf("failed to save block: %d, %v", number, err)
+		return
+	}
+
+	log.Println("block saved: ", number)
 }
