@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"strconv"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	eth "github.com/ethereum/go-ethereum/core/types"
@@ -127,15 +128,15 @@ func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
 
 	_, err := t.Exec(insertBlockQuery,
 		block.Block.NumberU64(),
-		block.Block.Hash().String(),
-		block.Block.ParentHash().String(),
+		strings.ToLower(block.Block.Hash().String()),
+		strings.ToLower(block.Block.ParentHash().String()),
 		strconv.FormatUint(block.Block.Nonce(), 10),
-		block.Block.UncleHash().String(),
+		strings.ToLower(block.Block.UncleHash().String()),
 		bloom,
-		block.Block.TxHash().String(),
-		block.Block.Root().String(),
-		block.Block.ReceiptHash().String(),
-		block.Block.Coinbase().String(),
+		strings.ToLower(block.Block.TxHash().String()),
+		strings.ToLower(block.Block.Root().String()),
+		strings.ToLower(block.Block.ReceiptHash().String()),
+		strings.ToLower(block.Block.Coinbase().String()),
 		block.Block.Difficulty().Uint64(),
 		0, // TODO: add total difficulty field
 		size.Uint64(),
@@ -143,7 +144,7 @@ func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
 		block.Block.GasLimit(),
 		block.Block.GasUsed(),
 		block.Block.Time().Uint64(),
-		block.Block.MixDigest().String(),
+		strings.ToLower(block.Block.MixDigest().String()),
 		len(block.Transactions))
 	if err != nil {
 		return fmt.Errorf("error while inserting block %d: %s", block.Block.NumberU64(), err)
@@ -157,13 +158,13 @@ func (conn *Storage) saveTransaction(t *sql.Tx, block *types.Block, tx *types.Tr
 	data := common.Bytes2Hex(source.Data())
 
 	_, err := t.Exec(insertTransactionQuery,
-		source.Hash().String(),
+		strings.ToLower(source.Hash().String()),
 		source.Nonce(),
-		block.Block.Hash().String(),
+		strings.ToLower(block.Block.Hash().String()),
 		block.Block.NumberU64(),
 		tx.Receipt.TransactionIndex,
-		tx.Receipt.From.String(),
-		tx.Receipt.To.String(),
+		strings.ToLower(tx.Receipt.From.String()),
+		strings.ToLower(tx.Receipt.To.String()),
 		source.Value().Uint64(),
 		source.Gas(),
 		source.GasPrice().Uint64(),
@@ -220,15 +221,15 @@ func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
 	firstArg, secondArg, thirdArg := conn.shiftLogArgs(l.Data)
 
 	_, err := t.Exec(insertLogQuery,
-		l.TxHash.String(),
-		l.Address.String(),
-		firstTopic,
-		secondTopic,
-		thirdTopic,
-		fourthTopic,
-		firstArg,
-		secondArg,
-		thirdArg,
+		strings.ToLower(l.TxHash.String()),
+		strings.ToLower(l.Address.String()),
+		strings.ToLower(firstTopic),
+		strings.ToLower(secondTopic),
+		strings.ToLower(thirdTopic),
+		strings.ToLower(fourthTopic),
+		strings.ToLower(firstArg),
+		strings.ToLower(secondArg),
+		strings.ToLower(thirdArg),
 		l.BlockNumber,
 		l.TxIndex,
 		l.Index,
@@ -257,24 +258,24 @@ func (conn *Storage) saveArgs(t *sql.Tx, tx *types.Transaction) error {
 	args := conn.shiftArgs(tx.DecodedData.Args)
 
 	_, err := t.Exec(insertArgQuery,
-		tx.Receipt.TxHash.String(),
-		tx.DecodedData.Method,
-		args[0],
-		args[1],
-		args[2],
-		args[3],
-		args[4],
-		args[5],
-		args[6],
-		args[7],
-		args[8],
-		args[9],
-		args[10],
-		args[11],
-		args[12],
-		args[13],
-		args[14],
-		args[15],
+		strings.ToLower(tx.Receipt.TxHash.String()),
+		strings.ToLower(tx.DecodedData.Method),
+		strings.ToLower(args[0]),
+		strings.ToLower(args[1]),
+		strings.ToLower(args[2]),
+		strings.ToLower(args[3]),
+		strings.ToLower(args[4]),
+		strings.ToLower(args[5]),
+		strings.ToLower(args[6]),
+		strings.ToLower(args[7]),
+		strings.ToLower(args[8]),
+		strings.ToLower(args[9]),
+		strings.ToLower(args[10]),
+		strings.ToLower(args[11]),
+		strings.ToLower(args[12]),
+		strings.ToLower(args[13]),
+		strings.ToLower(args[14]),
+		strings.ToLower(args[15]),
 	)
 	if err != nil {
 		return fmt.Errorf("error while inserting arg: %s", err)
