@@ -62,7 +62,6 @@ class DateTimePicker extends React.Component<IDateTimePickerProps, never> {
     }
 
     public render() {
-        console.log(this.dateAsString());
         const { classes, label, value, onChange, ...p } = this.props;
         return (
             <form className={classes.container} noValidate>

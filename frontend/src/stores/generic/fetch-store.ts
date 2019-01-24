@@ -72,8 +72,6 @@ export const initActions = <
         fetch: fetchData(fetchDataCfg)(store),
         update: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false, withCount: boolean = true) => {
             //debugger;
-            console.log('update:');
-            console.log(upd);
             store.setState(upd, overwrite);
             fetchData(fetchDataCfg)(store)(store.getState());
             if (fetchCountCfg !== undefined && withCount) {
