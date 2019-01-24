@@ -26,9 +26,7 @@ class ContractsPage extends React.Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {/*this.state.transactions.map((row) => {*/}
                             {definedAddressesMap.map((row) => {
-                                console.log(row);
                                 return (
                                     <TableRow key={row.name}>
                                         <TableCell>

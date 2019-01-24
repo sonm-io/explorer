@@ -8,6 +8,7 @@ import Header from "src/components/common/header";
 import SectionName from 'src/components/common/grid-section-name';
 import Label from 'src/components/common/grid-label';
 import Value from 'src/components/common/grid-value';
+import {definedAddresses, isAddressExists as isContract} from 'src/types/Address';
 
 interface ITransactionPageProps extends IItemProps<Transaction> {
 }
@@ -43,14 +44,20 @@ export class TransactionPage extends React.Component<ITransactionPageProps, neve
                     <Label>From</Label>
                     <Value>
                         <Link to={"/address/" + item.from}>
-                            {item.from}
+                            {isContract(item.from)
+                                ? definedAddresses[item.from].name
+                                : item.from
+                            }
                         </Link>
                     </Value>
 
                     <Label>To</Label>
                     <Value>
                         <Link to={"/address/" + item.to}>
-                            {item.to}
+                            {isContract(item.to)
+                                ? definedAddresses[item.to].name
+                                : item.to
+                            }
                         </Link>
                     </Value>
 
