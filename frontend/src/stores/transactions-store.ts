@@ -78,8 +78,10 @@ export const init = (
         ...controller.actions(store),
         update: async (state: ITransactionsState, upd: Pick<ITransactionsState, keyof ITransactionsState>, overwrite: boolean = false, withCount: boolean = true) => {
             controller.actions(store).update(state, upd, overwrite, withCount);
-            if (state.address !== undefined) {
-                const balanceResult = await fetchAddressBalance(state.address);
+            const s = store.getState();
+            if (s.address !== undefined) {
+                const balanceResult = await fetchAddressBalance(s.address);
+                console.log(`in store: snm: ${balanceResult[0]}, usd: ${balanceResult[1]}`);
                 store.setState({ addressInfo: { balanceSnm: balanceResult[0], balanceUsd: balanceResult[1] } });
             } else {
                 store.setState({ addressInfo: undefined });

@@ -37,13 +37,3 @@ export const transactionsCount = (show: string, address?: string) => {
 };
 
 export const transaction = (hash: string) => fetchItem(`transactions?hash=eq.${hash}&limit=1`);
-
-// Mock balance:
-
-let balanceSnm = 10;
-let balanceUsd = 80;
-export const getBalance = async (address: string): Promise<[string, string]> => {
-    return new Promise<[string, string]>((resolve, reject) => {
-        setTimeout(() => resolve([(++balanceSnm).toString(), (++balanceUsd).toString()]), 3000);
-    });
-};
