@@ -1,6 +1,7 @@
 -- +migrate Up
 
 CREATE UNLOGGED TABLE logs (
+  -- TODO: primary key
   "txHash"      TEXT NOT NULL REFERENCES transactions ("hash") ON DELETE CASCADE ON UPDATE CASCADE,
   "address"     TEXT NOT NULL,
   "firstTopic"  TEXT,

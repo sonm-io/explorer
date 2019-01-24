@@ -1,6 +1,7 @@
 -- +migrate Up
 
 CREATE UNLOGGED TABLE args (
+  -- TODO:  primary key
   "txHash" TEXT NOT NULL REFERENCES transactions ("hash") ON DELETE CASCADE ON UPDATE CASCADE,
   "method" TEXT NOT NULL,
   "arg1"   TEXT,

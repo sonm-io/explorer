@@ -22,7 +22,7 @@ CREATE UNLOGGED TABLE blocks (
 );
 
 CREATE UNLOGGED TABLE transactions (
-  "hash"             TEXT PRIMARY KEY,
+  "hash"             TEXT PRIMARY KEY, -- probably varchar(60)
   "nonce"            BIGINT,
   "blockHash"        TEXT    NOT NULL REFERENCES blocks ("hash") ON DELETE CASCADE ON UPDATE CASCADE,
   "blockNumber"      BIGINT  NOT NULL REFERENCES blocks ("number") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -44,6 +44,7 @@ CREATE VIEW view_last_block
     SELECT b.number
     FROM blocks b
     WHERE b.number = (SELECT max(b2.number) FROM blocks b2);
+-- TODO: what the difference from `select mac(number) from blocks`
 
 CREATE UNLOGGED TABLE uncles (
   "hash"        TEXT PRIMARY KEY,
