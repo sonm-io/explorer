@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"log"
 	"testing"
 
@@ -14,7 +15,7 @@ const (
 )
 
 func testGetBestBlock(t *testing.T) {
-	bestBlock, err := testStorage.GetBestBlock()
+	bestBlock, err := testStorage.GetBestBlock(context.TODO())
 	assert.NoError(t, err, "GetBestBlock failed")
 	assert.Equal(t, expectedBestBlock, bestBlock,
 		"incorrect reply: expected %d, get %d", expectedBestBlock, bestBlock)
@@ -30,7 +31,7 @@ func testGetUnfilledIntervals(t *testing.T) {
 		t.Fatalf("failed to prepare test data %s \r\n", err)
 	}
 
-	intervals, err := testStorage.GetUnfilledIntervals()
+	intervals, err := testStorage.GetUnfilledIntervals(context.TODO())
 	assert.NoError(t, err, "GetUnfilledIntervals failed")
 	// GetUnfilledIntervals must returns only 500 unique intervals
 	assert.Equal(t, expectedIntervalsCount, len(intervals),

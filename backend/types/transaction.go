@@ -22,7 +22,7 @@ type Transaction struct {
 func fillTransaction(ctx context.Context, client blockchain.CustomEthereumClient, t *types.Transaction) (*Transaction, error) {
 	rec, err := client.GetTransactionReceipt(ctx, t.Hash())
 	if err != nil {
-		return nil, fmt.Errorf("failed to getting transaction receipt: %s", err)
+		return nil, fmt.Errorf("failed to get transaction receipt: %s", err)
 	}
 
 	tx := &Transaction{
@@ -33,11 +33,11 @@ func fillTransaction(ctx context.Context, client blockchain.CustomEthereumClient
 	// TODO(sokel): need to experiment with correct block number with there transaction; now it's doesn't works;
 	codeAt, err := client.CodeAt(ctx, rec.To, nil)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting code at address: %s", err)
+		return nil, fmt.Errorf("error while get code at address: %s", err)
 	}
 
 	if string(codeAt) != "" {
-		err = tx.parseContractData(t, rec)
+		err = tx.parseContractData(t)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse contract data: %s", err)
 		}
@@ -46,8 +46,8 @@ func fillTransaction(ctx context.Context, client blockchain.CustomEthereumClient
 	return tx, nil
 }
 
-func (t *Transaction) parseContractData(tx *types.Transaction, receipt *blockchain.Receipt) error {
-	t.parseLogs(receipt)
+func (t *Transaction) parseContractData(tx *types.Transaction) error {
+	t.parseLogs(t.Receipt)
 
 	if err := t.parseArgs(tx.Data()); err != nil {
 		return fmt.Errorf("failed to parse args: %s", err)

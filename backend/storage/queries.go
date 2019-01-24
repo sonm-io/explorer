@@ -4,7 +4,7 @@ const selectBestBlockQuery = `SELECT coalesce(max(number), 0) AS bestBlock FROM 
 
 const selectUnfilledIntervalsQuery = `
 	SELECT number + 1 as start_interval, next_id - 1 as finish_interval
-	FROM (SELECT number, LEAD(number)OVER (ORDER BY number) AS next_id FROM blocks)T
+	FROM (SELECT number, LEAD(number) OVER (ORDER BY number) AS next_id FROM blocks) T
 	WHERE number + 1 <> next_id
 	LIMIT 1000
 	`
@@ -42,13 +42,14 @@ const insertTransactionQuery = `INSERT INTO transactions(
 				"to",
 				"value",
 				gas,
+				"gasUsed",
 				"gasPrice",
 				input,
 				v,
 				r,
 				s, 
 				status) 
-				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`
 
 const insertLogQuery = `
 	INSERT INTO logs (

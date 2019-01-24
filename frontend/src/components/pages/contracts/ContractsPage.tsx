@@ -26,21 +26,7 @@ class ContractsPage extends React.Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                <TableCell>
-                                    <Link to={"/address/" + "0x0000000000000000000000000000000000000000"}>
-                                        0x0000000000000000000000000000000000000000
-                                    </Link>
-                                </TableCell>
-                                <TableCell key={"0x0000000000000000000000000000000000000000"}>
-                                    <Link to={"/address/" + "0x0000000000000000000000000000000000000000"}>
-                                        0x0000000000000000000000000000000000000000
-                                    </Link>
-                                </TableCell>
-                            </TableRow>
-                            {/*this.state.transactions.map((row) => {*/}
                             {definedAddressesMap.map((row) => {
-                                console.log(row);
                                 return (
                                     <TableRow key={row.name}>
                                         <TableCell>

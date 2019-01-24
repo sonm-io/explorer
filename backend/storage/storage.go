@@ -1,10 +1,12 @@
 package storage
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"math/big"
+	"strconv"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	eth "github.com/ethereum/go-ethereum/core/types"
@@ -27,6 +29,9 @@ type Config struct {
 func NewStorage(cfg *Config) (*Storage, error) {
 	connStr := getConnString(cfg.Database, cfg.User, cfg.Password, cfg.Host, cfg.Port)
 	db, err := sql.Open("postgres", connStr)
+	db.SetMaxOpenConns(100)
+	db.SetMaxIdleConns(200)
+
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +45,8 @@ func (conn *Storage) Close() error {
 	return conn.db.Close()
 }
 
-func (conn *Storage) GetBestBlock() (uint64, error) {
-	rows, err := conn.db.Query(selectBestBlockQuery)
+func (conn *Storage) GetBestBlock(ctx context.Context) (uint64, error) {
+	rows, err := conn.db.QueryContext(ctx, selectBestBlockQuery)
 	if err != nil {
 		return 0, err
 	}
@@ -56,8 +61,8 @@ func (conn *Storage) GetBestBlock() (uint64, error) {
 	return bestBlock, nil
 }
 
-func (conn *Storage) GetUnfilledIntervals() ([]types.Interval, error) {
-	rows, err := conn.db.Query(selectUnfilledIntervalsQuery)
+func (conn *Storage) GetUnfilledIntervals(ctx context.Context) ([]types.Interval, error) {
+	rows, err := conn.db.QueryContext(ctx, selectUnfilledIntervalsQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -79,63 +84,62 @@ func (conn *Storage) GetUnfilledIntervals() ([]types.Interval, error) {
 	return s, nil
 }
 
-func (conn *Storage) ProcessBlock(block *types.Block) error {
+func (conn *Storage) ProcessBlock(ctx context.Context, block *types.Block) error {
 	t, err := conn.db.Begin()
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %s", err)
 	}
 
-	err = conn.saveBlock(t, block)
+	err = conn.saveBlock(ctx, t, block)
 	if err != nil {
 		t.Rollback()
 		return err
 	}
 
 	for _, tx := range block.Transactions {
-		err = conn.saveTransaction(t, block, tx)
+		err = conn.saveTransaction(ctx, t, block, tx)
 		if err != nil {
 			t.Rollback()
-			return fmt.Errorf("error while inserting transaction: %s", err)
+			return fmt.Errorf("failed to save transaction: %s", err)
 		}
 
 		for _, l := range tx.Logs {
-			if err := conn.saveLog(t, l); err != nil {
+			if err := conn.saveLog(ctx, t, l); err != nil {
 				t.Rollback()
-				return fmt.Errorf("failed to save log: %v", err)
+				return fmt.Errorf("failed to save log: %s", err)
 			}
 		}
 
-		if err := conn.saveArgs(t, tx); err != nil {
+		if err := conn.saveArgs(ctx, t, tx); err != nil {
 			t.Rollback()
-			return fmt.Errorf("faile to save args: %v", err)
+			return fmt.Errorf("faile to save args: %s", err)
 		}
 	}
 
 	err = t.Commit()
 	if err != nil {
-		return fmt.Errorf("failed to complete database transaction: %v", err)
+		return fmt.Errorf("failed to complete database transaction: %s", err)
 	}
 	return nil
 }
 
-func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
+func (conn *Storage) saveBlock(ctx context.Context, t *sql.Tx, block *types.Block) error {
+	// fixme: perform this calculations out of db transaction
 	bloom := common.Bytes2Hex(block.Block.Bloom().Bytes())
-
 	size := big.NewInt(0).SetUint64(uint64(block.Block.Size()))
-
 	extra := common.Bytes2Hex(block.Block.Extra())
 
-	_, err := t.Exec(insertBlockQuery,
+	_, err := t.ExecContext(ctx, insertBlockQuery,
 		block.Block.NumberU64(),
-		block.Block.Hash().String(),
-		block.Block.ParentHash().String(),
-		block.Block.Nonce(),
-		block.Block.UncleHash().String(),
+		strings.ToLower(block.Block.Hash().String()),
+		strings.ToLower(block.Block.ParentHash().String()),
+		strconv.FormatUint(block.Block.Nonce(), 10),
+		strings.ToLower(block.Block.UncleHash().String()),
 		bloom,
-		block.Block.TxHash().String(),
-		block.Block.Root().String(),
-		block.Block.ReceiptHash().String(),
-		block.Block.Coinbase().String(),
+		strings.ToLower(block.Block.TxHash().String()),
+		strings.ToLower(block.Block.Root().String()),
+		strings.ToLower(block.Block.ReceiptHash().String()),
+		strings.ToLower(block.Block.Coinbase().String()),
 		block.Block.Difficulty().Uint64(),
 		0, // TODO: add total difficulty field
 		size.Uint64(),
@@ -143,7 +147,7 @@ func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
 		block.Block.GasLimit(),
 		block.Block.GasUsed(),
 		block.Block.Time().Uint64(),
-		block.Block.MixDigest().String(),
+		strings.ToLower(block.Block.MixDigest().String()),
 		len(block.Transactions))
 	if err != nil {
 		return fmt.Errorf("error while inserting block %d: %s", block.Block.NumberU64(), err)
@@ -151,21 +155,23 @@ func (conn *Storage) saveBlock(t *sql.Tx, block *types.Block) error {
 	return nil
 }
 
-func (conn *Storage) saveTransaction(t *sql.Tx, block *types.Block, tx *types.Transaction) error {
+func (conn *Storage) saveTransaction(ctx context.Context, t *sql.Tx, block *types.Block, tx *types.Transaction) error {
+	// fixme: perform this calculations out of db transaction
 	source := block.Block.Transaction(tx.Receipt.TxHash)
 	v, r, s := source.RawSignatureValues()
 	data := common.Bytes2Hex(source.Data())
 
-	_, err := t.Exec(insertTransactionQuery,
-		source.Hash().String(),
+	_, err := t.ExecContext(ctx, insertTransactionQuery,
+		strings.ToLower(source.Hash().String()),
 		source.Nonce(),
-		block.Block.Hash().String(),
+		strings.ToLower(block.Block.Hash().String()),
 		block.Block.NumberU64(),
 		tx.Receipt.TransactionIndex,
-		tx.Receipt.From.String(),
-		tx.Receipt.To.String(),
+		strings.ToLower(tx.Receipt.From.String()),
+		strings.ToLower(tx.Receipt.To.String()),
 		source.Value().Uint64(),
 		source.Gas(),
+		tx.Receipt.GasUsed,
 		source.GasPrice().Uint64(),
 		data,
 		v.String(),
@@ -196,9 +202,7 @@ func (conn *Storage) shiftLogTopics(topics []common.Hash) (string, string, strin
 }
 
 func (conn *Storage) shiftLogArgs(hexData []byte) (string, string, string) {
-	log.Println("len data inner", len(hexData))
 	data := common.Bytes2Hex(hexData)
-	log.Println("len data inner", len(data))
 	var firstArg, secondArg, thirdArg string
 
 	if len(data) > 0 && len(data) > 63 {
@@ -216,28 +220,28 @@ func (conn *Storage) shiftLogArgs(hexData []byte) (string, string, string) {
 	return firstArg, secondArg, thirdArg
 }
 
-func (conn *Storage) saveLog(t *sql.Tx, l *eth.Log) error {
+func (conn *Storage) saveLog(ctx context.Context, t *sql.Tx, l *eth.Log) error {
+	// fixme: perform this calculations out of db transaction
 	firstTopic, secondTopic, thirdTopic, fourthTopic := conn.shiftLogTopics(l.Topics)
-
 	firstArg, secondArg, thirdArg := conn.shiftLogArgs(l.Data)
 
-	_, err := t.Exec(insertLogQuery,
-		l.TxHash.String(),
-		l.Address.String(),
-		firstTopic,
-		secondTopic,
-		thirdTopic,
-		fourthTopic,
-		firstArg,
-		secondArg,
-		thirdArg,
+	_, err := t.ExecContext(ctx, insertLogQuery,
+		strings.ToLower(l.TxHash.String()),
+		strings.ToLower(l.Address.String()),
+		strings.ToLower(firstTopic),
+		strings.ToLower(secondTopic),
+		strings.ToLower(thirdTopic),
+		strings.ToLower(fourthTopic),
+		strings.ToLower(firstArg),
+		strings.ToLower(secondArg),
+		strings.ToLower(thirdArg),
 		l.BlockNumber,
 		l.TxIndex,
 		l.Index,
 		l.Removed,
 	)
 	if err != nil {
-		return fmt.Errorf("error while inserting log: %v", err)
+		return fmt.Errorf("error while inserting log: %s", err)
 	}
 
 	return nil
@@ -255,31 +259,32 @@ func (conn *Storage) shiftArgs(decodedArgs []string) [16]string {
 	return args
 }
 
-func (conn *Storage) saveArgs(t *sql.Tx, tx *types.Transaction) error {
+func (conn *Storage) saveArgs(ctx context.Context, t *sql.Tx, tx *types.Transaction) error {
+	// fixme: perform this calculations out of db transaction
 	args := conn.shiftArgs(tx.DecodedData.Args)
 
-	_, err := t.Exec(insertArgQuery,
-		tx.Receipt.TxHash.String(),
-		tx.DecodedData.Method,
-		args[0],
-		args[1],
-		args[2],
-		args[3],
-		args[4],
-		args[5],
-		args[6],
-		args[7],
-		args[8],
-		args[9],
-		args[10],
-		args[11],
-		args[12],
-		args[13],
-		args[14],
-		args[15],
+	_, err := t.ExecContext(ctx, insertArgQuery,
+		strings.ToLower(tx.Receipt.TxHash.String()),
+		strings.ToLower(tx.DecodedData.Method),
+		strings.ToLower(args[0]),
+		strings.ToLower(args[1]),
+		strings.ToLower(args[2]),
+		strings.ToLower(args[3]),
+		strings.ToLower(args[4]),
+		strings.ToLower(args[5]),
+		strings.ToLower(args[6]),
+		strings.ToLower(args[7]),
+		strings.ToLower(args[8]),
+		strings.ToLower(args[9]),
+		strings.ToLower(args[10]),
+		strings.ToLower(args[11]),
+		strings.ToLower(args[12]),
+		strings.ToLower(args[13]),
+		strings.ToLower(args[14]),
+		strings.ToLower(args[15]),
 	)
 	if err != nil {
-		return fmt.Errorf("error while inserting arg: %v", err)
+		return fmt.Errorf("error while inserting arg: %s", err)
 	}
 	return nil
 }

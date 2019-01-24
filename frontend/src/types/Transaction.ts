@@ -8,6 +8,7 @@ export class Transaction { // ToDo convert to interface
     public to: string;
     public value: number;
     public gas: number;
+    public gasUsed: number;
     public gasPrice: number;
     public input: string;
     public v: string;
