@@ -54,6 +54,8 @@ export class TransactionPage extends React.Component<ITransactionPageProps, neve
                     <SectionName>Transaction fee</SectionName>
                     <Label>Gas</Label>
                     <Value>{item.gas}</Value>
+                    <Label>Gas Used</Label>
+                    <Value>{item.gasUsed}</Value>
                     <Label>Gas Price</Label>
                     <Value>{item.gasPrice}</Value>
                 </Grid>
