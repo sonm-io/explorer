@@ -1,4 +1,5 @@
 import { fetchData, fetchItem, IQueryParam, getQuery } from './base';
+import { Transaction } from 'src/types/Transaction';
 
 export type TTransactionsShow = 'transactions' | 'token-trns';
 
@@ -37,7 +38,7 @@ const transactions = (
     }
 };
 
-export const transactionsPage = (
+export const transactionsPage = async (
     page: number,
     pageSize: number,
     show: TTransactionsShow,
@@ -50,7 +51,8 @@ export const transactionsPage = (
     params.push({ name: 'limit', value: pageSize });
 
     const query = getQuery(tpl, params);
-    return fetchData(query);
+    const data = await fetchData(query);
+    return data.map((row: any) => new Transaction(row));
 };
 
 export const transactionsCount = (show: TTransactionsShow, address?: string, block?: number) => {

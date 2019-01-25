@@ -41,5 +41,5 @@ export interface IQueryParam {
 export const getQuery = (tpl: string, params: IQueryParam[]) => {
     return params.length === 0
         ? tpl
-        : tpl + '&' + params.map((p) => `${p.name}=${p.value}`).join('&');
+        : tpl + params.map((p) => `${p.name}=${p.value}`).join('&');
 };

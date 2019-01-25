@@ -56,6 +56,14 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                 : <ArrowForwardIcon className={cn(css('direction-icon'), css('arrow'))}/>;
     }
 
+    private renderStatus = (status: boolean) => {
+        return status
+            ? <DoneImage className={cn(css('success'), css('status-icon'))}
+                         titleAccess="success"/>
+            : <HighlightOffImage className={cn(css('fail'), css('status-icon'))}
+                                 titleAccess="failed"/>;
+    }
+
     private renderTable = () => {
         const p = this.props;
         return (
@@ -67,7 +75,10 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                         <TableCell className={css('cell-from')}>From</TableCell>
                         <TableCell className={css('cell-arrow')}></TableCell>
                         <TableCell className={css('cell-to')}>To</TableCell>
-                        <TableCell>Status</TableCell>
+                        <TableCell>{p.show === 'transactions'
+                            ? 'Status'
+                            : 'Value, SNM'
+                        }</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -96,11 +107,10 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                                     }
                                 </TableCell>
                                 <TableCell>
-                                    {row.status
-                                        ? <DoneImage className={cn(css('success'), css('status-icon'))}
-                                                     titleAccess="success"/>
-                                        : <HighlightOffImage className={cn(css('fail'), css('status-icon'))}
-                                                             titleAccess="failed"/>
+                                    {
+                                        p.show === 'transactions'
+                                            ? this.renderStatus(row.status)
+                                            : row.valueFmtd
                                     }
                                 </TableCell>
                             </TableRow>
