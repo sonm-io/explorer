@@ -1,5 +1,7 @@
 import { fetchData, fetchItem, IQueryParam, getQuery } from './base';
 
+export type TTransactionsShow = 'transactions' | 'token-trns';
+
 // ToDo: extract 'show' and 'address' to filter object.
 
 const addAddrParam = (params: IQueryParam[], address?: string) => {
@@ -9,33 +11,52 @@ const addAddrParam = (params: IQueryParam[], address?: string) => {
     }
 };
 
-export const transactions = (
+const transactions = (
+    filter: {
+        show: TTransactionsShow,
+        address?: string,
+        block?: number,
+    },
+    addOrder: boolean = false
+): [string, IQueryParam[]] => {
+    const params: IQueryParam[] = [];
+    if (filter.block !== undefined) {
+        params.push({ name: 'blockNumber', value: `eq.${filter.block}` });
+    }
+    addAddrParam(params, filter.address);
+    if (filter.show === 'transactions') {
+        if (addOrder) {
+            params.push({ name: 'order', value: 'nonce.desc' });
+        }
+        return ['transactions?', params];
+    } else {
+        if (addOrder) {
+            params.push({ name: 'order', value: 'timestamp.desc' });
+        }
+        return ['token_transfers?', params];
+    }
+};
+
+export const transactionsPage = (
     page: number,
     pageSize: number,
-    show: string, // transactions | transactions tokens
+    show: TTransactionsShow,
     address?: string,
     block?: number,
 ) => {
-    const params: IQueryParam[] = [];
+    const [tpl, params] = transactions({show, address, block}, true);
+
     params.push({ name: 'offset', value: pageSize * (page-1) });
     params.push({ name: 'limit', value: pageSize });
 
-    addAddrParam(params, address);
-    if (block !== undefined) {
-        params.push({ name: 'blockNumber', value: `eq.${block}` });
-    }
-
-    params.push({ name: 'order', value: 'nonce.desc' });
-
-    const query = getQuery('transactions?', params);
+    const query = getQuery(tpl, params);
     return fetchData(query);
 };
 
-export const transactionsCount = (show: string, address?: string) => {
-    const params: IQueryParam[] = [];
+export const transactionsCount = (show: TTransactionsShow, address?: string, block?: number) => {
+    const [tpl, params] = transactions({show, address, block}, false);
     params.push({ name: 'select', value: 'count' });
-    addAddrParam(params, address);
-    const query = getQuery('transactions?', params);
+    const query = getQuery(tpl, params);
     return fetchData(query);
 };
 

@@ -13,7 +13,7 @@ import {Transaction} from "src/types/Transaction";
 import {tablePaginationActionsWrapped} from "../blocks/parts/TablePaginationActions"; // ToDo: why we use this generic component from blocks? possibly it must be extracted from blocks.
 import {IListProps} from 'src/components/factories/list';
 import {PagedList} from "src/components/generic/PagedList";
-import {ITransactions, TTransactionsShow} from "src/stores/transactions-store";
+import {ITransactions} from "src/stores/transactions-store";
 import {Toolbar} from "@material-ui/core";
 import ToggleButtonGroup from 'src/components/common/toggle-button-group';
 import DateTimePicker from 'src/components/common/datetime-picker';
@@ -27,6 +27,7 @@ import {prefix} from "src/utils/common";
 import DoneImage from '@material-ui/icons/Done';
 import HighlightOffImage from '@material-ui/icons/Clear';
 import * as cn from 'classnames';
+import { TTransactionsShow } from "src/api/transactions-api";
 
 export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {
 }
