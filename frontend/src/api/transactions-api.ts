@@ -2,6 +2,13 @@ import { fetchData, fetchItem, IQueryParam, getQuery } from './base';
 
 // ToDo: extract 'show' and 'address' to filter object.
 
+const addAddrParam = (params: IQueryParam[], address?: string) => {
+    if (address !== undefined) {
+        const addrLower = address.toLowerCase();
+        params.push({ name: 'or', value: `(from.eq.${addrLower},to.eq.${addrLower})` });
+    }
+};
+
 export const transactions = (
     page: number,
     pageSize: number,
@@ -13,9 +20,7 @@ export const transactions = (
     params.push({ name: 'offset', value: pageSize * (page-1) });
     params.push({ name: 'limit', value: pageSize });
 
-    if (address !== undefined) {
-        params.push({ name: 'or', value: `(from.eq.${address},to.eq.${address})` });
-    }
+    addAddrParam(params, address);
     if (block !== undefined) {
         params.push({ name: 'blockNumber', value: `eq.${block}` });
     }
@@ -29,9 +34,7 @@ export const transactions = (
 export const transactionsCount = (show: string, address?: string) => {
     const params: IQueryParam[] = [];
     params.push({ name: 'select', value: 'count' });
-    if (address !== undefined) {
-        params.push({ name: 'or', value: `(from.eq.${address},to.eq.${address})` });
-    }
+    addAddrParam(params, address);
     const query = getQuery('transactions?', params);
     return fetchData(query);
 };
