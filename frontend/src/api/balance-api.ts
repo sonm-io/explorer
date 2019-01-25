@@ -25,15 +25,13 @@ const toUsd = (value: string, rate: string) => {
 };
 
 export const getBalance = async (address: string): Promise<[string, string]> => {
-    await Promise.all([
-        sonmApiPromise,
-        ratePromise
-    ]);
+    await sonmApiPromise;
+    await ratePromise;
     const snm = await sonmApi.wrappers.token.balanceOf(address);
     const usd = toUsd(snm, rate);
     const formated: [string, string] = [
         BalanceUtils.formatBalance(snm),
-        BalanceUtils.formatBalance(usd)
+        BalanceUtils.formatBalance(usd, 2)
     ];
     console.log(`snm: ${formated[0]}, usd: ${formated[1]}`);
     return formated;
