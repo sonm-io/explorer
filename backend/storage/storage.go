@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"math/big"
-	"strconv"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -133,7 +132,7 @@ func (conn *Storage) saveBlock(ctx context.Context, t *sql.Tx, block *types.Bloc
 		block.Block.NumberU64(),
 		strings.ToLower(block.Block.Hash().String()),
 		strings.ToLower(block.Block.ParentHash().String()),
-		strconv.FormatUint(block.Block.Nonce(), 10),
+		block.Block.Nonce(),
 		strings.ToLower(block.Block.UncleHash().String()),
 		bloom,
 		strings.ToLower(block.Block.TxHash().String()),
@@ -177,7 +176,8 @@ func (conn *Storage) saveTransaction(ctx context.Context, t *sql.Tx, block *type
 		v.String(),
 		r.String(),
 		s.String(),
-		tx.Receipt.Status)
+		tx.Receipt.Status,
+		block.Block.Time().Uint64())
 	if err != nil {
 		return fmt.Errorf("error while inserting transaction: %s", err)
 	}

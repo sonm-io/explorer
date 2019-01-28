@@ -30,7 +30,7 @@ const insertBlockQuery = `INSERT INTO blocks(
 			"mixhash",
 			"txCount"
 			) VALUES 
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, to_timestamp($17), $18, $19)`
 
 const insertTransactionQuery = `INSERT INTO transactions(
 				hash,
@@ -48,8 +48,9 @@ const insertTransactionQuery = `INSERT INTO transactions(
 				v,
 				r,
 				s, 
-				status) 
-				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`
+				status,
+				"timestamp") 
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, to_timestamp($17))`
 
 const insertLogQuery = `
 	INSERT INTO logs (
