@@ -92,7 +92,7 @@ func (conn *Storage) ProcessBlock(ctx context.Context, block *types.Block) error
 
 	err = conn.saveBlock(ctx, t, block)
 	if err != nil {
-		if e := t.Rollback(); err != nil {
+		if e := t.Rollback(); e != nil {
 			return fmt.Errorf("failed to store block (%s) and rollback database transaction (%s)", err, e)
 		}
 		return err
@@ -101,7 +101,7 @@ func (conn *Storage) ProcessBlock(ctx context.Context, block *types.Block) error
 	for _, tx := range block.Transactions {
 		err = conn.saveTransaction(ctx, t, block, tx)
 		if err != nil {
-			if e := t.Rollback(); err != nil {
+			if e := t.Rollback(); e != nil {
 				return fmt.Errorf("failed to store transaction (%s) and rollback database transaction (%s)", err, e)
 			}
 			return fmt.Errorf("failed to save transaction: %s", err)
@@ -109,7 +109,7 @@ func (conn *Storage) ProcessBlock(ctx context.Context, block *types.Block) error
 
 		for _, l := range tx.Logs {
 			if err := conn.saveLog(ctx, t, l); err != nil {
-				if e := t.Rollback(); err != nil {
+				if e := t.Rollback(); e != nil {
 					return fmt.Errorf("failed to store log (%s) and rollback database transaction (%s)", err, e)
 				}
 				return fmt.Errorf("failed to save log: %s", err)
@@ -117,7 +117,7 @@ func (conn *Storage) ProcessBlock(ctx context.Context, block *types.Block) error
 		}
 
 		if err := conn.saveArgs(ctx, t, tx); err != nil {
-			if e := t.Rollback(); err != nil {
+			if e := t.Rollback(); e != nil {
 				return fmt.Errorf("failed to store args (%s) and rollback database transaction (%s)", err, e)
 			}
 			return fmt.Errorf("faile to save args: %s", err)
