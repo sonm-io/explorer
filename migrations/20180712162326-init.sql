@@ -89,6 +89,54 @@ CREATE TABLE args
   "arg16"  VARCHAR(66)
 );
 
+CREATE OR REPLACE FUNCTION token_transfers(
+        skip int,
+        size int,
+        address varchar(42) default null,
+        blockNumber bigint default null
+    )
+    returns table (
+        hash varchar(66),
+        blockNumber bigint,
+        method varchar(66),
+        "from" varchar(66),
+        "to" varchar(66),
+        "value" varchar(66),
+        "ts" timestamp
+    )
+    AS $body$
+    SELECT
+        tx."hash",
+        tx."blockNumber",
+        lg."firstTopic" as method,
+        lg."secondTopic" as "from",
+        lg."thirdTopic" as "to",
+        lg."firstArg" as "value",
+        tx."timestamp" as "ts"
+    FROM (
+        SELECT
+            logs."firstTopic",
+            logs."secondTopic",
+            logs."thirdTopic",
+            logs."firstArg",
+            logs."secondArg",
+            logs."thirdArg",
+            logs."txHash"
+        FROM logs
+        WHERE
+            logs."firstTopic" = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'::text
+            AND ($3 IS NULL OR $3 = logs."secondArg" OR $3 = logs."thirdTopic")
+        ORDER BY logs."blockNumber" DESC
+        OFFSET $1
+        LIMIT $2
+    ) lg
+    LEFT JOIN transactions tx ON (
+        lg."txHash" = tx."hash"
+        AND ($4 IS NULL OR $4 = tx."blockNumber")
+    )
+    ORDER BY tx.nonce desc;
+$body$ language sql;
+
 CREATE INDEX idx_block_hash
   ON blocks ("hash");
 
@@ -111,15 +159,19 @@ CREATE INDEX idx_transactions_to
 CREATE INDEX idx_transactions_blocknumber
   ON transactions ("blockNumber");
 
+CREATE INDEX idx_transactions_nonce_desc
+  ON transactions("nonce" DESC)
+
 -- +migrate Down
 
 DROP INDEX idx_block_hash;
 DROP INDEX idx_transactions_blockhash;
-\
 DROP INDEX idx_logs_txhash;
 DROP INDEX idx_logs_topic_transfer;
+DROP INDEX idx_transactions_nonce_desc
 
-DROP VIEW token_transfers;
+DROP FUNCTION IF EXISTS token_transfers(int, int, varchar(42), bigint)
+
 DROP TABLE args;
 DROP TABLE logs;
 DROP TABLE transactions;
