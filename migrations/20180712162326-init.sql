@@ -89,6 +89,7 @@ CREATE TABLE args
   "arg16"  VARCHAR(66)
 );
 
+-- +migrate StatementBegin
 CREATE OR REPLACE FUNCTION token_transfers(
         skip int,
         size int,
@@ -104,7 +105,7 @@ CREATE OR REPLACE FUNCTION token_transfers(
         "value" varchar(66),
         "ts" timestamp
     )
-    AS $body$
+    AS $$
     SELECT
         tx."hash",
         tx."blockNumber",
@@ -135,7 +136,8 @@ CREATE OR REPLACE FUNCTION token_transfers(
         AND ($4 IS NULL OR $4 = tx."blockNumber")
     )
     ORDER BY tx.nonce desc;
-$body$ language sql;
+$$ language sql;
+-- +migrate StatementEnd
 
 CREATE INDEX idx_block_hash
   ON blocks ("hash");
@@ -160,7 +162,7 @@ CREATE INDEX idx_transactions_blocknumber
   ON transactions ("blockNumber");
 
 CREATE INDEX idx_transactions_nonce_desc
-  ON transactions("nonce" DESC)
+  ON transactions("nonce" DESC);
 
 -- +migrate Down
 
@@ -168,9 +170,9 @@ DROP INDEX idx_block_hash;
 DROP INDEX idx_transactions_blockhash;
 DROP INDEX idx_logs_txhash;
 DROP INDEX idx_logs_topic_transfer;
-DROP INDEX idx_transactions_nonce_desc
+DROP INDEX idx_transactions_nonce_desc;
 
-DROP FUNCTION IF EXISTS token_transfers(int, int, varchar(42), bigint)
+DROP FUNCTION IF EXISTS token_transfers(int, int, varchar(42), bigint);
 
 DROP TABLE args;
 DROP TABLE logs;
