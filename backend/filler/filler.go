@@ -40,7 +40,6 @@ func NewFiller(cfg *Config) (*Filler, error) {
 
 func (f *Filler) Start(ctx context.Context) error {
 	doneFill := make(chan bool)
-	doneIntervals := make(chan bool)
 	go func() { doneFill <- true }()
 
 	for i := 0; i < concurrency; i++ {
@@ -58,7 +57,7 @@ func (f *Filler) Start(ctx context.Context) error {
 		case <-doneFill:
 			go func() {
 				defer func() {
-					doneIntervals <- true
+					doneFill <- true
 				}()
 
 				lastKnownBlock, err := f.loadBestBlock(ctx)
@@ -81,24 +80,6 @@ func (f *Filler) Start(ctx context.Context) error {
 					log.Printf("blocks delta = %v", lastBlockInChain-lastKnownBlock)
 
 					for i := lastKnownBlock + 1; i < lastBlockInChain; i++ {
-						f.loadChan <- i
-					}
-				}
-			}()
-		case <-doneIntervals:
-			go func() {
-				defer func() {
-					doneFill <- true
-				}()
-
-				intervals, err := f.db.GetUnfilledIntervals(ctx)
-				if err != nil {
-					log.Printf("failed to get unfilled intervals: %v", err)
-					return
-				}
-
-				for _, interval := range intervals {
-					for i := interval.Start; i <= interval.Finish; i++ {
 						f.loadChan <- i
 					}
 				}
@@ -135,15 +116,22 @@ func (f *Filler) loadBestBlock(ctx context.Context) (uint64, error) {
 func (f *Filler) processBlock(ctx context.Context, number uint64) {
 	block, err := types.FillNewBlock(ctx, f.client, big.NewInt(0).SetUint64(number))
 	if err != nil {
-		log.Println(err)
+		log.Printf("failed to load block related data: %v", err)
+		go f.retryBlockSaving(number)
 		return
 	}
-	log.Println("block filled: ", number)
 
+	log.Println("block filled: ", number)
 	if err = f.db.ProcessBlock(ctx, block); err != nil {
 		log.Printf("failed to save block: %d, %v", number, err)
+		go f.retryBlockSaving(number)
 		return
 	}
 
 	log.Println("block saved: ", number)
+}
+
+func (f *Filler) retryBlockSaving(n uint64) {
+	log.Printf("retrying on block %d", n)
+	f.loadChan <- n
 }
