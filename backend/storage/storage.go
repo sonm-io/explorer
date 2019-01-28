@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"math/big"
+	"strconv"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -91,26 +92,34 @@ func (conn *Storage) ProcessBlock(ctx context.Context, block *types.Block) error
 
 	err = conn.saveBlock(ctx, t, block)
 	if err != nil {
-		t.Rollback()
+		if e := t.Rollback(); err != nil {
+			return fmt.Errorf("failed to store block (%s) and rollback database transaction (%s)", err, e)
+		}
 		return err
 	}
 
 	for _, tx := range block.Transactions {
 		err = conn.saveTransaction(ctx, t, block, tx)
 		if err != nil {
-			t.Rollback()
+			if e := t.Rollback(); err != nil {
+				return fmt.Errorf("failed to store transaction (%s) and rollback database transaction (%s)", err, e)
+			}
 			return fmt.Errorf("failed to save transaction: %s", err)
 		}
 
 		for _, l := range tx.Logs {
 			if err := conn.saveLog(ctx, t, l); err != nil {
-				t.Rollback()
+				if e := t.Rollback(); err != nil {
+					return fmt.Errorf("failed to store log (%s) and rollback database transaction (%s)", err, e)
+				}
 				return fmt.Errorf("failed to save log: %s", err)
 			}
 		}
 
 		if err := conn.saveArgs(ctx, t, tx); err != nil {
-			t.Rollback()
+			if e := t.Rollback(); err != nil {
+				return fmt.Errorf("failed to store args (%s) and rollback database transaction (%s)", err, e)
+			}
 			return fmt.Errorf("faile to save args: %s", err)
 		}
 	}
@@ -129,10 +138,10 @@ func (conn *Storage) saveBlock(ctx context.Context, t *sql.Tx, block *types.Bloc
 	extra := common.Bytes2Hex(block.Block.Extra())
 
 	_, err := t.ExecContext(ctx, insertBlockQuery,
-		block.Block.NumberU64(),
+		strconv.FormatUint(block.Block.NumberU64(), 10),
 		strings.ToLower(block.Block.Hash().String()),
 		strings.ToLower(block.Block.ParentHash().String()),
-		block.Block.Nonce(),
+		strconv.FormatUint(block.Block.Nonce(), 10),
 		strings.ToLower(block.Block.UncleHash().String()),
 		bloom,
 		strings.ToLower(block.Block.TxHash().String()),
@@ -141,13 +150,13 @@ func (conn *Storage) saveBlock(ctx context.Context, t *sql.Tx, block *types.Bloc
 		strings.ToLower(block.Block.Coinbase().String()),
 		block.Block.Difficulty().Uint64(),
 		0, // TODO: add total difficulty field
-		size.Uint64(),
+		strconv.FormatUint(size.Uint64(), 10),
 		extra,
-		block.Block.GasLimit(),
-		block.Block.GasUsed(),
-		block.Block.Time().Uint64(),
+		strconv.FormatUint(block.Block.GasLimit(), 10),
+		strconv.FormatUint(block.Block.GasUsed(), 10),
+		strconv.FormatUint(block.Block.Time().Uint64(), 10),
 		strings.ToLower(block.Block.MixDigest().String()),
-		len(block.Transactions))
+		strconv.FormatInt(int64(len(block.Transactions)), 10))
 	if err != nil {
 		return fmt.Errorf("error while inserting block %d: %s", block.Block.NumberU64(), err)
 	}
@@ -162,22 +171,22 @@ func (conn *Storage) saveTransaction(ctx context.Context, t *sql.Tx, block *type
 
 	_, err := t.ExecContext(ctx, insertTransactionQuery,
 		strings.ToLower(source.Hash().String()),
-		source.Nonce(),
+		strconv.FormatUint(source.Nonce(), 10),
 		strings.ToLower(block.Block.Hash().String()),
-		block.Block.NumberU64(),
-		tx.Receipt.TransactionIndex,
+		strconv.FormatUint(block.Block.NumberU64(), 10),
+		strconv.FormatUint(tx.Receipt.TransactionIndex, 10),
 		strings.ToLower(tx.Receipt.From.String()),
 		strings.ToLower(tx.Receipt.To.String()),
 		source.Value().Uint64(),
-		source.Gas(),
-		tx.Receipt.GasUsed,
-		source.GasPrice().Uint64(),
+		strconv.FormatUint(source.Gas(), 10),
+		strconv.FormatUint(tx.Receipt.GasUsed, 10),
+		strconv.FormatUint(source.GasPrice().Uint64(), 10),
 		data,
 		v.String(),
 		r.String(),
 		s.String(),
 		tx.Receipt.Status,
-		block.Block.Time().Uint64())
+		strconv.FormatUint(block.Block.Time().Uint64(), 10))
 	if err != nil {
 		return fmt.Errorf("error while inserting transaction: %s", err)
 	}
