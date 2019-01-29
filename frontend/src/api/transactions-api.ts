@@ -77,7 +77,7 @@ export const transactionsPage = async (
     addPaging(params, filter, page, pageSize);
     const query = getQuery(tpl, params);
     const data = await fetchData(query);
-    return data.map((row: any) => new Transaction(row));
+    return typeof(data) === 'object' ? data.map((row: any) => new Transaction(row)) : data;
 };
 
 export const transactionsCount = (show: TTransactionsShow, address?: string, block?: number) => {
