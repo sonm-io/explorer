@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 
 	"github.com/sonm-io/core/cmd"
 	"github.com/sonm-io/explorer/backend/filler"
@@ -19,7 +21,9 @@ func run(app cmd.AppContext) error {
 		return fmt.Errorf("failed to load config file: %s", err)
 	}
 
-	f, err := filler.NewFiller(cfg)
+	log := getLogger(cfg.Log.Level())
+
+	f, err := filler.NewFiller(cfg, log)
 	if err != nil {
 		return fmt.Errorf("failed to create filler instance: %s", err)
 	}
@@ -36,8 +40,29 @@ func run(app cmd.AppContext) error {
 	})
 
 	if err := wg.Wait(); err != nil {
-		return fmt.Errorf("termination: %s", err)
+		log.Warn("termination", zap.Error(err))
 	}
 
 	return nil
+}
+
+func getLogger(lvl zapcore.Level) *zap.Logger {
+	encoder := zap.NewDevelopmentEncoderConfig()
+	encoder.EncodeLevel = zapcore.CapitalColorLevelEncoder
+
+	cfg := zap.Config{
+		Development:      false,
+		Level:            zap.NewAtomicLevelAt(lvl),
+		OutputPaths:      []string{"stdout"},
+		ErrorOutputPaths: []string{"stdout"},
+		Encoding:         "console",
+		EncoderConfig:    encoder,
+	}
+
+	log, err := cfg.Build()
+	if err != nil {
+		panic(err)
+	}
+
+	return log
 }

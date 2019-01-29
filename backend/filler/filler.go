@@ -3,23 +3,24 @@ package filler
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/big"
 	"time"
 
 	"github.com/sonm-io/core/blockchain"
 	"github.com/sonm-io/explorer/backend/storage"
 	"github.com/sonm-io/explorer/backend/types"
+	"go.uber.org/zap"
 )
 
 type Filler struct {
 	db          *storage.Storage
+	log         *zap.Logger
 	client      blockchain.CustomEthereumClient
 	loadChan    chan uint64
 	concurrency int
 }
 
-func NewFiller(cfg *Config) (*Filler, error) {
+func NewFiller(cfg *Config, log *zap.Logger) (*Filler, error) {
 	client, err := blockchain.NewClient(cfg.Geth.Endpoint)
 	if err != nil {
 		return nil, err
@@ -32,6 +33,7 @@ func NewFiller(cfg *Config) (*Filler, error) {
 
 	return &Filler{
 		db:          s,
+		log:         log,
 		client:      client,
 		loadChan:    make(chan uint64, cfg.Filler.Concurrency),
 		concurrency: int(cfg.Filler.Concurrency),
@@ -39,6 +41,9 @@ func NewFiller(cfg *Config) (*Filler, error) {
 }
 
 func (f *Filler) Start(ctx context.Context) error {
+	f.log.Info("starting filler", zap.Int("concurrency", f.concurrency))
+	defer f.log.Info("stopping filler")
+
 	doneFill := make(chan bool)
 	go func() { doneFill <- true }()
 
@@ -67,7 +72,7 @@ func (f *Filler) Start(ctx context.Context) error {
 				// working previously.
 				lastKnownBlock, err := f.getLastKnownBlock(ctx)
 				if err != nil {
-					log.Printf("failed to load last known block: %v", err)
+					f.log.Error("failed to load last known block", zap.Error(err))
 					return
 				}
 
@@ -75,14 +80,16 @@ func (f *Filler) Start(ctx context.Context) error {
 				// data we must obtain and process.
 				lastBlockInChain, err := f.getLastBlockInChain(reqCtx)
 				if err != nil {
-					log.Printf("failed to load last block in blockchain: %v", err)
+					f.log.Error("failed to load last block in chain", zap.Error(err))
 					return
 				}
 
-				log.Printf("last known block = %v; last block in chain = %v", lastKnownBlock, lastBlockInChain)
-				if lastKnownBlock < lastBlockInChain {
-					log.Printf("blocks delta = %v", lastBlockInChain-lastKnownBlock)
+				f.log.Info("blocks info fetched",
+					zap.Uint64("last_known", lastKnownBlock),
+					zap.Uint64("in_chain", lastBlockInChain),
+					zap.Uint64("delta", lastBlockInChain-lastKnownBlock))
 
+				if lastKnownBlock < lastBlockInChain {
 					for i := lastKnownBlock + 1; i < lastBlockInChain; i++ {
 						f.loadChan <- i
 					}
@@ -118,24 +125,26 @@ func (f *Filler) getLastKnownBlock(ctx context.Context) (uint64, error) {
 }
 
 func (f *Filler) processBlock(ctx context.Context, number uint64) {
+	f.log.Debug("processing block", zap.Uint64("block", number))
+
 	block, err := types.FillNewBlock(ctx, f.client, big.NewInt(0).SetUint64(number))
 	if err != nil {
-		log.Printf("failed to load block related data: %v", err)
+		f.log.Error("failed to load block data", zap.Uint64("block", number), zap.Error(err))
 		go f.retryBlockSaving(number)
 		return
 	}
 
-	log.Println("block filled: ", number)
+	f.log.Debug("block data fetched", zap.Uint64("block", number))
 	if err = f.db.ProcessBlock(ctx, block); err != nil {
-		log.Printf("failed to save block: %d, %v", number, err)
+		f.log.Error("failed to save block data", zap.Uint64("block", number), zap.Error(err))
 		go f.retryBlockSaving(number)
 		return
 	}
 
-	log.Println("block saved: ", number)
+	f.log.Info("block data saved", zap.Uint64("block", number))
 }
 
 func (f *Filler) retryBlockSaving(n uint64) {
-	log.Printf("retrying on block %d", n)
+	f.log.Debug("retrying", zap.Uint64("block", n))
 	f.loadChan <- n
 }

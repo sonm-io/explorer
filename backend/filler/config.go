@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/configor"
 	"github.com/sonm-io/explorer/backend/storage"
+	"go.uber.org/zap/zapcore"
 )
 
 type fillerConfig struct {
@@ -14,10 +15,20 @@ type gethConfig struct {
 	Endpoint string `yaml:"endpoint" required:"true"`
 }
 
+type loggerConfig struct {
+	RawLevel string `yaml:"level" required:"true" default:"info"`
+	level    zapcore.Level
+}
+
+func (lc *loggerConfig) Level() zapcore.Level {
+	return lc.level
+}
+
 type Config struct {
 	Filler   fillerConfig   `yaml:"filler" required:"true"`
 	Geth     gethConfig     `yaml:"geth" required:"true"`
 	Database storage.Config `yaml:"database" required:"true"`
+	Log      loggerConfig   `yaml:"log" required:"true"`
 }
 
 func (c *Config) validate() error {
@@ -29,6 +40,12 @@ func (c *Config) validate() error {
 		return fmt.Errorf("it's too danger to use so many threads")
 	}
 
+	var logLevel zapcore.Level
+	if err := logLevel.UnmarshalText([]byte(c.Log.RawLevel)); err != nil {
+		return err
+	}
+
+	c.Log.level = logLevel
 	return nil
 }
 
