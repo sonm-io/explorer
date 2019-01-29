@@ -1,12 +1,11 @@
 import { Transaction } from "src/types/Transaction";
 import PagedList, { IListState } from "./generic/paged-list";
-import Fetch, { IFetchCtl, IFetchConfig } from "./generic/fetch-store";
+import Fetch, { IFetchCtl, IFetchConfig, IFetchUpd } from "./generic/fetch-store";
 import { History } from 'history';
 import { Store } from "unistore";
+import { TTransactionsShow } from "src/api/transactions-api";
 
 // Interfaces
-
-export type TTransactionsShow = 'transactions' | 'token-trns';
 
 export interface ITransactions {
     addressInfo?: {
@@ -25,7 +24,7 @@ export interface ITransactionsState extends ITransactions, IListState<Transactio
 // ToDo: this signature doesn't correspond API method and there is no error message.
 export type TTransactionsFetch = (page: number, pageSize: number, address?: string) => Promise<Transaction[] | string>;
 
-export type TTransactionsFetchCount = (show: string, address?: string) => Promise<[{count: number}]>;
+export type TTransactionsFetchCount = (show: TTransactionsShow, address?: string, block?: number) => Promise<[{count: number}]>;
 
 interface ITransactionsFetchConfig extends IFetchConfig<
     ITransactionsState,
@@ -35,7 +34,7 @@ interface ITransactionsFetchConfig extends IFetchConfig<
 
 interface ITransactionsFetchCountConfig extends IFetchConfig<
     ITransactionsState,
-    [string, string?], // show, address
+    [TTransactionsShow, string?, number?], // show, address
     [{count: number}]
 > {}
 
@@ -63,8 +62,9 @@ export const init = (
     };
     const fetchCountCfg: ITransactionsFetchCountConfig = {
         fetchMethod: fetchCountMethod,
-        getArgs: (state: ITransactionsState) => (['', state.address]), // show, address
+        getArgs: (state: ITransactionsState) => ([state.show, state.address, state.block]),
         updateStore: PagedList.updateCount,
+        usePending: false
     };
     const state: ITransactionsState = {
         ...PagedList.initState(),
@@ -76,8 +76,8 @@ export const init = (
 
     const actions = (store: Store<ITransactionsState>) => ({
         ...controller.actions(store),
-        update: async (state: ITransactionsState, upd: Pick<ITransactionsState, keyof ITransactionsState>, overwrite: boolean = false, withCount: boolean = true) => {
-            controller.actions(store).update(state, upd, overwrite, withCount);
+        update: async (state: ITransactionsState, upd: Pick<ITransactionsState, keyof ITransactionsState>, udfCfg?: IFetchUpd) => {
+            controller.actions(store).update(state, upd, udfCfg);
             const s = store.getState();
             if (s.address !== undefined) {
                 const balanceResult = await fetchAddressBalance(s.address);

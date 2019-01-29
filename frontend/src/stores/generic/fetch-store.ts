@@ -16,11 +16,17 @@ export interface IFetchConfig<
     getArgs: (state: TState) => TFetchArgs;
     updateStore: (store: Store<TState>, result: TFetchResult) => void;
     getRoute?: (state: TState) => string;
+    usePending?: boolean;
+}
+
+export interface IFetchUpd {
+    overwrite: boolean;
+    withCount: boolean;
 }
 
 export interface IFetchActions<TState extends IFetchState> extends INotificationsActions {
     fetch: (state: TState) => Promise<void>;
-    update: <U extends keyof TState>(state: TState, upd: Pick<TState, U>, overwrite?: boolean, withCount?: boolean) => Promise<void>;
+    update: <U extends keyof TState>(state: TState, upd: Pick<TState, U>, updCfg?: Partial<IFetchUpd>) => Promise<void>;
     updateRoute: <U extends keyof TState>(state: TState, upd: Pick<TState, U>) => void;
 }
 
@@ -28,13 +34,13 @@ export interface IFetchActions<TState extends IFetchState> extends INotification
 // Implement this interface in Props of Component. Then connect store's actions to this component.
 export interface IFetchCmpActions<TProps> {
     fetch: () => Promise<void>;
-    update: <U extends keyof TProps>(upd: Pick<TProps, U>) => Promise<void>;
+    update: <U extends keyof TProps>(upd: Pick<TProps, U>, updCfg?: Partial<IFetchUpd>) => Promise<void>;
     updateRoute: <U extends keyof TProps>(upd: Pick<TProps, U>) => void;
 }
 
 export interface IFetchBoundActs<TState> {
     fetch: () => void;
-    update: <U extends keyof TState>(upd: Pick<TState, U>) => void;
+    update: <U extends keyof TState>(upd: Pick<TState, U>, updCfg?: Partial<IFetchUpd>) => void;
 }
 
 export interface IFetchCtl<TState extends IFetchState> extends
@@ -49,13 +55,13 @@ export const initState = (): IFetchState => ({
 
 export const fetchData = <S extends IFetchState, A extends any[], R>(config: IFetchConfig<S,A,R>) =>
     (store: Store<S>) => {
-        const fn = async (state: S, pending: boolean = true) => {
+        const fn = async (state: S) => {
             const fetchArgs = config.getArgs(state);
             const result = await config.fetchMethod(...fetchArgs);
             config.updateStore(store, result);
             //ToDo: add here error handling
         };
-        return pending(store, fn);
+        return config.usePending === false ? fn : pending(store, fn);
     };
 
 export const initActions = <
@@ -70,12 +76,13 @@ export const initActions = <
     (store: Store<S>): IFetchActions<S> => ({
         ...Notifications.actions(store),
         fetch: fetchData(fetchDataCfg)(store),
-        update: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false, withCount: boolean = true) => {
-            //debugger;
-            store.setState(upd, overwrite);
-            fetchData(fetchDataCfg)(store)(store.getState());
-            if (fetchCountCfg !== undefined && withCount) {
-                fetchData(fetchCountCfg)(store)(store.getState(), false);
+        update: async (_: S, upd: Pick<S, keyof S>, updCfg?: Partial<IFetchUpd>) => {
+            const updC = updCfg === undefined ? {} : updCfg;
+            store.setState(upd, updC.overwrite);
+            const state = store.getState();
+            fetchData(fetchDataCfg)(store)(state);
+            if (fetchCountCfg !== undefined && updC.withCount) {
+                fetchData(fetchCountCfg)(store)(state);
             }
         },
         updateRoute: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false) => {

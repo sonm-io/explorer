@@ -15,7 +15,7 @@ const history = createBrowserHistory();
 
 export default {
     transactions: Transactions.init(
-        Api.transactions,
+        Api.transactionsPage,
         Api.transactionsCount,
         Api.getBalance,
         history

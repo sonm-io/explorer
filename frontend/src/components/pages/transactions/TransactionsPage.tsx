@@ -13,7 +13,7 @@ import {Transaction} from "src/types/Transaction";
 import {tablePaginationActionsWrapped} from "../blocks/parts/TablePaginationActions"; // ToDo: why we use this generic component from blocks? possibly it must be extracted from blocks.
 import {IListProps} from 'src/components/factories/list';
 import {PagedList} from "src/components/generic/PagedList";
-import {ITransactions, TTransactionsShow} from "src/stores/transactions-store";
+import {ITransactions} from "src/stores/transactions-store";
 import {Toolbar} from "@material-ui/core";
 import ToggleButtonGroup from 'src/components/common/toggle-button-group';
 import DateTimePicker from 'src/components/common/datetime-picker';
@@ -27,6 +27,7 @@ import {prefix} from "src/utils/common";
 import DoneImage from '@material-ui/icons/Done';
 import HighlightOffImage from '@material-ui/icons/Clear';
 import * as cn from 'classnames';
+import { TTransactionsShow } from "src/api/transactions-api";
 
 export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {
 }
@@ -55,6 +56,14 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                 : <ArrowForwardIcon className={cn(css('direction-icon'), css('arrow'))}/>;
     }
 
+    private renderStatus = (status: boolean) => {
+        return status
+            ? <DoneImage className={cn(css('success'), css('status-icon'))}
+                         titleAccess="success"/>
+            : <HighlightOffImage className={cn(css('fail'), css('status-icon'))}
+                                 titleAccess="failed"/>;
+    }
+
     private renderTable = () => {
         const p = this.props;
         return (
@@ -66,13 +75,16 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                         <TableCell className={css('cell-from')}>From</TableCell>
                         <TableCell className={css('cell-arrow')}></TableCell>
                         <TableCell className={css('cell-to')}>To</TableCell>
-                        <TableCell>Status</TableCell>
+                        <TableCell>{p.show === 'transactions'
+                            ? 'Status'
+                            : 'Value, SNM'
+                        }</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {p.list.map((row) => {
+                    {p.list.map((row, i) => {
                         return (
-                            <TableRow key={row.hash}>
+                            <TableRow key={i}>
                                 <TableCell>
                                     <Link to={"/transaction/" + row.hash}>{row.hash}</Link>
                                 </TableCell>
@@ -80,26 +92,25 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                                     <Link to={"/block/" + row.blockNumber}>{row.blockNumber}</Link>
                                 </TableCell>
                                 <TableCell className={css('cell-from')}>
-                                    {isContract(row.from)
-                                        ? this.renderAddress(row.from, definedAddresses[row.from].name)
-                                        : this.renderAddress(row.from)
+                                    {isContract(row.From)
+                                        ? this.renderAddress(row.From, definedAddresses[row.From].name)
+                                        : this.renderAddress(row.From)
                                     }
                                 </TableCell>
                                 <TableCell className={css('cell-arrow')}>
-                                    {this.renderDirectionIcon(row.from, row.to)}
+                                    {this.renderDirectionIcon(row.From, row.To)}
                                 </TableCell>
                                 <TableCell className={css('cell-to')}>
-                                    {isContract(row.to)
-                                        ? this.renderAddress(row.to, definedAddresses[row.to].name)
-                                        : this.renderAddress(row.to)
+                                    {isContract(row.To)
+                                        ? this.renderAddress(row.To, definedAddresses[row.To].name)
+                                        : this.renderAddress(row.To)
                                     }
                                 </TableCell>
                                 <TableCell>
-                                    {row.status
-                                        ? <DoneImage className={cn(css('success'), css('status-icon'))}
-                                                     titleAccess="success"/>
-                                        : <HighlightOffImage className={cn(css('fail'), css('status-icon'))}
-                                                             titleAccess="failed"/>
+                                    {
+                                        p.show === 'transactions'
+                                            ? this.renderStatus(row.status)
+                                            : row.Value
                                     }
                                 </TableCell>
                             </TableRow>
@@ -109,7 +120,7 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                 <TableFooter>
                     <TableRow>
                         <TablePagination
-                            count={2000000}
+                            count={p.totalCount || 2000000}
                             // TODO: load state before & in time:
                             // колличество транзакций будет постоянно меняться
                             // при использовании offset на страницу будут догружаться

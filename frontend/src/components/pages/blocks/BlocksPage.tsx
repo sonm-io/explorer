@@ -61,7 +61,7 @@ export class BlocksPage extends PagedList<Block, IBlocksPageProps> {
                 <TableFooter>
                     <TableRow>
                         <TablePagination
-                            count={2000000}
+                            count={p.totalCount || 2000000}
                             // TODO: load state before & in time:
                             // колличество блоков будет постоянно меняться
                             // при использовании offset на страницу будут догружаться

@@ -22,7 +22,7 @@ export interface IListFetchConfig<
 
 export const initState = <TItem>(pageSize = 10, page = 1): IListState<TItem> => ({
     ...Fetch.initState(),
-    totalCount: -1,
+    totalCount: 0,
     list: [] as TItem[],
     pageSize,
     page,
