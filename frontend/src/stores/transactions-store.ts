@@ -64,6 +64,7 @@ export const init = (
         fetchMethod: fetchCountMethod,
         getArgs: (state: ITransactionsState) => ([state.show, state.address, state.block]),
         updateStore: PagedList.updateCount,
+        usePending: false
     };
     const state: ITransactionsState = {
         ...PagedList.initState(),

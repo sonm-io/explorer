@@ -16,6 +16,7 @@ export interface IFetchConfig<
     getArgs: (state: TState) => TFetchArgs;
     updateStore: (store: Store<TState>, result: TFetchResult) => void;
     getRoute?: (state: TState) => string;
+    usePending?: boolean;
 }
 
 export interface IFetchActions<TState extends IFetchState> extends INotificationsActions {
@@ -49,13 +50,13 @@ export const initState = (): IFetchState => ({
 
 export const fetchData = <S extends IFetchState, A extends any[], R>(config: IFetchConfig<S,A,R>) =>
     (store: Store<S>) => {
-        const fn = async (state: S, pending: boolean = true) => {
+        const fn = async (state: S) => {
             const fetchArgs = config.getArgs(state);
             const result = await config.fetchMethod(...fetchArgs);
             config.updateStore(store, result);
             //ToDo: add here error handling
         };
-        return pending(store, fn);
+        return config.usePending === false ? fn : pending(store, fn);
     };
 
 export const initActions = <
@@ -73,9 +74,10 @@ export const initActions = <
         update: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false, withCount: boolean = true) => {
             //debugger;
             store.setState(upd, overwrite);
-            fetchData(fetchDataCfg)(store)(store.getState());
+            const state = store.getState();
+            fetchData(fetchDataCfg)(store)(state);
             if (fetchCountCfg !== undefined && withCount) {
-                fetchData(fetchCountCfg)(store)(store.getState(), false);
+                fetchData(fetchCountCfg)(store)(state);
             }
         },
         updateRoute: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false) => {
