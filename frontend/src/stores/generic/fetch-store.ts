@@ -19,9 +19,14 @@ export interface IFetchConfig<
     usePending?: boolean;
 }
 
+export interface IFetchUpd {
+    overwrite: boolean;
+    withCount: boolean;
+}
+
 export interface IFetchActions<TState extends IFetchState> extends INotificationsActions {
     fetch: (state: TState) => Promise<void>;
-    update: <U extends keyof TState>(state: TState, upd: Pick<TState, U>, overwrite?: boolean, withCount?: boolean) => Promise<void>;
+    update: <U extends keyof TState>(state: TState, upd: Pick<TState, U>, updCfg?: Partial<IFetchUpd>) => Promise<void>;
     updateRoute: <U extends keyof TState>(state: TState, upd: Pick<TState, U>) => void;
 }
 
@@ -29,13 +34,13 @@ export interface IFetchActions<TState extends IFetchState> extends INotification
 // Implement this interface in Props of Component. Then connect store's actions to this component.
 export interface IFetchCmpActions<TProps> {
     fetch: () => Promise<void>;
-    update: <U extends keyof TProps>(upd: Pick<TProps, U>) => Promise<void>;
+    update: <U extends keyof TProps>(upd: Pick<TProps, U>, updCfg?: Partial<IFetchUpd>) => Promise<void>;
     updateRoute: <U extends keyof TProps>(upd: Pick<TProps, U>) => void;
 }
 
 export interface IFetchBoundActs<TState> {
     fetch: () => void;
-    update: <U extends keyof TState>(upd: Pick<TState, U>) => void;
+    update: <U extends keyof TState>(upd: Pick<TState, U>, updCfg?: Partial<IFetchUpd>) => void;
 }
 
 export interface IFetchCtl<TState extends IFetchState> extends
@@ -71,12 +76,12 @@ export const initActions = <
     (store: Store<S>): IFetchActions<S> => ({
         ...Notifications.actions(store),
         fetch: fetchData(fetchDataCfg)(store),
-        update: async (_: S, upd: Pick<S, keyof S>, overwrite: boolean = false, withCount: boolean = true) => {
-            //debugger;
-            store.setState(upd, overwrite);
+        update: async (_: S, upd: Pick<S, keyof S>, updCfg?: Partial<IFetchUpd>) => {
+            const updC = updCfg === undefined ? {} : updCfg;
+            store.setState(upd, updC.overwrite);
             const state = store.getState();
             fetchData(fetchDataCfg)(store)(state);
-            if (fetchCountCfg !== undefined && withCount) {
+            if (fetchCountCfg !== undefined && updC.withCount) {
                 fetchData(fetchCountCfg)(store)(state);
             }
         },
