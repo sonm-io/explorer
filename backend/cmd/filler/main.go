@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 
 	"github.com/sonm-io/core/cmd"
 	"github.com/sonm-io/explorer/backend/filler"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"golang.org/x/sync/errgroup"
 )
 
