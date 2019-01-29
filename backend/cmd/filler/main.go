@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	cmd.NewCmd(run).Execute()
+	_ = cmd.NewCmd(run).Execute()
 }
 
 func run(app cmd.AppContext) error {

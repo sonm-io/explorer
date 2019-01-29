@@ -12,29 +12,29 @@ import (
 	"github.com/sonm-io/explorer/backend/types"
 )
 
-const concurrency = 50
-
 type Filler struct {
-	client   blockchain.CustomEthereumClient
-	db       *storage.Storage
-	loadChan chan uint64
+	db          *storage.Storage
+	client      blockchain.CustomEthereumClient
+	loadChan    chan uint64
+	concurrency int
 }
 
 func NewFiller(cfg *Config) (*Filler, error) {
-	client, err := blockchain.NewClient(cfg.Filler.Endpoint)
+	client, err := blockchain.NewClient(cfg.Geth.Endpoint)
 	if err != nil {
 		return nil, err
 	}
 
-	s, err := storage.NewStorage(cfg.Database)
+	s, err := storage.NewStorage(&cfg.Database)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Filler{
-		client:   client,
-		db:       s,
-		loadChan: make(chan uint64, concurrency),
+		db:          s,
+		client:      client,
+		loadChan:    make(chan uint64, cfg.Filler.Concurrency),
+		concurrency: int(cfg.Filler.Concurrency),
 	}, nil
 }
 
@@ -42,7 +42,7 @@ func (f *Filler) Start(ctx context.Context) error {
 	doneFill := make(chan bool)
 	go func() { doneFill <- true }()
 
-	for i := 0; i < concurrency; i++ {
+	for i := 0; i < f.concurrency; i++ {
 		go func() {
 			for number := range f.loadChan {
 				f.processBlock(ctx, number)
@@ -60,16 +60,20 @@ func (f *Filler) Start(ctx context.Context) error {
 					doneFill <- true
 				}()
 
-				lastKnownBlock, err := f.loadBestBlock(ctx)
+				reqCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+				defer cancel()
+
+				// get the last block from DB: it is where we'd stop
+				// working previously.
+				lastKnownBlock, err := f.getLastKnownBlock(ctx)
 				if err != nil {
 					log.Printf("failed to load last known block: %v", err)
 					return
 				}
 
-				reqCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
-				defer cancel()
-
-				lastBlockInChain, err := f.loadLastBlock(reqCtx)
+				// get last block mined in blockchain: it is the last
+				// data we must obtain and process.
+				lastBlockInChain, err := f.getLastBlockInChain(reqCtx)
 				if err != nil {
 					log.Printf("failed to load last block in blockchain: %v", err)
 					return
@@ -92,7 +96,7 @@ func (f *Filler) Stop() {
 	defer f.db.Close()
 }
 
-func (f *Filler) loadLastBlock(ctx context.Context) (uint64, error) {
+func (f *Filler) getLastBlockInChain(ctx context.Context) (uint64, error) {
 	lastBlockNumber, err := f.client.GetLastBlock(ctx)
 	if err != nil {
 		return 0, err
@@ -104,7 +108,7 @@ func (f *Filler) loadLastBlock(ctx context.Context) (uint64, error) {
 	return lastBlockNumber.Uint64(), nil
 }
 
-func (f *Filler) loadBestBlock(ctx context.Context) (uint64, error) {
+func (f *Filler) getLastKnownBlock(ctx context.Context) (uint64, error) {
 	bestBlockNumber, err := f.db.GetBestBlock(ctx)
 	if err != nil {
 		return 0, err
