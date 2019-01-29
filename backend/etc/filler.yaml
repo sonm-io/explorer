@@ -8,9 +8,11 @@ database:
   password: postgres
   database: app
 
-migrator:
-  directory: ./migrations
-  dialect: postgres
-
 filler:
-  endpoint: "https://sidechain.livenet.sonm.com"
+  concurrency: 50
+
+geth:
+  # local node (fast)
+  endpoint: "http://127.0.0.1:8545"
+  # or remove one (slow)
+  # endpoint: "https://sidechain.livenet.sonm.com"
