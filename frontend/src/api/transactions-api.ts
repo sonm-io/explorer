@@ -3,6 +3,12 @@ import { Transaction } from 'src/types/Transaction';
 
 export type TTransactionsShow = 'transactions' | 'token-trns';
 
+interface IFilter {
+    show: TTransactionsShow;
+    address?: string;
+    block?: number;
+}
+
 // ToDo: extract 'show' and 'address' to filter object.
 
 const addAddrParam = (params: IQueryParam[], address?: string) => {
@@ -12,30 +18,49 @@ const addAddrParam = (params: IQueryParam[], address?: string) => {
     }
 };
 
-const transactions = (
-    filter: {
-        show: TTransactionsShow,
-        address?: string,
-        block?: number,
-    },
-    addOrder: boolean = false
-): [string, IQueryParam[]] => {
+const append24zeros = (address: string) => {
+     return '0x' + Array(24+1).join('0') + address.substring(2);
+};
+
+const getEndpoint = (filter: IFilter): string => {
+    return filter.show === 'transactions'
+        ? 'transactions?'
+        : 'rpc/token_transfers?';
+};
+
+const getParams = (filter: IFilter): IQueryParam[] => {
     const params: IQueryParam[] = [];
-    if (filter.block !== undefined) {
-        params.push({ name: 'blockNumber', value: `eq.${filter.block}` });
-    }
-    addAddrParam(params, filter.address);
     if (filter.show === 'transactions') {
-        if (addOrder) {
-            params.push({ name: 'order', value: 'nonce.desc' });
+        addAddrParam(params, filter.address);
+        if (filter.block !== undefined) {
+            params.push({ name: 'blockNumber', value: `eq.${filter.block}` });
         }
-        return ['transactions?', params];
     } else {
-        if (addOrder) {
-            params.push({ name: 'order', value: 'timestamp.desc' });
+        if (filter.address !== undefined) {
+            params.push({ name: 'address', value: append24zeros(filter.address) });
         }
-        return ['token_transfers?', params];
     }
+    return params;
+};
+
+const addOrder = (params: IQueryParam[], filter: IFilter) => {
+    if (filter.show === 'transactions') {
+        params.push({ name: 'order', value: 'nonce.desc' });
+    } else {
+        params.push({ name: 'order', value: 'ts.desc' });
+    }
+    return params;
+};
+
+const addPaging = (params: IQueryParam[], filter: IFilter, page: number, pageSize: number) => {
+    if (filter.show === 'transactions') {
+        params.push({ name: 'offset', value: pageSize * (page-1) });
+        params.push({ name: 'limit', value: pageSize });
+    } else {
+        params.push({ name: 'skip', value: pageSize * (page-1) });
+        params.push({ name: 'size', value: pageSize });
+    }
+    return params;
 };
 
 export const transactionsPage = async (
@@ -45,21 +70,29 @@ export const transactionsPage = async (
     address?: string,
     block?: number,
 ) => {
-    const [tpl, params] = transactions({show, address, block}, true);
-
-    params.push({ name: 'offset', value: pageSize * (page-1) });
-    params.push({ name: 'limit', value: pageSize });
-
+    const filter: IFilter = { show, address, block };
+    const tpl = getEndpoint(filter);
+    const params = getParams(filter);
+    addOrder(params, filter);
+    addPaging(params, filter, page, pageSize);
     const query = getQuery(tpl, params);
     const data = await fetchData(query);
     return data.map((row: any) => new Transaction(row));
 };
 
 export const transactionsCount = (show: TTransactionsShow, address?: string, block?: number) => {
-    const [tpl, params] = transactions({show, address, block}, false);
-    params.push({ name: 'select', value: 'count' });
-    const query = getQuery(tpl, params);
-    return fetchData(query);
+    const filter: IFilter = { show, address, block };
+
+    if (show === 'transactions') {
+        const params = getParams(filter);
+        params.push({ name: 'select', value: 'count' });
+        const query = getQuery('transactions?', params);
+        return fetchData(query);
+    } else {
+        const params = getParams(filter);
+        const query = getQuery('rpc/token_transfers_count?', params);
+        return fetchData(query);
+    }
 };
 
 export const transaction = (hash: string) => fetchItem(`transactions?hash=eq.${hash}&limit=1`);

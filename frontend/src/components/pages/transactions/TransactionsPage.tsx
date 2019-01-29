@@ -82,9 +82,9 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {p.list.map((row) => {
+                    {p.list.map((row, i) => {
                         return (
-                            <TableRow key={row.hash}>
+                            <TableRow key={i}>
                                 <TableCell>
                                     <Link to={"/transaction/" + row.hash}>{row.hash}</Link>
                                 </TableCell>
@@ -92,25 +92,25 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                                     <Link to={"/block/" + row.blockNumber}>{row.blockNumber}</Link>
                                 </TableCell>
                                 <TableCell className={css('cell-from')}>
-                                    {isContract(row.from)
-                                        ? this.renderAddress(row.from, definedAddresses[row.from].name)
-                                        : this.renderAddress(row.from)
+                                    {isContract(row.From)
+                                        ? this.renderAddress(row.From, definedAddresses[row.From].name)
+                                        : this.renderAddress(row.From)
                                     }
                                 </TableCell>
                                 <TableCell className={css('cell-arrow')}>
-                                    {this.renderDirectionIcon(row.from, row.to)}
+                                    {this.renderDirectionIcon(row.From, row.To)}
                                 </TableCell>
                                 <TableCell className={css('cell-to')}>
-                                    {isContract(row.to)
-                                        ? this.renderAddress(row.to, definedAddresses[row.to].name)
-                                        : this.renderAddress(row.to)
+                                    {isContract(row.To)
+                                        ? this.renderAddress(row.To, definedAddresses[row.To].name)
+                                        : this.renderAddress(row.To)
                                     }
                                 </TableCell>
                                 <TableCell>
                                     {
                                         p.show === 'transactions'
                                             ? this.renderStatus(row.status)
-                                            : row.valueFmtd
+                                            : row.Value
                                     }
                                 </TableCell>
                             </TableRow>
