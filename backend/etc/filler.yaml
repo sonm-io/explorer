@@ -1,6 +1,7 @@
-logging:
-  # The desired logging level.
-  # Allowed values are "debug", "info", "warn", "error", "panic" and "fatal"
+log:
+  # please run it
+  # with "info" mode in
+  # production!
   level: "debug"
 
 database:
