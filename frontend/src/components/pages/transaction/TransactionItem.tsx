@@ -7,13 +7,14 @@ import SectionName from 'src/components/common/grid-section-name';
 import Label from 'src/components/common/grid-label';
 import Value from 'src/components/common/grid-value';
 import {definedAddresses, isAddressExists as isContract} from 'src/types/Address';
+import { IItemData } from 'src/components/factories/item';
 
 interface IInputData {
     methodId: string;
     params: string[];
 }
 
-export class TransactionItem extends React.Component<Transaction, never> {
+export class TransactionItem extends React.Component<IItemData<Transaction>, never> {
 
     private static getInputParams = (input: string) => {
         const params: string[] = [];
@@ -27,7 +28,7 @@ export class TransactionItem extends React.Component<Transaction, never> {
     }
 
     private getInputData = (): IInputData =>  {
-        const input = this.props.input;
+        const input = this.props.data.input;
         return {
             methodId: input.substring(0, 8),
             params: TransactionItem.getInputParams(input)
@@ -55,7 +56,7 @@ export class TransactionItem extends React.Component<Transaction, never> {
     }
 
     public render() {
-        const item = this.props;
+        const item = this.props.data;
         return (
             <div className="transaction">
                 <div className="head-container">
@@ -72,6 +73,11 @@ export class TransactionItem extends React.Component<Transaction, never> {
                         <Link to={"/block/" + item.blockNumber}>
                             {item.blockNumber}
                         </Link>
+                    </Value>
+
+                    <Label>Date</Label>
+                    <Value>
+                        {item.Timestamp}
                     </Value>
 
                     <Label>Status</Label>

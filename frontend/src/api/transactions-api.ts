@@ -80,7 +80,7 @@ export const transactionsPage = async (
     return typeof(data) === 'object' ? data.map((row: any) => new Transaction(row)) : data;
 };
 
-export const transactionsCount = (show: TTransactionsShow, address?: string, block?: number) => {
+export const transactionsCount = async (show: TTransactionsShow, address?: string, block?: number) => {
     const filter: ITransactionsFilter = { show, address, block };
 
     if (show === 'transactions') {
@@ -95,4 +95,7 @@ export const transactionsCount = (show: TTransactionsShow, address?: string, blo
     }
 };
 
-export const transaction = (hash: string) => fetchItem(`transactions?hash=eq.${hash}&limit=1`);
+export const transaction = async (hash: string) => {
+    const data = await fetchItem(`transactions?hash=eq.${hash}&limit=1`);
+    return new Transaction(data);
+};

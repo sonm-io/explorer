@@ -12,7 +12,7 @@ export class TransactionPage extends React.Component<ITransactionPageProps, neve
     public render() {
         const p = this.props;
         return p.data !== undefined
-            ? React.createElement(TransactionItem, p.data)
+            ? <TransactionItem data={p.data}></TransactionItem>
             : null;
     }
 }
