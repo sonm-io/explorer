@@ -8,8 +8,10 @@ export const blocks = async ({page, pageSize, filter}: IBlocksFetchArgs) => {
         params.push({ name: 'limit', value: limit });
         params.push({ name: 'offset', value: offset });
         if (filter.date !== undefined) {
-            const timestamp = filter.date.getTime() / 1000;
-            params.push({ name: 'timestamp', value: `lt.${timestamp}` });
+            const date = filter.date;
+            date.setUTCHours(23,59,59,999);
+            console.log(date);
+            params.push({ name: 'timestamp', value: `lte.${date.toISOString()}` });
         }
         params.push({ name: 'order', value: 'number.desc' });
         return getQuery('blocks?', params);

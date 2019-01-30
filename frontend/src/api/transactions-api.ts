@@ -3,7 +3,7 @@ import { Transaction } from 'src/types/Transaction';
 
 export type TTransactionsShow = 'transactions' | 'token-trns';
 
-interface IFilter {
+export interface ITransactionsFilter {
     show: TTransactionsShow;
     address?: string;
     block?: number;
@@ -22,13 +22,13 @@ const append24zeros = (address: string) => {
      return '0x' + Array(24+1).join('0') + address.substring(2);
 };
 
-const getEndpoint = (filter: IFilter): string => {
+const getEndpoint = (filter: ITransactionsFilter): string => {
     return filter.show === 'transactions'
         ? 'transactions?'
         : 'rpc/token_transfers?';
 };
 
-const getParams = (filter: IFilter): IQueryParam[] => {
+const getParams = (filter: ITransactionsFilter): IQueryParam[] => {
     const params: IQueryParam[] = [];
     if (filter.show === 'transactions') {
         addAddrParam(params, filter.address);
@@ -43,16 +43,16 @@ const getParams = (filter: IFilter): IQueryParam[] => {
     return params;
 };
 
-const addOrder = (params: IQueryParam[], filter: IFilter) => {
+const addOrder = (params: IQueryParam[], filter: ITransactionsFilter) => {
     if (filter.show === 'transactions') {
         params.push({ name: 'order', value: 'nonce.desc' });
     } else {
-        params.push({ name: 'order', value: 'ts.desc' });
+        params.push({ name: 'order', value: 'timestamp.desc' });
     }
     return params;
 };
 
-const addPaging = (params: IQueryParam[], filter: IFilter, page: number, pageSize: number) => {
+const addPaging = (params: IQueryParam[], filter: ITransactionsFilter, page: number, pageSize: number) => {
     if (filter.show === 'transactions') {
         params.push({ name: 'offset', value: pageSize * (page-1) });
         params.push({ name: 'limit', value: pageSize });
@@ -70,7 +70,7 @@ export const transactionsPage = async (
     address?: string,
     block?: number,
 ) => {
-    const filter: IFilter = { show, address, block };
+    const filter: ITransactionsFilter = { show, address, block };
     const tpl = getEndpoint(filter);
     const params = getParams(filter);
     addOrder(params, filter);
@@ -81,7 +81,7 @@ export const transactionsPage = async (
 };
 
 export const transactionsCount = (show: TTransactionsShow, address?: string, block?: number) => {
-    const filter: IFilter = { show, address, block };
+    const filter: ITransactionsFilter = { show, address, block };
 
     if (show === 'transactions') {
         const params = getParams(filter);
