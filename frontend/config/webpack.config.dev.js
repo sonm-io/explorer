@@ -227,7 +227,11 @@ module.exports = {
             }, {
               loader: 'css-loader' // translates CSS into CommonJS
             }, {
-              loader: 'less-loader' // compiles Less to CSS
+              loader: 'less-loader', options: { // compiles Less to CSS
+                paths: [
+                  path.resolve(__dirname, '..')
+                ]
+              }
             }],
           },
           // "file" loader makes sure those assets get served by WebpackDevServer.

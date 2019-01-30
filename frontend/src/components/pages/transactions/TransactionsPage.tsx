@@ -28,6 +28,7 @@ import DoneImage from '@material-ui/icons/Done';
 import HighlightOffImage from '@material-ui/icons/Clear';
 import * as cn from 'classnames';
 import { TTransactionsShow } from "src/api/transactions-api";
+import { ShortHash } from "src/components/common/short-hash";
 
 export interface ITransactionsPageProps extends ITransactions, IListProps<Transaction, ITransactions> {
 }
@@ -86,7 +87,7 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                         return (
                             <TableRow key={i}>
                                 <TableCell>
-                                    <Link to={"/transaction/" + row.hash}>{row.hash}</Link>
+                                    <Link to={"/transaction/" + row.hash}><ShortHash value={row.hash}></ShortHash></Link>
                                 </TableCell>
                                 <TableCell>
                                     <Link to={"/block/" + row.blockNumber}>{row.blockNumber}</Link>
