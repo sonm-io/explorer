@@ -14,9 +14,9 @@ import {tablePaginationActionsWrapped} from "../blocks/parts/TablePaginationActi
 import {IListProps} from 'src/components/factories/list';
 import {PagedList} from "src/components/generic/PagedList";
 import {ITransactions} from "src/stores/transactions-store";
-import {Toolbar} from "@material-ui/core";
+//import {Toolbar} from "@material-ui/core";
 import ToggleButtonGroup from 'src/components/common/toggle-button-group';
-import DateTimePicker from 'src/components/common/datetime-picker';
+//import DateTimePicker from 'src/components/common/datetime-picker';
 import {AddressInfo} from './parts/address-info';
 import InSvg from './parts/in.svg';
 import OutSvg from './parts/out.svg';
@@ -169,9 +169,9 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
         this.props.updateRoute({show: value});
     }
 
-    private handleChangeDate = (value?: Date) => {
-        this.props.update({date: value, page: 1});
-    }
+    // private handleChangeDate = (value?: Date) => {
+    //     this.props.update({date: value, page: 1});
+    // }
 
     public render = () => {
         const p = this.props;
@@ -187,12 +187,12 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                     />
                 </div>
                 <div className="content-container">
-                    <Toolbar disableGutters>
+                    {/* <Toolbar disableGutters>
                         <DateTimePicker
                             value={p.date}
                             onChange={this.handleChangeDate}
                         />
-                    </Toolbar>
+                    </Toolbar> */}
                     {this.renderTable()}
                 </div>
             </div>
