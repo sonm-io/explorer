@@ -5,6 +5,10 @@ import { TCmpCtor } from 'src/types';
 import { IItemState } from 'src/stores/generic/item-store';
 import { IFetchActions, IFetchCtl } from 'src/stores/generic/fetch-store';
 
+export interface IItemData<TData> {
+    data: TData;
+}
+
 export interface IItemProps<TData> extends IItemState<TData> {
     fetch: (id: string) => Promise<void>;
 }
