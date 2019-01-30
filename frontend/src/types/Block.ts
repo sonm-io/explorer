@@ -1,3 +1,5 @@
+import * as dateFormat from 'dateformat';
+
 export class Block {
     constructor(data: any) {
         Object.assign(this, data);
@@ -27,7 +29,8 @@ export class Block {
         return this.gasUsed / this.gasLimit * 100;
     }
 
-    public get utcDate() {
-        return new Date(this.timestamp * 1000).toUTCString();
+    public get Timestamp() {
+        const date = new Date(this.timestamp);
+        return dateFormat(date, 'dd mmm yyyy HH:MM:ss');
     }
 }

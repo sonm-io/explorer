@@ -35,7 +35,7 @@ export class BlocksPage extends PagedList<Block, IBlocksPageProps> {
                 <TableHead>
                     <TableRow>
                         <TableCell variant={"head"}>Height</TableCell>
-                        <TableCell variant={"head"}>Age</TableCell>
+                        <TableCell variant={"head"}>Date</TableCell>
                         <TableCell variant={"head"}>Txn</TableCell>
                         <TableCell variant={"head"}>GasUsed</TableCell>
                         <TableCell variant={"head"}>GasLimit</TableCell>
@@ -48,7 +48,7 @@ export class BlocksPage extends PagedList<Block, IBlocksPageProps> {
                                 <TableCell>
                                     <Link to={"/block/" + row.number}>{row.number}</Link>
                                 </TableCell>
-                                <TableCell>{row.utcDate}</TableCell>
+                                <TableCell>{row.Timestamp}</TableCell>
                                 <TableCell>
                                     <Link to={'/transactions/block-' + row.number}>{row.txCount}</Link>
                                 </TableCell>

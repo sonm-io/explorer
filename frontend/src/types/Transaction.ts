@@ -1,5 +1,6 @@
 import * as ethJsAbi from 'ethjs-abi';
 import { BalanceUtils } from 'src/utils/balance-utils';
+import * as dateFormat from 'dateformat';
 
 const remove24LeadingZeros = (addr: string) => {
     return '0x' + addr.substring(2+24);
@@ -25,6 +26,7 @@ export class Transaction {
     public r: string;
     public s: string;
     public status: boolean;
+    public timestamp: string;
 
     public get Value() {
         if (this.value === 0) {
@@ -45,5 +47,10 @@ export class Transaction {
         return this.gas === undefined
             ? remove24LeadingZeros(this.to)
             : this.to;
+    }
+
+    public get Timestamp() {
+        const date = new Date(this.timestamp);
+        return dateFormat(date, 'dd mmm yyyy HH:MM:ss');
     }
 }

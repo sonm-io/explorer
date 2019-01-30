@@ -73,6 +73,7 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                     <TableRow>
                         <TableCell>TxHash</TableCell>
                         <TableCell>Block</TableCell>
+                        <TableCell>Date</TableCell>
                         <TableCell className={css('cell-from')}>From</TableCell>
                         <TableCell className={css('cell-arrow')}></TableCell>
                         <TableCell className={css('cell-to')}>To</TableCell>
@@ -91,6 +92,9 @@ export class TransactionsPage extends PagedList<Transaction, ITransactionsPagePr
                                 </TableCell>
                                 <TableCell>
                                     <Link to={"/block/" + row.blockNumber}>{row.blockNumber}</Link>
+                                </TableCell>
+                                <TableCell>
+                                    {row.Timestamp}
                                 </TableCell>
                                 <TableCell className={css('cell-from')}>
                                     {isContract(row.From)

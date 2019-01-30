@@ -11,11 +11,12 @@ export const blocks = async ({page, pageSize, filter}: IBlocksFetchArgs) => {
             const timestamp = filter.date.getTime() / 1000;
             params.push({ name: 'timestamp', value: `lt.${timestamp}` });
         }
-        return getQuery('blocks?order=number.desc', params);
+        params.push({ name: 'order', value: 'number.desc' });
+        return getQuery('blocks?', params);
     };
 
     const data = await list(queryFactory)(page, pageSize);
-    return data.map((row: any) => new Block(row));
+    return typeof(data) === 'object' ? data.map((row: any) => new Block(row)) : data;
 };
 
 export const block = async (num: string) => {

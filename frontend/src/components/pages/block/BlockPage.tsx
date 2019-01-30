@@ -28,7 +28,7 @@ export class BlockPage extends React.Component<IBlockPageProps> {
                     <Label>Hash</Label>
                     <Value>{item.hash}</Value>
                     <Label>Timestamp</Label>
-                    <Value>{item.utcDate}</Value>
+                    <Value>{item.Timestamp}</Value>
                     <Label>Transactions</Label>
                     <Value>
                         <Link to={'/transactions/block-' + item.number}>{item.txCount}</Link>
