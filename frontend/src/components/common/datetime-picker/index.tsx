@@ -40,11 +40,20 @@ class DateTimePicker extends React.Component<IDateTimePickerProps, never> {
         super(props);
     }
 
+    private getValue = () => this.inputRef === undefined ? undefined : new Date(this.inputRef.value);
+
+    private handleKeyUp = (event: any) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            if (this.props.onChange !== undefined) {
+                this.props.onChange(this.getValue());
+            }
+        }
+    }
+
     private handleBlur = () => {
         if (this.props.onChange !== undefined) {
-            const value = this.inputRef === undefined ? undefined : new Date(this.inputRef.value);
-            console.log('inputRef value [' + value + ']');
-            this.props.onChange(value);
+            this.props.onChange(this.getValue());
         }
     }
 
@@ -71,6 +80,7 @@ class DateTimePicker extends React.Component<IDateTimePickerProps, never> {
                     className={classes.textField}
                     InputLabelProps={inputLabelProps}
                     inputProps={inputProps}
+                    onKeyUp={this.handleKeyUp}
                     onBlur={this.handleBlur}
                     defaultValue={this.dateAsString()}
                     {...p}
