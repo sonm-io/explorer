@@ -111,9 +111,6 @@ export class TransactionItem extends React.Component<IItemData<Transaction>, nev
                     <Label>Nonce | {'{'} Position {'}'}</Label>
                     <Value>{`${item.nonce} { ${item.transactionIndex} }`}</Value>
 
-                    <Label>Value</Label>
-                    <Value>{item.value}</Value>
-
                     <SectionName>Transaction fee</SectionName>
                     <Label>Gas Limit</Label>
                     <Value>{item.gas}</Value>
