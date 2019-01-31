@@ -1,5 +1,5 @@
-import { fetchData, fetchItem, IQueryParam, getQuery } from './base';
-import { Transaction } from 'src/types/Transaction';
+import {fetchData, fetchItem, getQuery, IQueryParam} from './base';
+import {Transaction} from 'src/types/Transaction';
 
 export type TTransactionsShow = 'transactions' | 'token-trns';
 
@@ -14,12 +14,12 @@ export interface ITransactionsFilter {
 const addAddrParam = (params: IQueryParam[], address?: string) => {
     if (address !== undefined) {
         const addrLower = address.toLowerCase();
-        params.push({ name: 'or', value: `(from.eq.${addrLower},to.eq.${addrLower})` });
+        params.push({name: 'or', value: `(from.eq.${addrLower},to.eq.${addrLower})`});
     }
 };
 
 const append24zeros = (address: string) => {
-     return '0x' + Array(24+1).join('0') + address.substring(2);
+    return '0x' + Array(24 + 1).join('0') + address.substring(2);
 };
 
 const getEndpoint = (filter: ITransactionsFilter): string => {
@@ -33,11 +33,11 @@ const getParams = (filter: ITransactionsFilter): IQueryParam[] => {
     if (filter.show === 'transactions') {
         addAddrParam(params, filter.address);
         if (filter.block !== undefined) {
-            params.push({ name: 'blockNumber', value: `eq.${filter.block}` });
+            params.push({name: 'blockNumber', value: `eq.${filter.block}`});
         }
     } else {
         if (filter.address !== undefined) {
-            params.push({ name: 'address', value: append24zeros(filter.address) });
+            params.push({name: 'address', value: append24zeros(filter.address)});
         }
     }
     return params;
@@ -45,20 +45,23 @@ const getParams = (filter: ITransactionsFilter): IQueryParam[] => {
 
 const addOrder = (params: IQueryParam[], filter: ITransactionsFilter) => {
     if (filter.show === 'transactions') {
-        params.push({ name: 'order', value: 'blockNumber.desc' });
+        params.push({name: 'order', value: 'blockNumber.desc'});
     } else {
-        params.push({ name: 'order', value: 'timestamp.desc' });
+        params.push({name: 'order', value: 'timestamp.desc'});
     }
     return params;
 };
 
 const addPaging = (params: IQueryParam[], filter: ITransactionsFilter, page: number, pageSize: number) => {
+    const offset = pageSize * (page === 0 ? 0 : page - 1);
+    const limit = pageSize;
+
     if (filter.show === 'transactions') {
-        params.push({ name: 'offset', value: pageSize * (page-1) });
-        params.push({ name: 'limit', value: pageSize });
+        params.push({name: 'offset', value: offset});
+        params.push({name: 'limit', value: limit});
     } else {
-        params.push({ name: 'skip', value: pageSize * (page-1) });
-        params.push({ name: 'size', value: pageSize });
+        params.push({name: 'skip', value: offset});
+        params.push({name: 'size', value: limit});
     }
     return params;
 };
@@ -70,22 +73,22 @@ export const transactionsPage = async (
     address?: string,
     block?: number,
 ) => {
-    const filter: ITransactionsFilter = { show, address, block };
+    const filter: ITransactionsFilter = {show, address, block};
     const tpl = getEndpoint(filter);
     const params = getParams(filter);
     addOrder(params, filter);
     addPaging(params, filter, page, pageSize);
     const query = getQuery(tpl, params);
     const data = await fetchData(query);
-    return typeof(data) === 'object' ? data.map((row: any) => new Transaction(row)) : data;
+    return typeof (data) === 'object' ? data.map((row: any) => new Transaction(row)) : data;
 };
 
 export const transactionsCount = async (show: TTransactionsShow, address?: string, block?: number) => {
-    const filter: ITransactionsFilter = { show, address, block };
+    const filter: ITransactionsFilter = {show, address, block};
 
     if (show === 'transactions') {
         const params = getParams(filter);
-        params.push({ name: 'select', value: 'count' });
+        params.push({name: 'select', value: 'count'});
         const query = getQuery('transactions?', params);
         return fetchData(query);
     } else {
