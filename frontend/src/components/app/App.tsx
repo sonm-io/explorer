@@ -40,7 +40,7 @@ class App extends React.Component<RouteComponentProps> {
             <Switch>
                 <Route exact path="/" component={HomePage}/>
                 <Route path="/blocks" render={(p) => {
-                    RootStore.blocks.boundedActions.update({page: 1}, { withCount: true });
+                    RootStore.blocks.boundedActions.update({page: 0}, { withCount: true });
                     return <BlocksLayout/>;
                 }}/>
                 <Route exact path="/block/:num" render={(p) => {
@@ -50,11 +50,11 @@ class App extends React.Component<RouteComponentProps> {
                 }}/>
                 <Route path="/transactions/block-:block" render={(p) => {
                     const block = p.match.params.block;
-                    RootStore.transactions.boundedActions.update({address: undefined, block, page: 1}, { withCount: true });
+                    RootStore.transactions.boundedActions.update({address: undefined, block, page: 0}, { withCount: true });
                     return <TransactionsLayout/>;
                 }}/>
                 <Route path="/transactions" render={(p) => {
-                    RootStore.transactions.boundedActions.update({address: undefined, block: undefined, page: 1}, { withCount: true });
+                    RootStore.transactions.boundedActions.update({address: undefined, block: undefined, page: 0}, { withCount: true });
                     return <TransactionsLayout/>;
                 }}/>
                 <Route path="/transaction/:txHash" render={(p) => {
@@ -69,7 +69,7 @@ class App extends React.Component<RouteComponentProps> {
                         const show = p.match.params.show;
                         RootStore.transactions.boundedActions.update({
                             address,
-                            page: 1,
+                            page: 0,
                             show: show || 'transactions',
                         }, { withCount: true });
                         return <TransactionsLayout/>;

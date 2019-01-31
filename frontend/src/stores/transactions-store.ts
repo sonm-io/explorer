@@ -81,7 +81,6 @@ export const init = (
             const s = store.getState();
             if (s.address !== undefined) {
                 const balanceResult = await fetchAddressBalance(s.address);
-                console.log(`in store: snm: ${balanceResult[0]}, usd: ${balanceResult[1]}`);
                 store.setState({ addressInfo: { balanceSnm: balanceResult[0], balanceUsd: balanceResult[1] } });
             } else {
                 store.setState({ addressInfo: undefined });
