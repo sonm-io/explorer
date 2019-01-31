@@ -62,6 +62,7 @@ const addPaging = (params: IQueryParam[], filter: ITransactionsFilter, page: num
     } else {
         params.push({name: 'skip', value: offset});
         params.push({name: 'size', value: limit});
+        params.push({name: 'limit', value: limit});
     }
     return params;
 };
@@ -89,10 +90,12 @@ export const transactionsCount = async (show: TTransactionsShow, address?: strin
     if (show === 'transactions') {
         const params = getParams(filter);
         params.push({name: 'select', value: 'count'});
+        params.push({name: 'limit', value: 1});
         const query = getQuery('transactions?', params);
         return fetchData(query);
     } else {
         const params = getParams(filter);
+        params.push({name: 'limit', value: 1});
         const query = getQuery('rpc/token_transfers_count?', params);
         return fetchData(query);
     }
