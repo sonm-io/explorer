@@ -45,7 +45,7 @@ const getParams = (filter: ITransactionsFilter): IQueryParam[] => {
 
 const addOrder = (params: IQueryParam[], filter: ITransactionsFilter) => {
     if (filter.show === 'transactions') {
-        params.push({ name: 'order', value: 'nonce.desc' });
+        params.push({ name: 'order', value: 'blockNumber.desc' });
     } else {
         params.push({ name: 'order', value: 'timestamp.desc' });
     }
