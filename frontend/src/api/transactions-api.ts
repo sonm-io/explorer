@@ -19,7 +19,8 @@ const addAddrParam = (params: IQueryParam[], address?: string) => {
 };
 
 const append24zeros = (address: string) => {
-    return '0x' + Array(24 + 1).join('0') + address.substring(2);
+    const addrLower = address.toLowerCase();
+    return '0x' + Array(24 + 1).join('0') + addrLower.substring(2);
 };
 
 const getEndpoint = (filter: ITransactionsFilter): string => {
