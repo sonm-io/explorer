@@ -33,6 +33,5 @@ export const getBalance = async (address: string): Promise<[string, string]> => 
         BalanceUtils.formatBalance(snm),
         BalanceUtils.formatBalance(usd, 2)
     ];
-    console.log(`snm: ${formated[0]}, usd: ${formated[1]}`);
     return formated;
 };
