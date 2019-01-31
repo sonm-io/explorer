@@ -53,7 +53,7 @@ const addOrder = (params: IQueryParam[], filter: ITransactionsFilter) => {
 };
 
 const addPaging = (params: IQueryParam[], filter: ITransactionsFilter, page: number, pageSize: number) => {
-    const offset = pageSize * (page === 0 ? 0 : page - 1);
+    const offset = pageSize * page;
     const limit = pageSize;
 
     if (filter.show === 'transactions') {
