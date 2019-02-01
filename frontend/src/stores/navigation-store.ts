@@ -36,14 +36,20 @@ class Navigator implements INavigationActions {
             return;
         }
 
-        if (!isNaN(parseInt(v))) {
-            this.navigateTo("/block/" + v);
-        } else if (v.length === 66) {
-            this.navigateTo("/transaction/" + v);
-        } else if (v.length === 42) {
-            this.navigateTo("/address/" + v);
+        if (v.substr(0, 2) === '0x') {
+            if (v.length === 66) {
+                this.navigateTo("/transaction/" + v);
+            } else if (v.length === 42) {
+                this.navigateTo("/address/" + v);
+            } else {
+                this.navigateTo("/notfound");
+            }
         } else {
-            this.navigateTo("/notfound");
+            if (!isNaN(parseInt(v))) {
+                this.navigateTo("/block/" + v);
+            } else {
+                this.navigateTo("/notfound");
+            }
         }
     }
 }
