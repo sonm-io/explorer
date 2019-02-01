@@ -49,7 +49,7 @@ export class TransactionItem extends React.Component<IItemData<Transaction>, nev
                 {
                     input.params.map((p, i) => {
                         return (
-                            <React.Fragment>
+                            <React.Fragment key={i}>
                                 <Label></Label>
                                 <Value>[{i}]: {p}</Value>
                             </React.Fragment>
@@ -78,9 +78,9 @@ export class TransactionItem extends React.Component<IItemData<Transaction>, nev
                     </TableHead>
                     <TableBody>
                         {
-                            item.tokenTransfers.map((tt) => {
+                            item.tokenTransfers.map((tt, i) => {
                                 return (
-                                    <TableRow>
+                                    <TableRow key={i}>
                                         <TableCell><Link to={"/address/" + tt.from}>{tt.from}</Link></TableCell>
                                         <TableCell><Link to={"/address/" + tt.to}>{tt.to}</Link></TableCell>
                                         <TableCell>{tt.value}</TableCell>
