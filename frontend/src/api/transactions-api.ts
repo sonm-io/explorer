@@ -1,4 +1,4 @@
-import {fetchData, fetchItem, getQuery, IQueryParam} from './base';
+import {fetchData, getQuery, IQueryParam} from './base';
 import {Transaction} from 'src/types/Transaction';
 
 export type TTransactionsShow = 'transactions' | 'token-trns';
@@ -103,6 +103,11 @@ export const transactionsCount = async (show: TTransactionsShow, address?: strin
 };
 
 export const transaction = async (hash: string) => {
-    const data = await fetchItem(`transactions?hash=eq.${hash}&limit=1`);
-    return new Transaction(data);
+    const data = await fetchData(`transactions?hash=eq.${hash}&limit=1`);
+    if (data.length === 0) {
+        return undefined; // Not found
+    } else if (typeof(data) === 'object' && typeof(data.message) === 'string') {
+        return data.message; // postgrest error message
+    }
+    return new Transaction(data[0]);
 };

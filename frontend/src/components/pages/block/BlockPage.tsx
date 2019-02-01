@@ -8,6 +8,7 @@ import Header from "src/components/common/header";
 import Label from 'src/components/common/grid-label';
 import Value from 'src/components/common/grid-value';
 import './block-page.less';
+import ErrorForm from 'src/components/elements/errors/Error';
 
 interface IBlockPageProps extends IItemProps<Block> {}
 
@@ -58,8 +59,12 @@ export class BlockPage extends React.Component<IBlockPageProps> {
 
     public render() {
         const p = this.props;
-        return p.data !== undefined
-            ? this.renderMain(p.data)
-            : null;
+        if (p.pendingSet.size > 0) {
+            return null;
+        } else if (p.data === undefined) {
+            return <ErrorForm error="Block not found" />;
+        } else {
+            return this.renderMain(p.data);
+        }
     }
 }
