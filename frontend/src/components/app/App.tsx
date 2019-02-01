@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Route, RouteComponentProps, Switch, withRouter} from "react-router-dom";
-import NotFound from "src/components/elements/errors/NotFound";
+import ErrorForm from "src/components/elements/errors/Error";
 import {BlockPage} from "src/components/pages/block/BlockPage";
 import {BlocksPage} from "src/components/pages/blocks/BlocksPage";
 import ContractsPage from "src/components/pages/contracts/ContractsPage";
@@ -76,7 +76,9 @@ class App extends React.Component<RouteComponentProps> {
                     }}
                 />
                 <Route path="/contracts" component={ContractsPage}/>
-                <Route path="*" component={NotFound}/>
+                <Route path="*" render={(p) => {
+                    return <ErrorForm error={"Page not found"}/>;
+                }}/>
             </Switch>
         </div>
 
