@@ -8,6 +8,11 @@ import Label from 'src/components/common/grid-label';
 import Value from 'src/components/common/grid-value';
 import {definedAddresses, isAddressExists as isContract} from 'src/types/Address';
 import { IItemData } from 'src/components/factories/item';
+import Table from "@material-ui/core/Table/Table";
+import TableHead from "@material-ui/core/TableHead/TableHead";
+import TableBody from "@material-ui/core/TableBody/TableBody";
+import TableRow from "@material-ui/core/TableRow/TableRow";
+import TableCell from "src/components/common/table-cell";
 
 interface IInputData {
     methodId: string;
@@ -52,6 +57,40 @@ export class TransactionItem extends React.Component<IItemData<Transaction>, nev
                     })
                 }
             </React.Fragment>
+        );
+    }
+
+    private renderTokenTransfers() {
+        const item = this.props.data;
+        if (item.tokenTransfers.length === 0) {
+            return null;
+        }
+        return (
+            <div className="content-container">
+                <h3>Token transfers</h3>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>From</TableCell>
+                            <TableCell>To</TableCell>
+                            <TableCell>Value, SNM</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            item.tokenTransfers.map((tt) => {
+                                return (
+                                    <TableRow>
+                                        <TableCell><Link to={"/address/" + tt.from}>{tt.from}</Link></TableCell>
+                                        <TableCell><Link to={"/address/" + tt.to}>{tt.to}</Link></TableCell>
+                                        <TableCell>{tt.value}</TableCell>
+                                    </TableRow>
+                                );
+                            })
+                        }
+                    </TableBody>
+                </Table>
+            </div>
         );
     }
 
@@ -122,6 +161,7 @@ export class TransactionItem extends React.Component<IItemData<Transaction>, nev
                     <SectionName>Input data</SectionName>
                     {this.renderInputData()}
                 </Grid>
+                {this.renderTokenTransfers()}
             </div>
         );
     }

@@ -102,12 +102,20 @@ export const transactionsCount = async (show: TTransactionsShow, address?: strin
     }
 };
 
+const TOKEN_TRANSFER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+
+export const transactionTransfers = async (hash: string) => {
+    const data = await fetchData(`logs?txHash=eq.${hash}&firstTopic=eq.${TOKEN_TRANSFER}`);
+    return typeof (data) === 'object' ? data.map((row: any) => new Transaction(row)) : data;
+};
+
 export const transaction = async (hash: string) => {
     const data = await fetchData(`transactions?hash=eq.${hash}&limit=1`);
+    const tokenTransfers = await transactionTransfers(hash);
     if (data.length === 0) {
         return undefined; // Not found
     } else if (typeof(data) === 'object' && typeof(data.message) === 'string') {
         return data.message; // postgrest error message
     }
-    return new Transaction(data[0]);
+    return new Transaction(data[0], tokenTransfers);
 };
