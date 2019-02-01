@@ -1,8 +1,5 @@
 import * as React from "react";
-
-import Paper from "@material-ui/core/Paper/Paper";
 import Typography from "@material-ui/core/Typography/Typography";
-
 import {Theme, WithStyles} from "@material-ui/core";
 import createStyles from "@material-ui/core/styles/createStyles";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -16,14 +13,9 @@ class ErrorForm extends React.Component<ErrorProps, any> {
         const error = this.props.error;
         const {classes} = this.props;
         return (
-            <Paper className={classes.root} elevation={1}>
-                <Typography variant="headline" component="h3">
-                    Sorry about that, same error occurred :(
-                </Typography>
-                <Typography className={classes.text} variant="headline" component="p">
-                    {error}
-                </Typography>
-            </Paper>
+            <Typography className={classes.root} variant="headline" component="p">
+                {error}
+            </Typography>
         );
     }
 }
@@ -35,10 +27,8 @@ const styles = (theme: Theme) => createStyles({
         paddingBottom: theme.spacing.unit * 2,
         margin: theme.spacing.unit * 6,
         textAlign: "center",
-    },
-    text: {
         fontSize: "2.5rem",
-    },
+    }
 });
 
 export default withStyles(styles)(ErrorForm);

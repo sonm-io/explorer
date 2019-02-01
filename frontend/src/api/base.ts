@@ -9,7 +9,7 @@ export const fetchData = async (query: string) => {
     const url = `${EndpointAddr}/${query}`;
     return await fetch(url)
         .then((res) => {
-            if (!res.ok) {
+            if (!res.ok && res.status !== 400) {
                 throw new Error(res.statusText);
             }
             return res.json();

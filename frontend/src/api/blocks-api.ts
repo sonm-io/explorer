@@ -1,5 +1,5 @@
 import { Block } from 'src/types/Block';
-import { list, fetchItem, IPageParams, IQueryParam, getQuery } from './base';
+import { list, fetchData, IPageParams, IQueryParam, getQuery } from './base';
 import { IBlocksFetchArgs } from 'src/stores/blocks-store';
 
 export const blocks = async ({page, pageSize, filter}: IBlocksFetchArgs) => {
@@ -22,6 +22,11 @@ export const blocks = async ({page, pageSize, filter}: IBlocksFetchArgs) => {
 };
 
 export const block = async (num: string) => {
-    const data = await fetchItem(`blocks?number=eq.${num}&limit=1`);
-    return new Block(data);
+    const data = await fetchData(`blocks?number=eq.${num}&limit=1`);
+    if (data.length === 0) {
+        return undefined; // Not found
+    } else if (typeof(data) === 'object' && typeof(data.message) === 'string') {
+        return data.message; // postgrest error message
+    }
+    return new Block(data[0]);
 };

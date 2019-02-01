@@ -36,19 +36,14 @@ class Navigator implements INavigationActions {
             return;
         }
 
-        try {
-            parseInt(v);
+        if (!isNaN(parseInt(v))) {
             this.navigateTo("/block/" + v);
-        } catch (e) {
-            console.log("its not block number");
-        }
-
-        if (v.length === 66) {
+        } else if (v.length === 66) {
             this.navigateTo("/transaction/" + v);
         } else if (v.length === 42) {
             this.navigateTo("/address/" + v);
         } else {
-            // TODO: redirect to not found
+            this.navigateTo("/notfound");
         }
     }
 }
