@@ -2,13 +2,39 @@ import * as ethJsAbi from 'ethjs-abi';
 import { BalanceUtils } from 'src/utils/balance-utils';
 import * as dateFormat from 'dateformat';
 
+export interface ITokenTransfer {
+    from: string;
+    to: string;
+    value: string;
+}
+
 const remove24LeadingZeros = (addr: string) => {
     return '0x' + addr.substring(2+24);
 };
 
+const valueToNumber = (str: string | number): string => {
+    if (str === 0) {
+        return '';
+    } else {
+        const bn = ethJsAbi.decodeParams(['uint256'], '0x' + str)[0];
+        return BalanceUtils.formatBalance(bn.toString());
+    }
+};
+
+const logRecordToTokenTransfer = (log: any): ITokenTransfer => {
+    return {
+        from: remove24LeadingZeros(log.secondTopic),
+        to: remove24LeadingZeros(log.thirdTopic),
+        value: valueToNumber(log.firstArg)
+    };
+};
+
 export class Transaction {
-    constructor(data: any) {
+    constructor(data: any, tokenTransfers?: object[]) {
         Object.assign(this, data);
+        this.tokenTransfers = tokenTransfers === undefined
+            ? []
+            : tokenTransfers.map(logRecordToTokenTransfer);
     }
     public hash: string;
     public nonce: number;
@@ -27,14 +53,10 @@ export class Transaction {
     public s: string;
     public status: boolean;
     public timestamp: string;
+    public tokenTransfers: ITokenTransfer[];
 
     public get Value() {
-        if (this.value === 0) {
-            return '';
-        } else {
-            const bn = ethJsAbi.decodeParams(['uint256'], '0x' + this.value)[0];
-            return BalanceUtils.formatBalance(bn.toString());
-        }
+        return valueToNumber(this.value);
     }
 
     public get From() {
