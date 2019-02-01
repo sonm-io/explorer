@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" 
     xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="24" viewBox="0 0 40 24">
     <defs>
-        <path id="xbq8a" d="M992 780a4 4 0 0 1 4-4h32a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4h-32a4 4 0 0 1-4-4z"/>
+        <path id="xbq8a" d="M992 615a4 4 0 0 1 4-4h32a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4h-32a4 4 0 0 1-4-4z"/>
     </defs>
     <g>
-        <g transform="translate(-992 -776)">
+        <g transform="translate(-992 -611)">
             <g>
                 <use fill="#15987a" xlink:href="#xbq8a"/>
             </g>
             <g>
                 <g>
-                    <text fill="#fff" dominant-baseline="text-before-edge" font-family="'Roboto Medium','Roboto-Medium'" font-size="13" transform="translate(1005 781)">
+                    <text fill="#fff" dominant-baseline="text-before-edge" font-family="'Roboto Medium','Roboto-Medium'" font-size="13" transform="translate(1005 616)">
                         <tspan>IN</tspan>
                     </text>
                 </g>
