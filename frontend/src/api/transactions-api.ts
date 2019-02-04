@@ -40,6 +40,9 @@ const getParams = (filter: ITransactionsFilter): IQueryParam[] => {
         if (filter.address !== undefined) {
             params.push({name: 'address', value: append24zeros(filter.address)});
         }
+        if (filter.block !== undefined) {
+            params.push({name: 'blocknumber', value: `${filter.block}`});
+        }
     }
     return params;
 };
