@@ -41,7 +41,9 @@ interface ITransactionsFetchCountConfig extends IFetchConfig<
 // Implementation
 
 const getRoute = (state: ITransactionsState) => {
-    if (state.address !== undefined) {
+    if (state.block !== undefined) {
+        return `/transactions/block-${state.block}/${state.show}`;
+    } else if (state.address !== undefined) {
         return `/address/${state.address}/${state.show}`;
     } else {
         return '/transactions';
