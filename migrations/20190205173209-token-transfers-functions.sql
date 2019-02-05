@@ -1,5 +1,7 @@
 -- +migrate Up
 
+DROP FUNCTION IF EXISTS public.token_transfers_count;
+
 -- +migrate StatementBegin
 CREATE OR REPLACE FUNCTION public.token_transfers_count(address VARCHAR(66) DEFAULT NULL::VARCHAR(66),
                                                         blocknumber BIGINT DEFAULT NULL::BIGINT)
@@ -18,6 +20,7 @@ WHERE logs."firstTopic" = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f
 $function$;
 -- +migrate StatementEnd
 
+DROP FUNCTION IF EXISTS public.token_transfers;
 
 -- +migrate StatementBegin
 CREATE OR REPLACE FUNCTION public.token_transfers(skip INT, size INT, address VARCHAR(66) DEFAULT NULL::VARCHAR(66),
