@@ -1,5 +1,6 @@
 -- +migrate Up
 
+-- +migrate StatementBegin
 CREATE OR REPLACE FUNCTION public.token_transfers_count(address VARCHAR(66) DEFAULT NULL::VARCHAR(66),
                                                         blocknumber BIGINT DEFAULT NULL::BIGINT)
   RETURNS TABLE
@@ -15,7 +16,10 @@ WHERE logs."firstTopic" = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f
   AND ($1 IS NULL OR $1 = logs."secondTopic" OR $1 = logs."thirdTopic")
   AND ($2 IS NULL OR $2 = logs."blockNumber")
 $function$;
+-- +migrate StatementEnd
 
+
+-- +migrate StatementBegin
 CREATE OR REPLACE FUNCTION public.token_transfers(skip INT, size INT, address VARCHAR(66) DEFAULT NULL::VARCHAR(66),
                                                   blocknumber BIGINT DEFAULT NULL::BIGINT)
   RETURNS TABLE
@@ -58,5 +62,7 @@ FROM (
   )
 ORDER BY tx.nonce desc;
 $function$
+-- +migrate StatementEnd
+
 
 -- +migrate Down
