@@ -166,13 +166,16 @@ CREATE INDEX idx_transactions_nonce_desc
 
 -- +migrate Down
 
-DROP INDEX idx_block_hash;
-DROP INDEX idx_transactions_blockhash;
-DROP INDEX idx_logs_txhash;
-DROP INDEX idx_logs_topic_transfer;
-DROP INDEX idx_transactions_nonce_desc;
+DROP INDEX IF EXISTS idx_block_hash;
+DROP INDEX IF EXISTS idx_transactions_blockhash;
+DROP INDEX IF EXISTS idx_logs_txhash;
+DROP INDEX IF EXISTS idx_logs_topic_transfer;
+DROP INDEX IF EXISTS idx_transactions_from;
+DROP INDEX IF EXISTS idx_transactions_to;
+DROP INDEX IF EXISTS idx_transactions_blocknumber;
+DROP INDEX IF EXISTS idx_transactions_nonce_desc;
 
-DROP FUNCTION IF EXISTS token_transfers(int, int, varchar(42), bigint);
+DROP FUNCTION IF EXISTS token_transfers;
 
 DROP TABLE args;
 DROP TABLE logs;

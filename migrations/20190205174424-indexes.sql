@@ -15,6 +15,6 @@ CREATE INDEX idx_logs_thirdtopic
 -- +migrate Down
 
 
-DROP INDEX idx_block_hash;
-DROP INDEX idx_block_hash;
-DROP INDEX idx_block_hash;
+DROP INDEX idx_logs_blocknumber;
+DROP INDEX idx_logs_secondtopic;
+DROP INDEX idx_logs_thirdtopic;
