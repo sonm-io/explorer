@@ -158,7 +158,7 @@ func (conn *Storage) saveBlock(ctx context.Context, t *sql.Tx, block *types.Bloc
 		strings.ToLower(block.Block.MixDigest().String()),
 		strconv.FormatInt(int64(len(block.Transactions)), 10))
 	if err != nil {
-		return fmt.Errorf("error while inserting block %d: %s", block.Block.NumberU64(), err)
+		return err
 	}
 	return nil
 }
