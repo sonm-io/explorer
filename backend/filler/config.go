@@ -2,13 +2,15 @@ package filler
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/configor"
 	"github.com/sonm-io/explorer/backend/storage"
 	"go.uber.org/zap/zapcore"
 )
 
 type fillerConfig struct {
-	Concurrency uint `yaml:"concurrency" required:"true" default:"50"`
+	Concurrency  uint `yaml:"concurrency" required:"true" default:"50"`
+	ReloadPeriod uint `yaml:"reload_period" required:"true" default:"1"`
 }
 
 type gethConfig struct {
@@ -38,6 +40,10 @@ func (c *Config) validate() error {
 
 	if c.Filler.Concurrency >= 500 {
 		return fmt.Errorf("it's too danger to use so many threads")
+	}
+
+	if c.Filler.ReloadPeriod == 0 {
+		return fmt.Errorf("cannot use zero period")
 	}
 
 	var logLevel zapcore.Level

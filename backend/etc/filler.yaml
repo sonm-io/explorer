@@ -11,6 +11,7 @@ database:
 
 filler:
   concurrency: 50
+  reload_period: 1
 
 geth:
   # local node (fast)

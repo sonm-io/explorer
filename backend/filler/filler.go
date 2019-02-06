@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"sync"
 	"time"
 
 	"github.com/sonm-io/core/blockchain"
+	"github.com/sonm-io/core/util"
 	"github.com/sonm-io/explorer/backend/storage"
 	"github.com/sonm-io/explorer/backend/types"
 	"go.uber.org/zap"
@@ -18,6 +20,7 @@ type Filler struct {
 	client      blockchain.CustomEthereumClient
 	loadChan    chan uint64
 	concurrency int
+	period      uint
 }
 
 func NewFiller(cfg *Config, log *zap.Logger) (*Filler, error) {
@@ -37,6 +40,7 @@ func NewFiller(cfg *Config, log *zap.Logger) (*Filler, error) {
 		client:      client,
 		loadChan:    make(chan uint64, cfg.Filler.Concurrency),
 		concurrency: int(cfg.Filler.Concurrency),
+		period:      cfg.Filler.ReloadPeriod,
 	}, nil
 }
 
@@ -44,8 +48,8 @@ func (f *Filler) Start(ctx context.Context) error {
 	f.log.Info("starting filler", zap.Int("concurrency", f.concurrency))
 	defer f.log.Info("stopping filler")
 
-	doneFill := make(chan bool)
-	go func() { doneFill <- true }()
+	fillTicker := util.NewImmediateTicker(time.Duration(f.period) * time.Second)
+	var fillMu sync.Mutex
 
 	for i := 0; i < f.concurrency; i++ {
 		go func() {
@@ -59,11 +63,10 @@ func (f *Filler) Start(ctx context.Context) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-doneFill:
+		case <-fillTicker.C:
 			go func() {
-				defer func() {
-					doneFill <- true
-				}()
+				fillMu.Lock()
+				defer fillMu.Unlock()
 
 				reqCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
 				defer cancel()
@@ -90,7 +93,7 @@ func (f *Filler) Start(ctx context.Context) error {
 					zap.Uint64("delta", lastBlockInChain-lastKnownBlock))
 
 				if lastKnownBlock < lastBlockInChain {
-					for i := lastKnownBlock + 1; i < lastBlockInChain; i++ {
+					for i := lastKnownBlock + 1; i <= lastBlockInChain; i++ {
 						f.loadChan <- i
 					}
 				}
