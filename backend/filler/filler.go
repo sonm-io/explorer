@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"strings"
 	"time"
 
+	"github.com/lib/pq"
 	"github.com/sonm-io/core/blockchain"
 	"github.com/sonm-io/explorer/backend/storage"
 	"github.com/sonm-io/explorer/backend/types"
@@ -136,6 +138,11 @@ func (f *Filler) processBlock(ctx context.Context, number uint64) {
 
 	f.log.Debug("block data fetched", zap.Uint64("block", number))
 	if err = f.db.ProcessBlock(ctx, block); err != nil {
+		if isUniqueViolationError(err) {
+			f.log.Debug("block already in db, skipping", zap.Uint64("block", number))
+			return
+		}
+
 		f.log.Error("failed to save block data", zap.Uint64("block", number), zap.Error(err))
 		go f.retryBlockSaving(number)
 		return
@@ -147,4 +154,16 @@ func (f *Filler) processBlock(ctx context.Context, number uint64) {
 func (f *Filler) retryBlockSaving(n uint64) {
 	f.log.Debug("retrying", zap.Uint64("block", n))
 	f.loadChan <- n
+}
+
+func isUniqueViolationError(err error) bool {
+	dbe, ok := err.(*pq.Error)
+	if !ok {
+		// if we're returning wrapped error somewhere.
+		// Yup, I really love error handling in Go.
+		return strings.Contains(err.Error(), "pq: duplicate key value violates unique constraint")
+	}
+
+	// https://www.postgresql.org/docs/9.3/errcodes-appendix.html
+	return dbe.Code == "23505"
 }
