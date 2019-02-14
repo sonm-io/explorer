@@ -7,8 +7,8 @@ import SearchCmp, { TSearchCss } from "../search/Search";
 import { withStyles } from "@material-ui/core";
 import { INavigationState, INavigationCmpActions } from "src/stores/navigation-store";
 import './page-header.less';
-import { Logo } from "../logo";
-
+import Logo from "src/components/elements/logo/BE-w.svg";
+import BetaSvg from "./parts/BETA.svg";
 export interface IPageHeaderProps extends INavigationState, INavigationCmpActions {}
 
 const Search = withStyles<TSearchCss>((theme) => ({
@@ -33,8 +33,8 @@ export class PageHeader extends React.Component<IPageHeaderProps> {
                 <AppBar position="static" elevation={0}>
                     <Toolbar>
                         <NavButton onClick={this.props.onNavigate} value="/" active={p.activeMenu==='home'}>
-                            <Logo />
-                            <div className="page-header__beta">Beta</div>
+                            <Logo className="page-header__logo" />
+                            <BetaSvg className="page-header__beta" />
                         </NavButton>
                         <NavButton onClick={this.props.onNavigate} value="/transactions" active={p.activeMenu==='transactions'}>
                             Transactions
