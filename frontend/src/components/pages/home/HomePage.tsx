@@ -2,7 +2,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import * as React from "react";
 import SearchCmp, { TSearchCss } from "src/components/elements/search/Search";
 import { withStyles } from "@material-ui/core";
-import { Logo } from "src/components/elements/logo";
+import Logo from "src/components/elements/logo/BE-w.svg";
 import './home.less';
 
 interface IHomePageProps {
