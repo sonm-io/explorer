@@ -14,6 +14,15 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	// skipBlocksFromTail shows
+	// how many blocks we should
+	// count as "very last" ones.
+	// We must skip those blocks because
+	// they may be uncle block.
+	skipBlocksFromTail = 5
+)
+
 type Filler struct {
 	db          *storage.Storage
 	log         *zap.Logger
@@ -114,7 +123,7 @@ func (f *Filler) getLastBlockInChain(ctx context.Context) (uint64, error) {
 		return 0, fmt.Errorf("lastBlockNumber is not unit64")
 	}
 
-	return lastBlockNumber.Uint64(), nil
+	return lastBlockNumber.Uint64() - skipBlocksFromTail, nil
 }
 
 func (f *Filler) getLastKnownBlock(ctx context.Context) (uint64, error) {
