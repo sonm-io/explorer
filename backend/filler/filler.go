@@ -20,7 +20,7 @@ const (
 	// count as "very last" ones.
 	// We must skip those blocks because
 	// they may be uncle block.
-	skipBlocksFromTail = 3
+	skipBlocksFromTail = 5
 )
 
 type Filler struct {
