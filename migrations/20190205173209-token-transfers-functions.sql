@@ -69,3 +69,5 @@ $function$
 
 
 -- +migrate Down
+
+DROP FUNCTION IF EXISTS public.token_transfers_count;

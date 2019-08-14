@@ -1,18 +1,18 @@
 version: '3'
 
 services:
-#  database:
-#    container_name: explorer_db
-#    image: postgres:10.4
-#    restart: always
-#    environment:
-#      POSTGRES_DB: "app"
-#      POSTGRES_USER: "app"
-#      POSTGRES_PASSWORD: "app"
-#    volumes:
-#      - ./postgres-data:/var/lib/postgresql/data
-#    ports:
-#      - 5432:5432
+  database:
+    container_name: explorer_db
+    image: postgres:10.4
+    restart: always
+    environment:
+      POSTGRES_DB: "app"
+      POSTGRES_USER: "app"
+      POSTGRES_PASSWORD: "app"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
   rest:
     container_name: explorer_rest
     image: postgrest/postgrest
@@ -20,9 +20,9 @@ services:
     environment:
       PGRST_DB_URI: "postgres://postgres:postgres@localhost/app"
       PGRST_DB_ANON_ROLE: "app"
-#    links:
-#      - database:database
+    links:
+      - database:database
     ports:
       - 3544:3000
-#    depends_on:
-#      - database
+    depends_on:
+      - database
