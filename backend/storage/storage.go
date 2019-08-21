@@ -11,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	eth "github.com/ethereum/go-ethereum/core/types"
 	_ "github.com/lib/pq"
+
 	"github.com/sonm-io/explorer/backend/types"
 )
 
@@ -29,12 +30,12 @@ type Config struct {
 func NewStorage(cfg *Config) (*Storage, error) {
 	connStr := getConnString(cfg.Database, cfg.User, cfg.Password, cfg.Host, cfg.Port)
 	db, err := sql.Open("postgres", connStr)
-	db.SetMaxOpenConns(100)
-	db.SetMaxIdleConns(200)
-
 	if err != nil {
 		return nil, err
 	}
+
+	db.SetMaxOpenConns(100)
+	db.SetMaxIdleConns(200)
 
 	return &Storage{
 		db: db,

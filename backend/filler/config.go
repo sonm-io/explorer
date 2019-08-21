@@ -2,9 +2,11 @@ package filler
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/configor"
-	"github.com/sonm-io/explorer/backend/storage"
 	"go.uber.org/zap/zapcore"
+
+	"github.com/sonm-io/explorer/backend/storage"
 )
 
 type fillerConfig struct {
@@ -44,8 +46,8 @@ func (c *Config) validate() error {
 	if err := logLevel.UnmarshalText([]byte(c.Log.RawLevel)); err != nil {
 		return err
 	}
-
 	c.Log.level = logLevel
+
 	return nil
 }
 
