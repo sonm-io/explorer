@@ -13,6 +13,9 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+  filler:
+    build: ./backend
+    restart: always
   rest:
     container_name: explorer_rest
     image: postgrest/postgrest
