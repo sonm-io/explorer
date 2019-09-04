@@ -1,3 +1,4 @@
+#!/usr/bin/env make
 
 .PHONY: backend frontend
 

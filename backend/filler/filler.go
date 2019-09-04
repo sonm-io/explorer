@@ -9,9 +9,10 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/sonm-io/core/blockchain"
+	"go.uber.org/zap"
+
 	"github.com/sonm-io/explorer/backend/storage"
 	"github.com/sonm-io/explorer/backend/types"
-	"go.uber.org/zap"
 )
 
 const (

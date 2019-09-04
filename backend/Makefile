@@ -40,7 +40,7 @@ fmt:
 
 vet:
 	@echo "+ $@"
-	@go tool vet $(shell ls -1 -d */ | grep -v -e vendor)
+	@go vet ./...
 
 test:
 	@echo "+ $@"
