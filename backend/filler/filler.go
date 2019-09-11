@@ -58,6 +58,7 @@ func (f *Filler) Start(ctx context.Context) error {
 
 	doneFill := make(chan bool)
 	go func() { doneFill <- true }()
+	tk := time.NewTicker(1 * time.Minute)
 
 	for i := 0; i < f.concurrency; i++ {
 		go func() {
@@ -72,41 +73,65 @@ func (f *Filler) Start(ctx context.Context) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		case <-doneFill:
-			go func() {
-				defer func() {
-					doneFill <- true
-				}()
+			select {
+			case <-tk.C:
+				go func() {
+					defer func() {
+						doneFill <- true
+					}()
 
-				reqCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
-				defer cancel()
+					f.log.Info("start processing unfilled intervals")
 
-				// get the last block from DB: it is where we'd stop
-				// working previously.
-				lastKnownBlock, err := f.getLastKnownBlock(ctx)
-				if err != nil {
-					f.log.Error("failed to load last known block", zap.Error(err))
-					return
-				}
-
-				// get last block mined in blockchain: it is the last
-				// data we must obtain and process.
-				lastBlockInChain, err := f.getLastBlockInChain(reqCtx)
-				if err != nil {
-					f.log.Error("failed to load last block in chain", zap.Error(err))
-					return
-				}
-
-				f.log.Info("blocks info fetched",
-					zap.Uint64("last_known", lastKnownBlock),
-					zap.Uint64("in_chain", lastBlockInChain),
-					zap.Uint64("delta", lastBlockInChain-lastKnownBlock))
-
-				if lastKnownBlock < lastBlockInChain {
-					for i := lastKnownBlock + 1; i < lastBlockInChain; i++ {
-						f.loadChan <- i
+					intervals, err := f.db.GetUnfilledIntervals(ctx)
+					if err != nil {
+						f.log.Error("failed to get unfilled intervals", zap.Error(err))
+						return
 					}
-				}
-			}()
+
+					for _, interval := range intervals {
+						for i := interval.Start; i >= interval.Finish; i++ {
+							f.loadChan <- i
+						}
+					}
+					f.log.Info("finish processing unfilled intervals", zap.Int32("intervals_count", int32(len(intervals))))
+				}()
+			default:
+				go func() {
+					defer func() {
+						doneFill <- true
+					}()
+
+					reqCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+					defer cancel()
+
+					// get the last block from DB: it is where we'd stop
+					// working previously.
+					lastKnownBlock, err := f.getLastKnownBlock(ctx)
+					if err != nil {
+						f.log.Error("failed to load last known block", zap.Error(err))
+						return
+					}
+
+					// get last block mined in blockchain: it is the last
+					// data we must obtain and process.
+					lastBlockInChain, err := f.getLastBlockInChain(reqCtx)
+					if err != nil {
+						f.log.Error("failed to load last block in chain", zap.Error(err))
+						return
+					}
+
+					f.log.Info("blocks info fetched",
+						zap.Uint64("last_known", lastKnownBlock),
+						zap.Uint64("in_chain", lastBlockInChain),
+						zap.Uint64("delta", lastBlockInChain-lastKnownBlock))
+
+					if lastKnownBlock < lastBlockInChain {
+						for i := lastKnownBlock + 1; i < lastBlockInChain; i++ {
+							f.loadChan <- i
+						}
+					}
+				}()
+			}
 		}
 	}
 }
